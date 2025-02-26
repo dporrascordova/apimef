@@ -1,0 +1,87 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title"><i class="clip-plus-circle-2"></i>&nbsp; Nuevo Usuario</h3>
+</div>
+<form name="form.nuevoUsuario" ng-submit="submitForm()" novalidate>
+    <div class="modal-body">
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Perfil:
+            </label>
+            <div class="col-sm-8">
+                <select class="form-control" name="Perfil" required ng-model="model.Perfil"
+                    ng-class="{ 'is-invalid': submitted && form.nuevoUsuario.Perfil.$invalid }">
+                    <option value="">--Seleccione--</option>
+                    <option data-ng-repeat="item in listaDePerfil" value={{item.id_perfil}}>
+                        {{item.desc_perfil}}
+                    </option>
+                </select>
+                <div ng-show="submitted && form.nuevoUsuario.Perfil.$invalid" class="invalid-feedback">
+                    <div ng-show="form.nuevoUsuario.Perfil.$error.required">El campo perfil es
+                        requerido</div>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Persona:
+            </label>
+            <div class="col-sm-8">
+                <select class="form-control" name="Persona" required ng-model="model.Persona" select2
+                    ng-class="{ 'is-invalid': submitted && form.nuevoUsuario.Persona.$invalid }">
+                    <option value="">--Seleccione--</option>
+                    <option data-ng-repeat="item in listaDePersona |  orderBy:'usNombre'" value={{item}}>
+                        {{item.usNombre}} {{item.usApellidoPaterno}} {{item.usApellidoMaterno}} 
+                    </option>
+                </select>
+                <div ng-show="submitted && form.nuevoUsuario.Persona.$invalid" class="invalid-feedback">
+                    <div ng-show="form.nuevoUsuario.Persona.$error.required">El campo persona es
+                        requerido</div>
+                </div>
+            </div>
+        </div>  
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Fecha Activaci&oacute;n:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.FechaActivacion" name="FechaActivacion" 
+                    required ng-class="{ 'is-invalid': submitted && form.nuevoUsuario.FechaActivacion.$invalid }"
+                    type="date"  />
+                <div ng-show="submitted && form.nuevoUsuario.FechaActivacion.$invalid" class="invalid-feedback">
+                    <div ng-show="form.nuevoUsuario.FechaActivacion.$error.required">El campo fecha activaci&oacute;n es
+                        requerido</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Fecha Desactivaci&oacute;n:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.fechaDesactivacion" name="fechaDesactivacion" 
+                    required ng-class="{ 'is-invalid': submitted && form.nuevoUsuario.fechaDesactivacion.$invalid }"
+                    type="date"  />
+                <div ng-show="submitted && form.nuevoUsuario.fechaDesactivacion.$invalid" class="invalid-feedback">
+                    <div ng-show="form.nuevoUsuario.fechaDesactivacion.$error.required">El campo fecha desactivaci&oacute;n es
+                        requerido</div>
+                </div>
+            </div>
+        </div>
+
+      
+
+
+    </div>
+
+
+    <div class="modal-footer">
+        <button class="btn btn-red" type="submit" ng-disabledg="form.nuevoUsuario.$invalid"><i
+                class="clip-database"></i>&nbsp;Guardar</button>
+        <button type="button" ng-click="close()" class="btn btn-secondary">
+            <i class="fa fa-share-square-o"></i>&nbsp; Cerrar</button>
+    </div>
+</form>

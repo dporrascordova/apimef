@@ -1,0 +1,405 @@
+<div ng-controller="casillaController">
+
+	<uib-tabset active="active"> <!-- 
+        <uib-tab index="0" select="search()">
+            <uib-tab-heading select="alertMe()" >
+                Solicitudes Ingresadas
+                <div ng-show="requestsData.length>0"
+                    style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+                    <b style="color: #fff">{{ totalItems}}</b>
+                </div>
+            </uib-tab-heading>
+
+
+            <div class="tab-content">
+                <form [formGroup]="searchCriteria" ng-submit="search()" class="text-sm">
+                    <div class="col-sm-12 inline-container-Group" style="margin-top:10px;padding: 10px;border:1px solid #d5d5d5">
+                        <p class="modal-title"
+                            style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+                            Criterios de
+                            búsqueda: </p>
+                        <fieldset style="width: 100%;">
+                            <div class="row">
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">N°
+                                    Solicitud:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="model1.solicitud" class="form-control" maxlength="50"
+                                        name="solicitud" placeholder="Ej. 0001" style="width:100%" type="text" value="">
+
+                                </div>
+
+
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Órgano
+                                    destino: </label>
+                                <div class="col-sm-2">
+                                    <select ng-model="model1.organoDestino" name="organoDestino" class="form-control">
+                                        <option value="" selected>-- Todos --</option>
+                                        <option data-ng-repeat="item in oficinas" value={{item.idunidad}}>
+                                            {{item.descripcioncompleta}}
+                                        </option>
+                                    </select>
+                                </div>
+
+
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Tipo
+                                    Documento:
+                                </label>
+                                <div class="col-sm-2">
+                                    <select class="form-control" ng-model="model1.tipoDocumento" name="tipoDocumento">
+                                        <option value="" selected>-- Todos --</option>
+                                        <option data-ng-repeat="item in tipoDocumento" value={{item.id_tipodocumento}}>
+                                            {{item.desc_tipodocumento}}
+                                        </option>
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Fecha
+                                    Inicio:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="model1.fechaInicio" class="form-control" type="date"
+                                        name="fechaInicio">
+                                </div>
+
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Fecha
+                                    Fin:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="model1.fechaFin" class="form-control" type="date" name="fechaFin">
+                                </div>
+
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Estado:
+                                </label>
+                                <div class="col-sm-2">
+                                    <select ng-model="model1.estadodoc" name="estadodoc" class="form-control">
+                                        <option value="" selected>-- Todos --</option>
+                                        <option value="1">Pendiente</option>
+                                        <option value="2">Observado</option>
+                                        <option value="3">Recibido</option>
+                                        <option value="4">Subsanado</option>
+                                        <option value="5">Atendido</option>
+                                    </select>
+        
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="row">
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">N°
+                                    Documento:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="model1.numeroDocumento" class="form-control" name="numeroDocumento"
+                                        maxlength="50" placeholder="Ej. I008-500" style="width:100%" type="text"
+                                        value="">
+                                </div>
+
+                                <label class="col-sm-2 control-label" style="margin-top: 5px; text-align: right;">Asunto:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="model1.asunto" class="form-control" name="asunto"
+                                        maxlength="50" placeholder="Ej. xxxxxx" style="width:100%" type="text"
+                                        value="">
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button id="btnBuscar1" class="btn btn-blue" type="submit"><i
+                                            class="clip-search"></i>&nbsp;
+                                        Buscar</button>
+
+                                        <button id="btnLimpiar1" class="btn btn-secondary" type="button" ng-click="Limpiar('1')"  ><i
+                                            class="clip-spinner-6"></i>&nbsp;
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+                <div class="flex flex-row">
+                      <button id="btn_Nuevo" style="margin-right: 5px;" ng-click="open('lg')" class="btn btn-red mt-3"
+                        type="button"><i class="clip-plus-circle-2"></i>&nbsp; Nuevo</button> 
+                    <button id="btnExportar" ng-click="exportarAExcelSoli()" class="btn btn-dark-grey mt-3" type="button"><i
+                            class="clip-file-excel"></i>&nbsp; Exportar a Excel</button>
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div class="inline-container-Group p-0 mt-3 bg-white">
+                    <h2 class="grid-title">Listado de Solicitudes</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover" dt-options="casi.dtOptions" datatable="ng"  >
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="text-center">Ver</th>
+                                    <th class="text-center">N° Solicitud</th>
+                                    <th class="text-center">Tipo Documento</th>
+                                    <th class="text-center">N° Documento</th>
+                                    <th class="text-center">Asunto</th>
+                                    <th class="text-center">Fecha Recepción</th>
+                                    <th class="text-center">Órgano Destino</th>
+                                    <th class="text-center">N° Folios</th>
+                                    <th class="text-center">Estado</th>
+                            <th class="text-center">Fecha Lectura</th>
+                              
+                                    <th class="text-center">Usuario Creación</th>
+                                    <th class="text-center">Fecha Creación</th>
+                                    <th class="text-center">Ip Creación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="request in dataSolSolicutes">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td class="text-center"><button title="Ver Solicitud"
+                                            ng-click="openViewSolicitud(request.id_documento)"
+                                            class="btn btn-link" type="button" style="outline: none;"><i
+                                                class="fa fa-search" style="color:#b30a14;font-size:18px;"></i>
+                                        </button></td>
+                           
+                                    <td class="text-center">{{ request.id_documento }}</td>
+                                    <td class="text-center">{{ request.desc_tipo_documento }}</td>
+                                    <td class="text-center">{{ request.nro_documento }}</td>
+                                    <td class="text-center">{{ request.asunto }}</td>
+                                    <td class="text-center">{{ request.srt_fecha_recibido }}</td>
+                                    <td class="text-center">{{ request.desc_oficina }}</td>
+                                    <td class="text-center">{{ request.nro_folios }}</td>                
+                                    <td class="text-center">{{ request.desc_estado_documento }}</td>
+                                <td class="text-center">{{item.fec_modificacion}}</td>
+                             
+                                    <td class="text-center">{{ request.usu_creacion }}</td>
+                                    <td class="text-center">{{ request.fec_creacion }}</td>
+                                    <td class="text-center">{{ request.ip_creacion }}</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        
+                    </div>
+                    <div ng-show="totalItems > 1" class="mt-3 row">
+                        <div class="col-md-7">
+                            <ul class="ml-2 mr-2" uib-pagination previous-text="Anterior" next-text="Siguiente"
+                                total-items="totalItems" ng-model="currentPage" max-size="maxSize"
+                                items-per-page="itemsPerPage" class="pagination-sm" boundary-link-numbers="true"
+                                rotate="false"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+        </uib-tab>
+--> <uib-tab index="1" select="searchNoti()"> <uib-tab-heading>
+	Notificaciones
+	<div
+		style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+		<b style="color: #fff">{{ requestsDataNoti.length }}</b>
+	</div>
+	</uib-tab-heading>
+
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form [formGroup]="searchCriteria" ng-submit="searchNoti()"
+			class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Hoja Ruta: </label>
+						<div class="col-sm-2">
+							<input ng-model="model2.solicitudNoti" class="form-control"
+								maxlength="50" name="solicitudNoti" placeholder="Ej. 0001"
+								style="width: 100%" type="text" value="">
+
+						</div>
+
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Órgano
+							emisor: </label>
+						<div class="col-sm-2">
+							<select ng-model="model2.organoDestinoNoti"
+								name="organoDestinoNoti" class="form-control" select2>
+								<option value="0" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinasNoti"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select class="form-control" ng-model="model2.tipoDocumentoNoti"
+								name="tipoDocumentoNoti" select2>
+								<option value="0" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumentoNoti"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+
+
+					</div>
+
+
+
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">N°
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="model2.numeroDocumentoNoti" class="form-control"
+								name="numeroDocumentoNoti" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="model2.observacion" class="form-control"
+								name="observacion" maxlength="50" placeholder="Ej. I008-500"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Estado: </label>
+							<div class="col-sm-2">
+								<select ng-model="model2.estado" name="estado" id="estado"
+									class="form-control">
+									<option value="" selected>-- Todos --</option>
+									<option value="1">Leido</option>
+									<option value="0">No Liedo</option>
+								</select>
+							</div>
+					</div>
+					
+					<div class="row">
+						<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Fecha Notificaci&oacute;n: </label>
+							<div class="col-sm-2">
+								<input ng-model="model2.fechaInicio" class="form-control" ng-model="model2.fechaInicio"
+									type="date" name="fechaInicio" max="9999-12-31">
+							</div>
+							
+							
+								<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tipo Notificaci&oacute;n: </label>
+							<div class="col-sm-2">
+								<select ng-model="model2.Tipo_noti" name="Tipo_noti" id="Tipo_noti"
+									class="form-control">
+									<option value="0" selected>-- Todos --</option>
+									<option value="2">Std</option>
+								</select>
+							</div>
+
+						 
+
+						<div class="col-sm-3">
+							<button id="btnBuscar" class="btn btn-blue" type="submit">
+								<i class="clip-search"></i>&nbsp;Buscar
+							</button>
+
+							<button class="btn btn-warning" type="button"
+								ng-click="Limpiar('2');">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+
+							<!--  <button id="btnLimpiar" class="btn btn-secondary" type="button" ng-click="Limpiar('2')"  ><i
+                                                    class="clip-spinner-6"></i>&nbsp;
+                                                Limpiar
+                                            </button> -->
+						</div>
+					</div>
+				</fieldset>
+			</div>
+		</form>
+
+
+
+		<div class="flex flex-row">
+			<button id="btnExportar" ng-click="exportarExcel()"
+				class="btn btn-dark-grey mt-3" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+
+		<div class="inline-container-Group p-0 mt-3 bg-white">
+			<h2 class="grid-title">Listado de Notificaciones</h2>
+			<div class="table-responsive">
+				<table class="table table-hover" dt-options="dtOptions"
+					datatable="ng">
+					<thead>
+						<tr>
+							<th></th>
+							<th class="text-center">Ver</th>
+							<th class="text-center">Hoja de ruta</th>
+							<th class="text-center">Fecha Notificaci&oacute;n</th>
+							<th class="text-center">Tipo Documento</th>
+							<th class="text-center">N° Documento</th>
+							<th class="text-center">&Oacute;rgano Emisor</th>
+							<th class="text-center">Asunto</th>
+
+							<th class="text-center">Estado</th>
+							<!--<th class="text-center">Usuario Creación</th>-->
+							<!--    <th class="text-center">Fecha Creación</th>-->
+							<!--  <th class="text-center">Ip Creación</th>-->
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="request in dataSolNotificaciones">
+							<td>{{ $index + 1 }}</td>
+							<td class="text-center"><button title="Ver Solicitud"
+									ng-click="VerHtml(request.id_casilla)" class="btn btn-link"
+									type="button" style="outline: none;">
+									<i class="fa fa-envelope"
+										style="color: #b30a14; font-size: 18px;"></i>
+								</button></td>
+
+							<td class="text-center">{{ request.hoja_ruta }}</td>
+							<td class="text-center">
+							<span ng-bind="request.dfec_creacion | date : 'yyyy/MM/dd'" style="display:none"></span>{{ request.fec_creacion }}</td>
+							<td class="text-center">{{ request.desc_tipo_documento }}</td>
+							<td class="text-center">{{ request.nro_documento }}</td>
+							<td class="text-center">{{ request.desc_oficina }}</td>
+							<td class="text-center">{{ request.observacion | limitTo :
+								450 : 0 }}</td>
+							<td class="text-center">{{ request.desc_estado_documento }}</td>
+							<!--<td class="text-center">{{ request.usu_creacion }}</td>-->
+							<!--<td class="text-center">{{ request.fec_creacion }}</td>-->
+							<!-- <td class="text-center">{{ request.ip_creacion }}</td>-->
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div ng-show="totalItemsNoti >= 1" class="mt-3 row">
+				<div class="col-md-7">
+					<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+						next-text="Siguiente" total-items="totalItemsNoti"
+						ng-model="currentPageNoti" max-size="maxSize"
+						items-per-page="itemsPerPageNoti" class="pagination-sm"
+						boundary-link-numbers="true" rotate="false"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	</uib-tab> </uib-tabset>
+
+</div>

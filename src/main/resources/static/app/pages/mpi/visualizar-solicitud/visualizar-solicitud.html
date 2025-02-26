@@ -1,0 +1,179 @@
+<div class="modal-header">
+	<h4 class="modal-title">
+		<!-- <i class='clip-puzzle-3'></i> -->
+		Visualizar Solicitud
+	</h4>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-sm-5">
+			<iframe ng-src="{{file.file}}"
+				style="background-color: white; height: 670px; width: 100%; float: left;"></iframe>
+		</div>
+		<div class="col-sm-7">
+			<div class="row">
+				
+				<div class="col-sm-6">
+					<label class="control-label">Fecha de Solicitud: </label> <input
+						class="form-control" style="font-size: 12px !important;"
+						type="text" ng-model="documento.srt_fecha_creacion"
+						ng-pattern="example.word" ng-disabled="true">
+
+
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label" l>Fecha de Recepci&oacute;n: </label>
+					<input class="form-control" style="font-size: 12px !important;"
+						type="text" ng-model="documento.srt_fecha_recibido"
+						ng-disabled="true">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<label class="control-label">Tipo Documento: </label> <select
+						class="form-control" name="tipoDocumento" required
+						ng-model="documento.id_tipo_documento" ng-disabled="true"font-size: 12px !important;">
+						<option value="">--Seleccione--</option>
+						<option data-ng-repeat="item in tipoDocumento"
+							value={{item.id_tipodocumento}}
+							ng-selected="item.id_tipodocumento == documento.id_tipo_documento">
+							{{item.desc_tipodocumento}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<label class="control-label">Documento entrante: </label> <input
+						class="form-control" style="font-size: 12px !important;"
+						type="text" ng-model="documento.nro_documento" ng-disabled="true"font-size: 12px !important;">
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label">N° Folios: </label> <input
+						class="form-control" type="text" ng-model="documento.nro_folios"
+						ng-disabled="true"font-size: 12px !important;">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<label class="control-label">Asunto: </label>
+					<textarea class="form-control" type="text"
+						style="font-size: 12px !important;" ng-model="documento.asunto"
+						cols="20" ng-disabled="true"></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<label class="control-label">Remitente: </label> <input
+						class="form-control" type="text"
+						style="font-size: 12px !important;" value="Validacion de usuario"
+						ng-model="documento.nombre_persona" ng-disabled="true"font-size: 12px !important;">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<label class="control-label">Hoja de Ruta referencia: </label> <input
+						class="form-control" style="font-size: 12px !important;"
+						ng-model="documento.hoja_ruta" ng-disabled="true"font-size: 12px !important;">
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label">Hoja de Ruta: </label> <input
+						class="form-control" style="font-size: 12px !important;"
+						ng-model="documento.hoja_ruta_generado" ng-disabled="true"font-size: 12px !important;">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<label class="control-label">Organo Destino: </label> <select
+						class="form-control" id="id_oficina"
+						style="font-size: 12px !important;"
+						ng-model="documento.id_oficina" ng-disabled="true"
+						style="    font-size: 12px !important;">
+						<option value="">--Seleccione--</option>
+						<option data-ng-repeat="item in oficinas" value={{item.idunidad}}
+							ng-selected="item.idunidad == documento.id_oficina">
+							{{item.descripcioncompleta}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<span class="text-info"> Movimientos: </span>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th scope="col">N°</th>
+								<th scope="col">Remite</th>
+								<th scope="col">Unidad Orgánica</th>
+								<th scope="col">Fecha Estado</th>
+								<th scope="col">Estado</th>
+							</tr>
+						<thead>
+						<tbody ng-repeat="item in movimientosSTD">
+							<tr ng-if="movimientosSTD.length > 0">
+								<td>{{$index+1}}</td>
+								<td>{{item.remitente}}</td>
+								<td>{{item.unidaddestino}}</td>
+								<td>{{item.fechadeestado}}</td>
+								<td>{{item.estado}}</td>
+							</tr>
+						</tbody>
+						<tbody ng-if="movimientosSTD.length == 0">
+							<tr>
+								<td colspan="5"><span class="text-info"> Sin ningún
+										otro destino </span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<span class="text-info"> Anexos: </span>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>N°</th>
+								<th>Nombre de Archivo</th>
+								<th>Fecha</th>
+								<th>Tamaño</th>
+							</tr>
+						<thead>
+						<tbody ng-repeat="item in documento.anexos">
+							<tr>
+								<td>{{$index+1}}</td>
+								<td style="max-width:250px;" ><label class="col-sm-6" title="Descargar"  ng-show="(item.flg_link == '1' || item.flg_link == 'null') && item.flg_estado == 1"
+									style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer"
+									ng-click="downloadFile(item.id_documento,item.extension_archivo,item.codigo_archivo)">
+										{{item.nombre_archivo}} </label>
+										  <a  class="col-sm-6" title="ver link" href="{{item.nombre_archivo}}"  ng-show="item.flg_link == '2' && item.flg_estado == 1" item target="_black"
+										style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer;word-wrap: break-word;    display: inline-block;  max-width: 100%; "  > 
+                                          {{item.nombre_archivo}} </a>
+										<label class="col-sm-6"
+										ng-show="item.flg_estado == 0"  
+										style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: black; cursor: default">
+											{{item.nombre_archivo}} </label>
+										
+										</td>
+								<td>{{item.fec_creacion}}</td>
+								<td>{{item.tamanio_archivo | Filesize}}</td>
+							</tr>
+						</tbody>
+						<tbody
+							ng-if="documento.anexos.length == 0 && documento.anexo == null">
+							<tr>
+								<td colspan="4"><span class="text-info"> Sin Anexos
+								</span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-secondary" type="button" ng-click="cancel()">
+		<i class="fa fa-share-square-o"></i>Cerrar
+	</button>
+</div>

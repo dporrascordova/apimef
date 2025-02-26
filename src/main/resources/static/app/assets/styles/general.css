@@ -1,0 +1,204 @@
+
+.Titulo {
+    font-family: 'Raleway', sans-serif;
+    font-size: 25px;
+    margin-left: 0;
+    min-width: 210px;
+
+}
+
+
+.cssMessageError {
+    font-size: 12px;
+    color: red;
+}
+
+.cssSinEstilo {
+    margin: 0px;
+    padding: 0px;
+}
+
+.cssTablaMarco {
+    border-collapse: collapse;
+    border: 1px solid #E1E1E1;
+    border-spacing: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 3px;
+}
+
+.cssTablaDetalleDoc {
+    border-collapse: collapse;
+    border-spacing: 2px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: white;
+}
+
+
+.cssTablaDetalleDoc td {
+    vertical-align: middle;
+    border: 1px solid #E1E1E1;
+    text-align: left;
+    padding: 2px;
+    font-size: 12px;
+    font-family: Arial;
+    color: black;
+}
+
+.cssTablaDetalleDoc td:first-child {
+    background-color: #f4f3f3;
+    text-align: left;
+    color: #4b4949;
+    padding: 7px;
+}
+
+.csstdTitulo {
+    background-color: #f4f3f3;
+    text-align: left;
+    color: #4b4949;
+}
+
+.cssLabelTituloRight {
+    text-align: right;
+    font-size: 12px;
+    color: black;
+
+}
+
+.cssLabelTituloLeft {
+    text-align: left;
+    font-size: 12px;
+    color: black;
+
+}
+
+.csstdDato {
+    background-color: white;
+    text-align: left;
+    color: black;
+}
+
+.cssTablaMantenimiento {
+
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.cssTablaMantenimiento td {
+    vertical-align: central;
+    border: 0px solid #E1E1E1;
+    padding: 1px;
+    font-size: 12px;
+    font-family: Arial;
+    color: black;
+}
+
+.opcMenuLink {
+    border-bottom: 1px solid #fff;
+    border-radius: 0;
+    height: 35px;
+    margin: 0 -5px;
+    padding: 10px 15px 25px 15px;
+    position: relative;
+
+
+}
+
+.opcMenuLink > li {
+    display: inline-block
+}
+
+.opcMenuLink > li + li:before {
+    content: " ";
+    padding: 0 5px;
+    color: #fff
+}
+
+.opcMenuLink > .active {
+    color: #007be8
+}
+
+.opcMenuLink a {
+    color: #007be8;
+}
+
+.opcMenuLink {
+    list-style: none outside none;
+}
+
+.opcMenuLinkPrincipal {
+    border-bottom: 1px solid #fff;
+    border-radius: 0;
+    height: 25px;
+    margin: -10px -5px;
+    padding: 5px 15px 25px;
+    position: relative;
+
+}
+
+.opcMenuLinkPrincipal a {
+    color: #007be8;
+    font-size: 15px;
+}
+
+.opcMenuLinkPrincipal > li {
+    display: inline-block
+}
+
+.opcMenuLinkPrincipal > li + li:before {
+    content: " ";
+    padding: 0 10px;
+    color: #fff
+}
+
+.opcMenuLinkPrincipal > .active {
+    color: #007be8
+}
+
+.opcMenuLinkPrincipal a {
+    color: #007be8;
+}
+
+.opcMenuLinkPrincipal {
+    list-style: none outside none;
+}
+
+
+span.cellWithoutBackground {
+    display: block;
+    background-image: none;
+    margin-right: -1px;
+    margin-left: -1px;
+
+    padding: 22px;
+}
+
+span.cellEstadoAsigBackground {
+    display: block;
+    background-image: none;
+    background-color: #FFFDC1;
+    margin-right: -2px;
+    margin-left: -2px;
+    padding: 4px;
+    font-weight: bold;
+}
+
+.inline-container-Group {
+    border: 1px solid #CCCCCC;
+    margin: 0px auto 0;
+    padding: 10px;
+}
+
+.confirmWidth {
+    width: 350px;
+    margin: 0 auto;
+    top: 200px;
+}

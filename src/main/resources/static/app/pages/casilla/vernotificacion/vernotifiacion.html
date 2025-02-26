@@ -1,0 +1,103 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title"><i class="fa fa-envelope"></i>&nbsp; Visualizar</h3>
+</div>
+<form name="form.nuevoUsuario" ng-submit="submitForm()" novalidate>
+    <div class="modal-body">
+        
+      
+        <preview content="model.html" style="width: 100%; height: auto; border: none;"></preview>
+
+        <div class="row"  ng-if="DataArchivos.length > 0" style="margin:auto;width: 98%;" >                    
+                <table class="table table-bordered" >
+                    <thead>
+                        <tr>
+                            <th><strong>N°</strong></th>
+                            <th><strong>Nombre de Archivo</strong></th>
+                            <th><strong>Fecha</strong></th>                                 
+                        </tr>
+                    <thead>
+                    <tbody ng-repeat="item in DataArchivos">
+                        <tr>
+                            <td> {{$index +1}}</td>
+                            <td>  
+                                <label class="col-sm-6" title="Descargar"
+                                style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer"
+                                ng-click="downloadFile(item.codigo_archivo,item.extension_archivo)">                                        
+                                {{item.nombre_archivo}}
+                                </label>
+                            </td>
+                            <td> {{item.fec_creacion}}</td>
+                                                          
+                        </tr>
+                    </tbody>
+                </table>
+       
+        </div>
+
+
+  
+
+
+
+       <!--  <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Usuario creación:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.usuario_creacion" name="usuario_creacion"   type="text" disabled  />   
+            </div>
+        </div> -->
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Fecha notificación:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.fecha_creacion" name="fecha_creacion"   type="text" disabled  />   
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Estado:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.estado" name="estado"   type="text" disabled  />   
+            </div>
+        </div>
+
+        
+
+       <!-- <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">IP creación:
+            </label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="100" ng-model="model.ipcreacion" name="ipcreacion"   type="text" disabled  />   
+            </div>
+        </div>
+-->
+
+
+
+
+
+    </div>
+
+
+    <div class="modal-footer">
+
+        <button class="btn btn-red"  ng-show="modulo == 0 && model.estado =='NO LEIDO' " ng-click="Notificacion_Reenviar()" type="submit" ><i
+            class="fa fa-envelope"></i>&nbsp;Reenviar</button>
+
+        <button type="button" ng-click="close()" class="btn btn-secondary">
+            <i class="fa fa-share-square-o"></i>&nbsp; Cerrar</button>
+    </div>
+    <style>
+    iframe{
+        width: 100%;
+        height: auto;
+        border: none;
+    }
+    </style>
+</form>

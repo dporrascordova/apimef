@@ -1,0 +1,252 @@
+<div class="modal-header">
+	<h3 class="modal-title" id="modal-title">
+		<i class="clip-plus-circle-2"></i>&nbsp; Nueva Solicitud
+	</h3>
+</div>
+<form name="form.nuevaSolicitud" ng-submit="submitForm()" novalidate>
+	<div class="modal-body">
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Tipo
+				Documento: </label>
+			<div class="col-sm-8">
+				<select class="form-control" select2 name="tipoDocumento" required
+					ng-model="model.tipoDocumento"
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.tipoDocumento.$invalid }">
+					<option value="">--Seleccione--</option>
+					<option data-ng-repeat="item in listaDeTipoDocumento"
+						value={{item.id_tipodocumento}}>
+						{{item.desc_tipodocumento}}</option>
+				</select>
+				<div
+					ng-show="submitted && form.nuevaSolicitud.tipoDocumento.$invalid"
+					class="invalid-feedback">
+					<div ng-show="form.nuevaSolicitud.tipoDocumento.$error.required">El
+						campo Tipo Documento es requerido</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">N°
+				Documento: </label>
+			<div class="col-sm-3">
+				<input class="form-control" ng-minlength="2" maxlength="30"
+					ng-model="model.nroDocumento" name="nroDocumento" required
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.nroDocumento.$invalid }"
+					type="text">
+				<div ng-show="submitted && form.nuevaSolicitud.nroDocumento.$error"
+					class="invalid-feedback">
+					<div ng-show="form.nuevaSolicitud.nroDocumento.$error.required">El
+						campo N° Documento es requerido</div>
+					<div ng-show="form.nuevaSolicitud.nroDocumento.$error.minlength">
+						Debe de ingresar como m&iacute;nimo 2 caracteres.</div>
+				</div>
+			</div>
+			<label class="col-sm-2 control-label text-right"
+				style="padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">N°
+				Folios: </label>
+			<div class="col-sm-3">
+				<input class="form-control" maxlength="7" ng-model="model.nroFolios"
+					name="nroFolios" numbers-only required ng-change="foliosChange()"
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.nroFolios.$invalid }"
+					type="text" />
+				<div ng-show="submitted && form.nuevaSolicitud.nroFolios.$invalid"
+					class="invalid-feedback">
+					<div ng-show="form.nuevaSolicitud.nroFolios.$error.required">El
+						campo Nro Folios es requerido</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px; display: none;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Hoja
+				de ruta de referencia: </label>
+			<div class="col-sm-3">
+				<input type="text" class="form-control"
+					ng-pattern="/^[0-9]{6}-[0-9]{4}$/" ng-model="model.nroExpediente"
+					name="nroExpediente" placeholder="000000-0000" maxlength="11"
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.nroExpediente.$error.pattern}" />
+				<div
+					ng-show="submitted && form.nuevaSolicitud.nroExpediente.$error.pattern"
+					class="invalid-feedback">La Hoja de ruta de referencia no
+					coincide con el formato: 000000-0000</div>
+			</div>
+		</div>
+
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Organo
+				Destino: </label>
+
+			<div class="col-sm-8">
+				<select class="form-control" select2 ng-model="model.organoDestino"
+					name="organoDestino" required
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.organoDestino.$invalid }"
+					data-placeholder="--Seleccione--" data-allow-clear="true">
+					<option value="">-- Seleccione --</option>
+					<option data-ng-repeat="item in listaDeOficinas"
+						value={{item.idunidad}}>{{item.descripcion}}</option>
+				</select>
+				<div
+					ng-show="submitted && form.nuevaSolicitud.organoDestino.$invalid"
+					class="invalid-feedback">
+					<div ng-show="form.nuevaSolicitud.organoDestino.$error.required">El
+						campo Organo Destino es requerido</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Asunto:
+			</label>
+			<div class="col-sm-8">
+				<textarea class="form-control" cols="20" ng-minlength="12"
+					maxlength="4000" ng-model="model.asunto" name="asunto" required
+					ng-keyup="contarCaracteres()" rows="2"
+					style="height: 70px; width: 100%; font-size: 12px;"
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.asunto.$invalid }"></textarea>
+				<div ng-show="submitted && form.nuevaSolicitud.asunto.$invalid"
+					class="invalid-feedback">
+					<div ng-show="form.nuevaSolicitud.asunto.$error.required">El
+						campo Asunto es requerido</div>
+					<div ng-show="form.nuevaSolicitud.asunto.$error.minlength">
+						Debe de ingresar como m&iacute;nimo 12 caracteres.</div>
+				</div>
+				<label id="lblCount1" style="width: 100%" class="Formato"
+					runat="server" text="">Nro Caracteres: {{contador}} restan
+					{{4000 - contador}}</label>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Archivo
+				principal: </label>
+			<div class="col-sm-8">
+				<input input-file type="file" ng-model="model.fileInput"
+					name="fileArchivoParaFirmar" ng-change="validarPDF()"
+					style="color: blue; font-weight: bold; float: left; margin-top: 5px; width: 100%;"
+					accept="application/pdf"
+					ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.fileArchivoParaFirmar.$invalid }"
+					required />
+				<div
+					ng-show="submitted && form.nuevaSolicitud.fileArchivoParaFirmar.$invalid"
+					class="invalid-feedback" style="display: block;">
+					<div
+						ng-show="form.nuevaSolicitud.fileArchivoParaFirmar.$error.required">El
+						archivo es requerido</div>
+				</div>
+			</div>
+			<div class="col-sm-12">
+				<label class="col-sm-3 control-label text-right"
+					style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">
+				</label> <label class="control-label"
+					style="color: #477461; text-align: left;"> - Los archivos
+					pdf deben tener una resoluci&oacute;n minima de 200 dpi </label>
+			</div>
+			<div class="col-sm-12">
+				<label class="col-sm-3 control-label text-right"
+					style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">
+				</label> <label class="control-label"
+					style="color: #477461; text-align: left;"> - Debe
+					asegurarse que los archivos firmados digitalmente tengan una firma
+					digital v&aacute;lida </label>
+			</div>
+		</div>
+		<div class="row"
+			style="border-top: 1px solid #d5d5d5; padding-top: 15px; margin-bottom: 5px;">
+
+			<div class="col-sm-12" style="margin-bottom: 5px;">
+				<label class="col-sm-3 control-label text-right"
+					style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;"></label>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="checkbox" id="check_link"
+						ng-model="check_link" value="1" ng-change="Check_link()">
+					<label class="form-check-label" for="check_link"> Active la
+						casilla si cuenta con anexos en la nube</label>
+				</div>
+			</div>
+
+
+			<label class="col-sm-3 control-label text-right"
+				style="margin-left: -10px; padding-left: 0px; padding-top: 6px; text-align: right; padding-right: 5px;">Anexos:</label>
+
+			<div class="col-sm-5" ng-show="tipo_anexo_file == true">
+				<input input-file type="file" id="filesAnexo" ng-model="filesAnexo"
+					name="fileArchivo" style="color: blue; font-weight: bold;">
+			</div>
+			<div class="col-sm-5" ng-show="tipo_anexo_file == false">
+				<input type="text" class="form-control"
+					ng-model="model.link_archivo" name="link_archivo"
+					placeholder="Ejm: www/midrive/miarchivo" maxlength="1000" />
+			</div>
+			<div class="col-sm-4">
+				<button id="btnAgregarArchivo" ng-click="addFile()"
+					class="btn btn-blue" type="button"
+					title="Click para agregar el archivo a la lista.">
+					<i class="fa fa-plus"></i>&nbsp;Agregar anexo
+				</button>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<label class="col-sm-3 control-label"></label>
+			<div class="col-sm-8 pl-0">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th><strong>Nro.</strong></th>
+							<th><strong>Nombre de Archivo</strong></th>
+							<th><strong>Fecha</strong></th>
+							<th><strong>Tama&ntilde;o</strong></th>
+							<th class="width:10px;"></th>
+						</tr>
+					<thead>
+					<tbody ng-repeat="item in files">
+						<tr>
+							<td>{{$index+1}}</td>
+							<td style="max-width: 250px; word-wrap: break-word;">{{item.fileName}}</td>
+							<td>{{item.date}}</td>
+							<td>{{item.size | Filesize}}</td>
+							<td>
+								<button class="ml-1 btn btn-link text-danger"
+									ng-click="onArrayFileDelete($index)" type="button"
+									title="Remover de la lista" style="outline: none;">
+									<i class="clip-close"></i>
+								</button>
+							</td>
+						</tr>
+					</tbody>
+					<tbody ng-if="files.length==0">
+						<tr>
+							<td colspan="5">
+								<h6 class="text-info text-center" style="font-size: 0.8rem;">
+									<strong>Sin Anexos</strong>
+								</h6>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<label class="control-label"
+					style="color: #477461; text-align: left;"> * El total de
+					archivos anexos({{AnexoTotalMaxFiles}}) que puede adjuntar debe
+					pesar m&aacute;ximo {{AnexoTotalMaxFileSize | Filesize}}. </label>
+			</div>
+
+
+
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-red" type="submit"
+			ng-disabledg="form.nuevaSolicitud.$invalid">
+			<i class="fa fa-envelope"></i>&nbsp;Enviar
+		</button>
+		<button type="button" ng-click="close()" class="btn btn-secondary">
+			<i class="fa fa-share-square-o"></i>&nbsp; Cerrar
+		</button>
+	</div>
+</form>

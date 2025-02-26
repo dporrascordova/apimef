@@ -1,0 +1,857 @@
+<!--  -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<form name="MiForm" autocomplete="off"
+	ng-submit="submit_RegistrarUsuario();" novalidate>
+	<div class="modal-header">
+		<h4 class="modal-title">
+			<i class='clip-puzzle-3'></i> Registro de Nuevo Usuario
+		</h4>
+	</div>
+	<div class="modal-body">
+		<div class="inline-container-Group">
+
+			<div class="row">
+				<div class="col">
+					<div class="alert alert-dark">Ingrese sus datos Personales</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="col-sm-3 control-label">Persona</label>
+				<div class="col-sm-3">
+					<select tabindex="1" class="form-control" name="UTipoPersona"
+						ng-model="persona.UTipoPersona"
+						ng-change="onSelectChangeTipoPersona()"
+						ng-options="item.id as item.descripcion for item in litTiporPersona">
+					</select>
+				</div>
+				<label ng-if="showExtraFields==false" class="col-sm-3 control-label">Tipo
+					de Documento</label>
+				<div ng-if="showExtraFields==false" class="col-sm-3">
+					<select tabindex="2" class="form-control" name="UTipoDoc"
+						ng-model="persona.UTipoDoc" ng-required="true"
+						ng-change="onSelectChangeTipoDocumento()"
+						ng-options="item.id as item.descripcion for item in litTipoDocumento"
+						ng-class="{'is-invalid': (MiForm.UTipoDoc.$dirty || MiForm.UTipoDoc.$touched || submitted) && MiForm.UTipoDoc.$error.required && showExtraFields==false  }">
+						<option value="">--Seleccione--</option>
+					</select> <span
+						ng-if="(MiForm.UTipoDoc.$dirty || MiForm.UTipoDoc.$touched || submitted) && MiForm.UTipoDoc.$error.required && showExtraFields==false"
+						for="UTipoDoc" class="invalid-feedback"> [Tipo de
+						Documento] es obligatorio </span>
+				</div>
+			</div>
+			<div ng-if="showExtraFields==false">
+				<div class="row">
+					<label class="col-sm-3 control-label">Documento de
+						Identidad</label>
+					<div ng-if="showTipoNumeroDocumento==true" class="col-sm-3">
+						<input tabindex="3" class="form-control" type="text"
+							ng-model="persona.UDocumento" name="UDocumento" maxlength="8"
+							ng-required="true"
+							 
+							ng-minlength="8" ng-maxlength="8" pattern="[0-9]{8}" numbers-only
+							ng-class="{'is-invalid': (MiForm.UDocumento.$dirty || MiForm.UDocumento.$touched || submitted) && (MiForm.UDocumento.$error.required || (MiForm.UDocumento.$error.minlength || MiForm.UDocumento.$error.maxlength)) && showExtraFields==false}">
+						<span
+							ng-if="(MiForm.UDocumento.$dirty || MiForm.UDocumento.$touched || submitted) && MiForm.UDocumento.$error.required && showExtraFields==false"
+							for="UDocumento" class="invalid-feedback"> [DNI] es
+							obligatorio </span> <span
+							ng-if="(MiForm.UDocumento.$error.minlength || MiForm.UDocumento.$error.maxlength) && showExtraFields==false"
+							for="UDocumento" class="invalid-feedback"> [DNI] Debe
+							tener 8 d&iacute;gitos. </span>
+					</div>
+					<div ng-if="showTipoNumeroDocumento==false" class="col-sm-3">
+						<input tabindex="4" class="form-control" type="text"
+							ng-model="persona.UDocumento" name="UDocumento"
+							ng-required="true"
+							 
+							ng-minlength="8" ng-maxlength="12" numbers-only
+							ng-class="{'is-invalid': (MiForm.UDocumento.$dirty || MiForm.UDocumento.$touched || submitted) && (MiForm.UDocumento.$error.required || (MiForm.UDocumento.$error.minlength || MiForm.UDocumento.$error.maxlength)) && showExtraFields==false}">
+						<span
+							ng-if="(MiForm.UDocumento.$dirty || MiForm.UDocumento.$touched || submitted) && MiForm.UDocumento.$error.required && showExtraFields==false"
+							for="UDocumento" class="invalid-feedback"> [CE] es
+							obligatorio </span> <span
+							ng-if="(MiForm.UDocumento.$error.minlength || MiForm.UDocumento.$error.maxlength) && showExtraFields==false"
+							for="UDocumento" class="invalid-feedback"> [CE] Debe tener
+							entre 8 y 12 d&iacute;gitos. </span>
+					</div>
+					<div class="col-sm-1">
+						<button id="btnBuscaDni" class="btn btn-secondary" type="button"
+							ng-click="buscarPersona()">
+							<i class="fa fa-search"></i><b> Buscar</b>
+						</button>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-sm-3 control-label">Nombres</label>
+					<div class="col-sm-3">
+						<input tabindex="5" class="form-control" type="text"
+							name="Nat_Nombres" ng-maxlength="50"
+							ng-model="persona.Nat_Nombres" ng-required="true" nospecialchar2
+							uppercased
+							ng-class="{ 'is-invalid': (MiForm.Nat_Nombres.$dirty || MiForm.Nat_Nombres.$touched || submitted) && MiForm.Nat_Nombres.$error.required }"
+							 > <span
+							ng-if="(MiForm.Nat_Nombres.$dirty || MiForm.Nat_Nombres.$touched || submitted) && MiForm.Nat_Nombres.$error.required && showExtraFields==false"
+							for="Nat_Nombres" class="invalid-feedback"> [Nombres] es
+							obligatorio</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-sm-3 control-label">Apellido Paterno</label>
+					<div class="col-sm-3">
+						<input tabindex="6" class="form-control" type="text"
+							name="Nat_Ape_Pat" ng-model="persona.Nat_Ape_Pat"
+							ng-maxlength="50" ng-required="true" nospecialchar2 uppercased
+							ng-class="{ 'is-invalid': (MiForm.Nat_Ape_Pat.$dirty || MiForm.Nat_Ape_Pat.$touched || submitted) && MiForm.Nat_Ape_Pat.$error.required }"
+							 > <span
+							ng-if="(MiForm.Nat_Ape_Pat.$dirty || MiForm.Nat_Ape_Pat.$touched || submitted) && MiForm.Nat_Ape_Pat.$error.required && showExtraFields==false"
+							for="Nat_Ape_Pat" class="invalid-feedback">[Apellido
+							Paterno] es obligatorio</span>
+					</div>
+					<label class="col-sm-3 control-label">Apellido Materno</label>
+					<div class="col-sm-3">
+						<input tabindex="7" class="form-control" type="text"
+							name="Nat_Ape_Mat" data-val="true" nospecialchar2 uppercased
+							ng-model="persona.Nat_Ape_Mat" ng-maxlength="50"
+							ng-required="true"
+							ng-class="{ 'is-invalid':(MiForm.Nat_Ape_Mat.$dirty || MiForm.Nat_Ape_Mat.$touched || submitted) && MiForm.Nat_Ape_Mat.$error.required }"
+							 > <span
+							ng-if="(MiForm.Nat_Ape_Mat.$dirty || MiForm.Nat_Ape_Mat.$touched || submitted) && MiForm.Nat_Ape_Mat.$error.required && showExtraFields==false"
+							for="Nat_Ape_Mat" class="invalid-feedback">[Apellido
+							Materno] es obligatorio</span>
+					</div>
+				</div>
+			</div>
+			<div class="row" ng-if="showExtraFields==true">
+				<label class="col-sm-3 control-label">RUC</label>
+				<div class="col-sm-3">
+					<input tabindex="8" class="form-control" type="text" name="Jur_RUC"
+						ng-model="persona.Jur_RUC" maxlength="11" ng-required="true"
+						ng-minlength="11" ng-maxlength="11" pattern="[0-9]{11}"
+						numbers-only
+						ng-class="{ 'is-invalid': (MiForm.Jur_RUC.$dirty || MiForm.Jur_RUC.$touched || submitted) && (MiForm.Jur_RUC.$error.required || (MiForm.Jur_RUC.$error.minlength || MiForm.Jur_RUC.$error.maxlength))}"
+						 > <span
+						ng-if="(MiForm.Jur_RUC.$dirty || MiForm.Jur_RUC.$touched || submitted) && MiForm.Jur_RUC.$error.required "
+						for="Jur_RUC" class="invalid-feedback"> [RUC] es
+						obligatorio </span> <span
+						ng-if="MiForm.Jur_RUC.$error.minlength || MiForm.Jur_RUC.$error.maxlength"
+						for="Jur_RUC" class="invalid-feedback"> [RUC] Debe tener 11
+						d&iacute;gitos. </span>
+				</div>
+				<div class="col-sm-1">
+					<button class="btn btn-secondary" type="button"
+						ng-click="buscarPersona()">
+						<i class="fa fa-search"></i><b> Buscar</b>
+					</button>
+				</div>
+			</div>
+			<div class="row" ng-if="showExtraFields==true">
+				<label class="col-sm-3 control-label">Raz&oacute;n Social</label>
+				<div class="col-sm-9">
+					<input tabindex="9" class="form-control" type="text"
+						name="Jur_RazonSocial" ng-required="true"
+						ng-model="persona.Jur_RazonSocial"
+						 
+						ng-class="{ 'is-invalid': (MiForm.Jur_RazonSocial.$dirty || MiForm.Jur_RazonSocial.$touched || submitted) && MiForm.Jur_RazonSocial.$error.required}">
+					<span
+						ng-if="(MiForm.Jur_RazonSocial.$dirty || MiForm.Jur_RazonSocial.$touched || submitted) && MiForm.Jur_RazonSocial.$error.required"
+						for="Jur_RazonSocial" class="invalid-feedback">[Raz&oacute;n
+						Social] es obligatorio</span>
+				</div>
+			</div>
+			<div class="row">
+				<label class="col-sm-3 control-label">Celular</label>
+				<div class="col-sm-3">
+					<input tabindex="10" class="form-control" type="text"
+						name="UCelular"  
+						ng-model="persona.UCelular" numbers-only ng-required="true"
+						maxlength="9"
+						onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+						ng-class="{ 'is-invalid': (MiForm.UCelular.$dirty || MiForm.UCelular.$touched || submitted) && MiForm.UCelular.$error.required }">
+					<span
+						ng-if="(MiForm.UCelular.$dirty || MiForm.UCelular.$touched || submitted) && MiForm.UCelular.$error.required"
+						for="UCelular" class="invalid-feedback">[Celular] es
+						obligatorio</span>
+				</div>
+				<label class="col-sm-3 control-label">Tel&eacute;fono fijo</label>
+				<div class="col-sm-3">
+					<input tabindex="11" class="form-control" numbers-only type="text"
+						name="UTelefono"  
+						ng-model="persona.UTelefono" maxlength="7"
+						onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+					<!--ng-class="{ 'is-invalid': (MiForm.UTelefono.$dirty || MiForm.UTelefono.$touched || submitted) && MiForm.UTelefono.$error.required }"
+                            <div ng-if="(MiForm.UTelefono.$dirty || MiForm.UTelefono.$touched || submitted) && MiForm.UTelefono.$error.required">
+                        <span for="UTelefono" class="invalid-feedback">[Teléfono] es obligatorio</span>
+                        
+                        ng-required="true"
+                    </div> -->
+				</div>
+			</div>
+			<div class="row">
+				<label class="col-sm-3 control-label">Correo</label>
+				<div class="col-sm-9">
+					<input tabindex="12" class="form-control" type="email"
+						name="UCorreo" ng-maxlength="100" onpaste="return false"
+						  ng-model="persona.UCorreo"
+						ng-required="true"
+						ng-class="{'is-invalid': (MiForm.UCorreo.$dirty || MiForm.UCorreo.$touched || submitted) && MiForm.UCorreo.$error.required || MiForm.UCorreo.$error.email}">
+					<span
+						ng-if="(MiForm.UCorreo.$dirty || MiForm.UCorreo.$touched || submitted) && MiForm.UCorreo.$error.required "
+						for="UCorreo" class="invalid-feedback">[Correo] es
+						obligatorio</span> <span ng-if="MiForm.UCorreo.$error.email"
+						for="UCorreo" class="invalid-feedback">[Correo] es invalido</span>
+				</div>
+			</div>
+			<div class="row">
+				<label class="col-sm-3 control-label">Repetir Correo</label>
+				<div class="col-sm-9">
+					<input tabindex="13" class="form-control" type="email"
+						name="UCorreoRep" onpaste="return false"
+						 
+						ng-model="persona.UCorreoRep" ng-required="true"
+						ng-class="{ 'is-invalid':  (MiForm.UCorreoRep.$dirty || MiForm.UCorreoRep.$touched || submitted) && MiForm.UCorreoRep.$error.required || MiForm.UCorreoRep.$error.email || MiForm.UCorreoRep.$error.sameas}"
+						same-as="persona.UCorreo"> <span
+						ng-if="(MiForm.UCorreoRep.$dirty || MiForm.UCorreoRep.$touched || submitted) && MiForm.UCorreoRep.$error.required"
+						for="UCorreoRep" class="invalid-feedback">[Repetir Correo]
+						es obligatorio</span> <span ng-if="MiForm.UCorreoRep.$error.email"
+						for="UCorreoRep" class="invalid-feedback">[Correo] es
+						invalido</span> <span
+						ng-if="MiForm.UCorreoRep.$error.sameas &&  MiForm.UCorreoRep.$touched"
+						class="invalid-feedback">[Correo] no coincide</span>
+					<!-- <div ng-if="MiForm.UCorreoRep.$errors.mustMatch && MiForm.UCorreoRep.$touched">
+                        <span for="UCorreoRep" class="invalid-feedback">[Correo] no coincide</span>
+                    </div> -->
+				</div>
+			</div>
+
+			<div class="row">
+				<br />
+
+
+
+			</div>
+
+			<div class="row">
+				<label class="col-sm-3 control-label" ng-if="showExtraFields==false">Direcci&oacute;n</label>
+				<label class="col-sm-3 control-label" ng-if="showExtraFields==true">Domicilio
+					Fiscal</label>
+				<div class="col-sm-9">
+					<input tabindex="14" class="form-control" type="text"
+						name="UDireccion" ng-model="persona.UDireccion" ng-required="true"
+						 
+						maxlength="100"
+						ng-class="{'is-invalid':(MiForm.UDireccion.$dirty || MiForm.UDireccion.$touched || submitted) && MiForm.UDireccion.$error.required}">
+					<span
+						ng-if="(MiForm.UDireccion.$dirty || MiForm.UDireccion.$touched || submitted) && MiForm.UDireccion.$error.required"
+						for="UDireccion" class="invalid-feedback">[Direcci&oacute;n]
+						es obligatorio</span>
+				</div>
+			</div>
+
+			<div class="row" ng-show ="isPeruvian">
+				<label class="col-sm-3 left control-label">Ubigeo</label>
+				<div class="col-sm-3">
+					<select tabindex="15" class="form-control" name="UDepartamento"
+						ng-model="persona.UDepartamento" ng-required="isPeruvian"
+						ng-change="onSelectChangeDepartamento()"
+						ng-options="item.id_departamento as item.desc_departamento for item in listDepartamentos | orderBy:'desc_departamento'"
+						ng-class="{'is-invalid': (MiForm.UDepartamento.$dirty || MiForm.UDepartamento.$touched || submitted) && MiForm.UDepartamento.$error.required }">
+						<option value="">--Seleccione--</option>
+					</select> <span
+						ng-if="(MiForm.UDepartamento.$dirty || MiForm.UDepartamento.$touched || submitted) && MiForm.UDepartamento.$error.required"
+						for="UDepartamento" class="invalid-feedback">[Departamento]
+						es obligatorio</span>
+				</div>
+				<div class="col-sm-3">
+					<select tabindex="16" class="form-control" name="UProvincia"
+						ng-model="persona.UProvincia" ng-required="isPeruvian"
+						ng-change="onSelectChangeProvincia()"
+						ng-options="item.id_provincia as item.desc_provincia for item in listProvincias | orderBy:'desc_provincia'"
+						ng-class="{ 'is-invalid': (MiForm.UProvincia.$dirty || MiForm.UProvincia.$touched || submitted) && MiForm.UProvincia.$error.required }">
+						<option value="">--Seleccione--</option>
+					</select> <span
+						ng-if="(MiForm.UProvincia.$dirty || MiForm.UProvincia.$touched || submitted) && MiForm.UProvincia.$error.required "
+						for="UProvincia" class="invalid-feedback">[Provincia] es
+						obligatorio</span>
+				</div>
+				<div class="col-sm-3">
+					<select tabindex="17" class="form-control" name="UDistrito"
+						ng-model="persona.UDistrito" ng-required="isPeruvian"
+						ng-options="item.id_distrito as item.desc_distrito for item in listDistrito | orderBy:'desc_distrito'"
+						ng-class="{ 'is-invalid': (MiForm.UDistrito.$dirty || MiForm.UDistrito.$touched || submitted) && MiForm.UDistrito.$error.required }">
+						<option value="">--Seleccione--</option>
+					</select> <span
+						ng-if="(MiForm.UDistrito.$dirty || MiForm.UDistrito.$touched || submitted) && MiForm.UDistrito.$error.required"
+						for="UDistrito" class="invalid-feedback">[Distrito] es
+						obligatorio</span>
+				</div>
+			</div>
+			<div
+				style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;"
+				ng-if="showExtraFields==true"></div>
+			<div>
+
+				<div class="row" ng-if="showExtraFields==true">
+					<div class="col">
+						<div class="alert alert-dark">Representante legal</div>
+					</div>
+				</div>
+
+
+                  <div class="row" ng-if="showExtraFields==true"> 
+					<label class="col-sm-3 control-label">Tipo
+					de Documento</label>
+			       <div class="col-sm-3">
+					<select tabindex="18" class="form-control" name="rep_legal_id_tipo_documento"
+						ng-model="persona.rep_legal_id_tipo_documento" ng-required="true"
+						ng-change="onSelectChangeTipoDocumento_RepreLegal()"
+						ng-options="item.id as item.descripcion for item in litTipoDocumento"
+						ng-class="{'is-invalid': (MiForm.rep_legal_id_tipo_documento.$dirty || MiForm.rep_legal_id_tipo_documento.$touched || submitted) && MiForm.rep_legal_id_tipo_documento.$error.required && showExtraFields==true  }">
+						<option value="">--Seleccione--</option>
+					</select> 
+					<span
+						ng-if="(MiForm.rep_legal_id_tipo_documento.$dirty || MiForm.rep_legal_id_tipo_documento.$touched || submitted) && MiForm.rep_legal_id_tipo_documento.$error.required && showExtraFields==true"
+						for="rep_legal_id_tipo_documento" class="invalid-feedback"> [Tipo de
+						Documento] es obligatorio </span>
+			         </div>
+			       </div>
+
+
+				<div class="row" ng-if="showExtraFields==true">
+		
+					<label class="col-sm-3 control-label">Documento de Identidad</label>
+					
+					<div ng-if="showTipoNumeroDocumento_Reple_Legal==true"  class="col-sm-3">
+						<input tabindex="19" class="form-control" type="text"
+							name="rep_legal_DNI" ng-required="true" required="required"
+							ng-model="persona.rep_legal_DNI" 
+							numbers-only maxlength="8" ng-minlength="8" ng-maxlength="8"
+							pattern="[0-9]{8}"
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_DNI.$dirty || MiForm.rep_legal_DNI.$touched || submitted) && (MiForm.rep_legal_DNI.$error.required || (MiForm.rep_legal_DNI.$error.minlength || MiForm.rep_legal_DNI.$error.maxlength) )&& showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_DNI.$dirty || MiForm.rep_legal_DNI.$touched || submitted) && MiForm.rep_legal_DNI.$error.required && showExtraFields==true"
+							for="rep_legal_DNI" class="invalid-feedback"> [DNI] es
+							obligatorio </span> <span
+							ng-if="(MiForm.rep_legal_DNI.$error.minlength || MiForm.rep_legal_DNI.$error.maxlength) && showExtraFields==true"
+							for="rep_legal_DNI" class="invalid-feedback"> [DNI] Debe
+							tener 8 d&iacute;gitos. </span>
+					</div>
+
+
+		           <div ng-if="showTipoNumeroDocumento_Reple_Legal==false" class="col-sm-3">
+						<input tabindex="20" class="form-control" type="text"
+			                name="rep_legal_DNI" ng-required="true" required="required"
+							ng-model="persona.rep_legal_DNI" 
+							ng-minlength="12"  ng-maxlength="12" maxlength="12"  numbers-only
+							pattern="[0-9]{12}"
+							ng-class="{'is-invalid': (MiForm.rep_legal_DNI.$dirty || MiForm.rep_legal_DNI.$touched || submitted) && (MiForm.rep_legal_DNI.$error.required || (MiForm.rep_legal_DNI.$error.minlength || MiForm.rep_legal_DNI.$error.maxlength)) && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_DNI.$dirty || MiForm.rep_legal_DNI.$touched || submitted) && MiForm.rep_legal_DNI.$error.required && showExtraFields==true"
+							for="rep_legal_DNI" class="invalid-feedback"> [Documento] es
+							obligatorio </span> <span
+							ng-if="(MiForm.rep_legal_DNI.$error.minlength || MiForm.rep_legal_DNI.$error.maxlength) && showExtraFields==true"
+							for="rep_legal_DNI" class="invalid-feedback"> [Documento] Debe tener
+							entre 4 y 12 d&iacute;gitos. </span>
+					</div>
+
+
+
+
+
+					<label class="col-sm-3 control-label">Nombres</label>
+					<div class="col-sm-3">
+						<input tabindex="21" class="form-control" type="text"
+							name="rep_legal_Nombres" ng-maxlength="100" nospecialchar2
+							maxlength="50" ng-required="true"
+							 
+							ng-model="persona.rep_legal_Nombres"
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_Nombres.$dirty || MiForm.rep_legal_Nombres.$touched || submitted) && MiForm.rep_legal_Nombres.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_Nombres.$dirty || MiForm.rep_legal_Nombres.$touched || submitted) && MiForm.rep_legal_Nombres.$error.required && showExtraFields==true"
+							for="rep_legal_Nombres" class="invalid-feedback">[Nombres]
+							es obligatorio</span>
+					</div>
+				</div>
+
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Apellido Paterno</label>
+					<div class="col-sm-3">
+						<input tabindex="22" class="form-control" type="text"
+							name="rep_legal_Ape_Pat" ng-required="true" nospecialchar2
+							maxlength="50" ng-model="persona.rep_legal_Ape_Pat"
+							ng-maxlength="100"  
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_Ape_Pat.$dirty || MiForm.rep_legal_Ape_Pat.$touched || submitted) && MiForm.rep_legal_Ape_Pat.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_Ape_Pat.$dirty || MiForm.rep_legal_Ape_Pat.$touched || submitted) && MiForm.rep_legal_Ape_Pat.$error.required && showExtraFields==true"
+							for="rep_legal_Ape_Pat" class="invalid-feedback">[Apellido
+							Paterno] es obligatorio</span>
+					</div>
+
+					<label class="col-sm-3 control-label">Apellido Materno</label>
+					<div class="col-sm-3">
+						<input tabindex="23" class="form-control" type="text"
+							name="rep_legal_Ape_Mat" ng-required="true" nospecialchar2
+							maxlength="50" ng-model="persona.rep_legal_Ape_Mat"
+							ng-maxlength="100" 
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_Ape_Mat.$dirty || MiForm.rep_legal_Ape_Mat.$touched || submitted) && MiForm.rep_legal_Ape_Mat.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_Ape_Mat.$dirty || MiForm.rep_legal_Ape_Mat.$touched || submitted) && MiForm.rep_legal_Ape_Mat.$error.required && showExtraFields==true"
+							for="rep_legal_Ape_Mat" class="invalid-feedback">[Apellido
+							Materno] es obligatorio</span>
+					</div>
+				</div>
+
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+					<div class="col-sm-9">
+						<input tabindex="24" class="form-control" type="text"
+							name="rep_legal_direccion" ng-required="true" maxlength="100"
+							ng-model="persona.rep_legal_direccion" ng-maxlength="200"
+							 
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_direccion.$dirty || MiForm.rep_legal_direccion.$touched || submitted) && MiForm.rep_legal_direccion.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_direccion.$dirty || MiForm.rep_legal_direccion.$touched || submitted) && MiForm.rep_legal_direccion.$error.required && showExtraFields==true"
+							for="rep_legal_direccion" class="invalid-feedback">[Direcci&oacute;n]
+							es obligatorio</span>
+					</div>
+				</div>
+
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Celular</label>
+					<div class="col-sm-3">
+						<input tabindex="25" class="form-control" type="text"
+							name="rep_legal_celular" ng-required="true" limit-to="9"
+							maxlength="9" numbers-only ng-model="persona.rep_legal_celular"
+							ng-maxlength="9"  
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_celular.$dirty || MiForm.rep_legal_celular.$touched || submitted) && MiForm.rep_legal_celular.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.rep_legal_celular.$dirty || MiForm.rep_legal_celular.$touched || submitted) && MiForm.rep_legal_celular.$error.required && showExtraFields==true"
+							for="rep_legal_celular" class="invalid-feedback">[Celular]
+							es obligatorio</span>
+					</div>
+				</div>
+
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Correo</label>
+					<div class="col-sm-9">
+						<input tabindex="26" class="form-control" type="email"
+							name="rep_legal_correo" ng-required="true" maxlength="60"
+							ng-model="persona.rep_legal_correo"
+							 
+							ng-class="{ 'is-invalid': (MiForm.rep_legal_correo.$dirty || MiForm.rep_legal_correo.$touched || submitted) && MiForm.rep_legal_correo.$error.required && showExtraFields==true || MiForm.rep_legal_correo.$error.email}">
+						<span
+							ng-if="(MiForm.rep_legal_correo.$dirty || MiForm.rep_legal_correo.$touched || submitted) && MiForm.rep_legal_correo.$error.required && showExtraFields==true"
+							for="rep_legal_correo" class="invalid-feedback">[Correo]
+							es obligatorio</span> <span ng-if="MiForm.rep_legal_correo.$error.email"
+							for="UCorreo" class="invalid-feedback">[Correo] es
+							invalido</span>
+					</div>
+				</div>
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label"><i
+						class="clip-paperclip"></i> Resoluci&oacute;n de
+						designaci&oacute;n o vigencia de poder</label>
+					<div class="col-sm-9">
+						<input id="fileArchivo" class="form-control" name="fileArchivo"
+							size="4096" ng-model="persona.fileArchivo" input-File type="file"
+							ng-change="UFile_DNI_handle()" required
+							ng-class="{'is-invalid': (MiForm.fileArchivo.$touched || submitted ) && MiForm.fileArchivo.$error.required && showExtraFields==true}"
+							style="height: auto;"> <span
+							ng-if="(MiForm.fileArchivo.$touched || submitted ) && MiForm.fileArchivo.$error.required && showExtraFields==true"
+							for="fileArchivo" class="invalid-feedback"
+							style="display: block;">[Resoluci&oacute;n de
+							designaci&oacute;n o vigencia de poder] es obligatorio</span>
+					</div>
+				</div>
+				<div
+					style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;"
+					ng-if="showExtraFields==true"></div>
+
+
+				<div class="row" ng-if="showExtraFields==true">
+					<div class="col">
+						<div class="alert alert-dark">Secci&oacute;n de usuario
+							externo de tipo delegado</div>
+					</div>
+				</div>
+				
+				   <div class="row" ng-if="showExtraFields==true"> 
+					<label class="col-sm-3 control-label">Tipo
+					de Documento</label>
+			       <div class="col-sm-3">
+					<select tabindex="27" class="form-control" name="UTipoDoc_Delegado"
+						ng-model="persona.UTipoDoc_Delegado" 
+						ng-change="onSelectChangeTipoDocumento_Delegado()"
+						ng-options="item.id as item.descripcion for item in litTipoDocumento"
+						ng-class="{'is-invalid': (MiForm.UTipoDoc_Delegado.$dirty || MiForm.UTipoDoc_Delegado.$touched || submitted) && MiForm.UTipoDoc_Delegado.$error.required && showExtraFields==false  }">
+						<option value="">--Seleccione--</option>
+					</select> 
+					<span
+						ng-if="(MiForm.UTipoDoc_Delegado.$dirty || MiForm.UTipoDoc_Delegado.$touched || submitted) && MiForm.UTipoDoc_Delegado.$error.required && showExtraFields==false"
+						for="UTipoDoc_Delegado" class="invalid-feedback"> [Tipo de
+						Documento] es obligatorio </span>
+			         </div>
+			       </div>
+				
+				
+
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Documento de Identidad</label>
+					
+					<div ng-if="showTipoNumeroDocumento_Delegado==true" class="col-sm-3">
+						<input tabindex="28" class="form-control" type="text"
+							name="delegado_DNI"  maxlength="8"
+							ng-model="persona.delegado_DNI"  
+							ng-minlength="8" ng-maxlength="8" pattern="[0-9]{8}"
+							ng-class="{ 'is-invalid': (MiForm.delegado_DNI.$dirty || MiForm.delegado_DNI.$touched || submitted) && (MiForm.delegado_DNI.$error.required || (MiForm.delegado_DNI.$error.minlength || MiForm.delegado_DNI.$error.maxlength))&& showExtraFields==true}">
+						 <span
+							ng-if="(MiForm.delegado_DNI.$dirty || MiForm.delegado_DNI.$touched || submitted) && MiForm.delegado_DNI.$error.required && showExtraFields==true"
+							for="delegado_DNI" class="invalid-feedback"> [DNI] es
+							obligatorio </span> <span
+							ng-if="(MiForm.delegado_DNI.$error.minlength || MiForm.delegado_DNI.$error.maxlength) && showExtraFields==true"
+							for="delegado_DNI" class="invalid-feedback"> [DNI] Debe
+							tener 8 d&iacute;gitos. </span> 
+					</div>
+					
+					
+				   <div ng-if="showTipoNumeroDocumento_Delegado==false" class="col-sm-3">
+						<input tabindex="29" class="form-control" type="text"
+							ng-model="persona.delegado_DNI" name="delegado_DNI"
+							
+							ng-minlength="12"  ng-maxlength="12" maxlength="12"   numbers-only
+							pattern="[0-9]{12}"
+							ng-class="{'is-invalid': (MiForm.delegado_DNI.$dirty || MiForm.delegado_DNI.$touched || submitted) && (MiForm.delegado_DNI.$error.required || (MiForm.delegado_DNI.$error.minlength || MiForm.delegado_DNI.$error.maxlength)) && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_DNI.$dirty || MiForm.delegado_DNI.$touched || submitted) && MiForm.delegado_DNI.$error.required && showExtraFields==true"
+							for="delegado_DNI" class="invalid-feedback"> [Documento] es
+							obligatorio </span> <span
+							ng-if="(MiForm.delegado_DNI.$error.minlength || MiForm.delegado_DNI.$error.maxlength) && showExtraFields==true"
+							for="delegado_DNI" class="invalid-feedback"> [Documento] Debe tener
+							entre 4 y 12 d&iacute;gitos. </span>
+					</div>
+
+
+
+					
+					
+					
+					
+					
+					
+					
+					<label class="col-sm-3 control-label">Nombres</label>
+					<div class="col-sm-3">
+						<input tabindex="30" class="form-control" type="text"
+							name="delegado_Nombres" ng-maxlength="100"  
+							ng-model="persona.delegado_Nombres" nospecialchar2 maxlength="50"
+							 
+							ng-class="{ 'is-invalid': (MiForm.delegado_Nombres.$dirty || MiForm.delegado_Nombres.$touched || submitted) && MiForm.delegado_Nombres.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_Nombres.$dirty || MiForm.delegado_Nombres.$touched || submitted) && MiForm.delegado_Nombres.$error.required && showExtraFields==true"
+							for="delegado_Nombres" class="invalid-feedback">[Nombres]
+							es obligatorio</span>
+					</div>
+				</div>
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Apellido Paterno</label>
+					<div class="col-sm-3">
+						<input tabindex="31" class="form-control" type="text"
+							name="delegado_Ape_Pat"   nospecialchar2
+							maxlength="50" ng-model="persona.delegado_Ape_Pat"
+							ng-maxlength="100" 
+							ng-class="{ 'is-invalid': (MiForm.delegado_Ape_Pat.$dirty || MiForm.delegado_Ape_Pat.$touched || submitted) && MiForm.delegado_Ape_Pat.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_Ape_Pat.$dirty || MiForm.delegado_Ape_Pat.$touched || submitted) && MiForm.delegado_Ape_Pat.$error.required && showExtraFields==true"
+							for="delegado_Ape_Pat" class="invalid-feedback">[Apellido
+							Paterno] es obligatorio</span>
+					</div>
+					<label class="col-sm-3 control-label">Apellido Materno</label>
+					<div class="col-sm-3">
+						<input tabindex="32" class="form-control" type="text"
+							name="delegado_Ape_Mat"   nospecialchar2
+							maxlength="50" ng-model="persona.delegado_Ape_Mat"
+							ng-maxlength="100" 
+							ng-class="{ 'is-invalid': (MiForm.delegado_Ape_Mat.$dirty || MiForm.delegado_Ape_Mat.$touched || submitted) && MiForm.delegado_Ape_Mat.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_Ape_Mat.$dirty || MiForm.delegado_Ape_Mat.$touched || submitted) && MiForm.delegado_Ape_Mat.$error.required && showExtraFields==true"
+							for="delegado_Ape_Mat" class="invalid-feedback">[Apellido
+							Materno] es obligatorio</span>
+					</div>
+				</div>
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+					<div class="col-sm-9">
+						<input tabindex="33" class="form-control" type="text"
+							name="delegado_Direccion"   maxlength="100"
+							ng-model="persona.delegado_Direccion" ng-maxlength="200"
+							 
+							ng-class="{ 'is-invalid': (MiForm.delegado_Direccion.$dirty || MiForm.delegado_Direccion.$touched || submitted) && MiForm.delegado_Direccion.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_Direccion.$dirty || MiForm.delegado_Direccion.$touched || submitted) && MiForm.delegado_Direccion.$error.required && showExtraFields==true"
+							for="delegado_Direccion" class="invalid-feedback">[Direcci&oacute;n]
+							es obligatorio</span>
+					</div>
+				</div>
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Celular</label>
+					<div class="col-sm-3">
+						<input tabindex="34" class="form-control" type="text"
+							name="delegado_Celular"  maxlength="9"
+							ng-model="persona.delegado_Celular" ng-maxlength="9"
+							  numbers-only limit-to="9"
+							ng-class="{ 'is-invalid': (MiForm.delegado_Celular.$dirty || MiForm.delegado_Celular.$touched || submitted) && MiForm.delegado_Celular.$error.required && showExtraFields==true}">
+						<span
+							ng-if="(MiForm.delegado_Celular.$dirty || MiForm.delegado_Celular.$touched || submitted) && MiForm.delegado_Celular.$error.required && showExtraFields==true"
+							for="delegado_Celular" class="invalid-feedback">[Celular]
+							es obligatorio</span>
+					</div>
+				</div>
+				<div class="row" ng-if="showExtraFields==true">
+					<label class="col-sm-3 control-label">Correo</label>
+					<div class="col-sm-3">
+						<input tabindex="35" class="form-control" type="email"
+							name="delegado_Correo"   maxlength="100"
+							ng-model="persona.delegado_Correo" ng-maxlength="200"
+							 
+							ng-class="{ 'is-invalid': (MiForm.delegado_Correo.$dirty || MiForm.delegado_Correo.$touched || submitted) && MiForm.delegado_Correo.$error.required && showExtraFields==true || MiForm.delegado_Correo.$error.email}">
+						<span
+							ng-if="(MiForm.delegado_Correo.$dirty || MiForm.delegado_Correo.$touched || submitted) && MiForm.delegado_Correo.$error.required && showExtraFields==true"
+							for="delegado_Correo" class="invalid-feedback">[Correo] es
+							obligatorio</span> <span ng-if="MiForm.delegado_Correo.$error.email"
+							for="delegado_Correo" class="invalid-feedback">[Correo] es
+							invalido</span>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if="showExtraFields==false"
+				style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;">
+			</div>
+
+			<div ng-if="showExtraFields==false">
+
+				<div class="row">
+					<div class="col">
+						<div class="alert alert-dark">Por medidas de seguridad debe
+							responder estas preguntas para poder obtener su Usuario y
+							Contrase&ntilde;a</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<label class="col-sm-3 control-label">Fecha de nacimiento</label>
+					<div class="col-sm-3">
+						<input tabindex="36" class="col-sm-12 form-control"
+							name="UNacimiento" ng-model="persona.UNacimiento" maxlength="10"
+							ng-required="true" type="date" max="9999-12-31"
+							ng-class="{'is-invalid':(MiForm.UNacimiento.$dirty || MiForm.UNacimiento.$touched || submitted) && MiForm.UNacimiento.$error.required && showExtraFields==false}">
+						<span
+							ng-if="(MiForm.UNacimiento.$dirty || MiForm.UNacimiento.$touched || submitted) && MiForm.UNacimiento.$error.required && showExtraFields==false"
+							for="UNacimiento" class="invalid-feedback">[Fecha de
+							nacimiento] es obligatorio</span>
+					</div>
+				</div>
+				<div class="row" ng-show ="isPeruvian">
+					<label class="col-sm-3 control-label">C&oacute;digo
+						verificador del DNI</label>
+					<div class="col-sm-3">
+						<input tabindex="37" class="form-control" data-val="true"
+							name="UCodigoDNI" ng-model="persona.UCodigoDNI" ng-maxlength="1"
+							ng-required="isPeruvian" numbers-only limit-to="1"
+							data-val-required="(*) Ingrese su c&oacute;digo de verificaci&oacute;n del DNI."
+							type="text"
+							ng-class="{'is-invalid':(MiForm.UCodigoDNI.$dirty || MiForm.UCodigoDNI.$touched || submitted) && MiForm.UCodigoDNI.$error.required && showExtraFields==false}">
+						<span
+							ng-if="(MiForm.UCodigoDNI.$dirty || MiForm.UCodigoDNI.$touched || submitted) && MiForm.UCodigoDNI.$error.required && showExtraFields==false"
+							for="UCodigoDNI" class="invalid-feedback">[C&oacute;digo
+							verificador del DNI] es obligatorio</span>
+					</div>
+					<div class="col-sm-5"
+						style="font-size: 11px; color: green; margin-top: 8px;">
+						D&oacute;nde se encuentra <a style="color: #007BE8"
+							data-toggle="dropdown" class="dropdown-toggle"
+							data-close-others="true"
+							ng-click="openVerImagenDNI('codigoverificador')"
+							href="javascript:void(0)">mi c&oacute;digo verificador</a>en el
+						DNI?
+					</div>
+				</div>
+				<div class="row" ng-show ="isPeruvian">
+					<label class="col-sm-3 control-label">C&oacute;digo de
+						UBIGEO del DNI</label>
+					<div class="col-sm-3">
+						<input tabindex="38" tabindex="2" class="form-control"
+							name="UCodigoUbigeo" ng-model="persona.UCodigoUbigeo"
+							ng-required="isPeruvian" numbers-only limit-to="6" ng-maxlength="6"
+							type="text"
+							ng-class="{'is-invalid': (MiForm.UCodigoUbigeo.$dirty || MiForm.UCodigoUbigeo.$touched || submitted) && MiForm.UCodigoUbigeo.$error.required && showExtraFields==false}">
+						<span
+							ng-if="(MiForm.UCodigoUbigeo.$dirty || MiForm.UCodigoUbigeo.$touched || submitted) && MiForm.UCodigoUbigeo.$error.required && showExtraFields==false"
+							for="UCodigoUbigeo" class="invalid-feedback">[C&oacute;digo
+							de UBIGEO del DNI] es obligatorio</span>
+					</div>
+					<label class="col-sm-5"
+						style="font-size: 11px; color: green; margin-top: 8px;">
+						D&oacute;nde se encuentra <a style="color: #007BE8"
+						id="verArchivoDni" data-toggle="dropdown" class="dropdown-toggle"
+						data-close-others="true"
+						ng-click="openVerImagenDNI('codigoubigeo')">mi c&oacute;digo
+							de UBIGEO</a>en el DNI?
+					</label>
+				</div>
+				
+				
+				<!-- <div class="row">
+					<label class="col-sm-3 control-label"><i
+						class="clip-paperclip"></i>Imagen de DNI legible </label>
+					<div class="col-sm-9">
+						<input tabindex="39" class="form-control" name="UFile_DNI" accept=".png, .jpg, .jpeg, .pdf"
+							size="4096" type="file" ng-model="persona.fileArchivo" input-file
+							ng-change="UFile_DNI_handle()" required
+							ng-class="{'is-invalid': (MiForm.UFile_DNI.$touched || submitted ) && MiForm.UFile_DNI.$error.required && showExtraFields==false}"
+							style="height: auto;"> <span
+							ng-if="(MiForm.UFile_DNI.$touched || submitted ) && MiForm.UFile_DNI.$error.required && showExtraFields==false"
+							for="UFile_DNI" class="invalid-feedback" style="display: block;">[Imagen
+							de DNI] es obligatorio</span>
+					</div>
+				</div> -->
+				
+				
+			</div>
+			<div
+				style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;"></div>
+
+			<div class="row">
+				<div class="col">
+					<div class="alert alert-dark">T&eacute;rminos y Condiciones</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<textarea class="form-control" cols="20" readonly="readonly"
+						rows="6" style="font-size: 10px; height: 250px;">
+T&Eacute;RMINOS Y CONDICIONES DE USO DEL SERVICIO DE LA VENTANILLA ELECTR&Oacute;NICA DEL MEF
+         
+La Ventanilla Electr&oacute;nica es una herramienta tecnol&oacute;gica que permite realizar tr&aacute;mites, gestionar y hacer seguimiento de sus expedientes virtuales presentados al MEF.
+A trav&eacute;s de este medio pueden ingresar sus documentos durante las 24 horas del d&iacute;a, los 365 d&iacute;as del año.
+
+I.  REQUISITOS PARA LA PRESTACI&Oacute;N DE DOCUMENTOS
+Los documentos que se presenten por este medio, deben estar debidamente firmados y digitalizados en formato PDF, TXT, Word, Excel, Power Point y JPG. El peso m&aacute;ximo
+de cada archivo no debe exceder los 25 MB.
+Durante cualquier etapa del proceso del tr&aacute;mite, la entidad de considerarlo necesario, puede solicitar al administrado la presentaci&oacute;n de los documentos originales.
+
+II. HORARIOS Y PLAZOS
+La Ventanilla Electrónica del MEF est&aacute; habilitada las veinticuatro (24) horas del día y los siete (7) d&iacute;as de la semana para la presentaci&oacute;n de documentos, no tiene restricci&oacute;n de horarios.
+
+III. NOTIFICACI&Oacute;N DE LOS DOCUMENTOS PRESENTADOS EN LA VENTANILLA ELECTR&Oacute;NICA
+Las comunicaciones y notificaciones relacionadas a los documentos presentados por los administrados a trav&eacute;s de la Ventanilla Electr&oacute;nica del MEF, se efect&uacute;an de manera virtual al
+domicilio electr&oacute;nico del mismo, remiti&eacute;ndosele para ello una alerta de env&iacute;o al correo electr&oacute;nico consignado al momento de su registro.
+
+IV. RESPONSABILIDADES
+El usuario es responsable de la informaci&oacute;n que registra y presenta a trav&eacute;s de la Ventanilla electr&oacute;nica.
+En atenci&oacute;n al Principio de Presunci&oacute;n de Veracidad establecido en el TUO de la Ley N° 27444, Ley del Procedimiento Administrativo General, se presume que los documentos y
+declaraciones formuladas por los usuarios responden a la verdad de los hechos que afirman.
+La confidencialidad de la clave de acceso a la Ventanilla Electr&oacute;nica, es responsabilidad exclusiva de los usuarios. Si estos deciden delegar en un tercero la responsabilidad de registrar
+sus documentos, lo hacen bajo su entera responsabilidad.
+
+V.  RESTRICCIONES DE USO
+La Ventanilla Electrónica debe usarse exclusivamente para presentar documentos e iniciar tr&aacute;mites ante el MEF.
+La Ventanilla Electrónica solo puede ser utilizada con fines l&iacute;citos.
+
+VI. PROTECCI&Oacute;N DE DATOS PERSONALES
+Para efectos del tr&aacute;mite solicitado; en cumplimiento de lo dispuesto en la Ley N° 29733, Ley de Protecci&oacute;n de Datos Personales, desde el momento de su ingreso y/o utilizaci&oacuten del portal, el usuario da expresamente su consentimiento 
+para el tratamiento de los datos personales proporcionados.
+
+VII. MARCO LEGAL APLICABLE
+- TUO de la Ley N° 27444, Ley del Procedimiento Administrativo General.
+- D.S. N° 004-2013-PCM Modernizaci&oacute;n de la Gesti&oacute;n P&uacute;blica.
+- D.S. Nº 109-2012-PCM Estrategia para la modernizaci&oacute;n de la Gesti&oacute;n P&uacute;blica.
+- D.S. Nº 066-2011-PCM que aprueba el plan de desarrollo de la sociedad de la informaci&oacute;n en el Per&uacute; La Agenda Digital Peruana 2.0.
+
+                        
+                    </textarea>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<label for="UTerminos"
+						style="font-size: 13px; font-weight: bold; color: blue;">
+						<input tabindex="40" name="UTerminos" id="UTerminos"
+						ng-model="persona.UTerminos" type="checkbox" ng-required="true">
+						He le&iacute;do y acepto los t&eacute;rminos y condiciones
+					</label>
+					<div
+						ng-if="(MiForm.UTerminos.$touched || submitted) && MiForm.UTerminos.$error.required">
+						<span for="UTerminos" class="help-block">Debe aceptar los
+							t&eacute;rminos y condiciones</span>
+					</div>
+				</div>
+			</div>
+			<div
+				style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;"></div>
+			<div class="row">
+				<div class="col">
+					<div class="alert alert-dark">Declaraci&oacute;n Jurada</div>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-sm-12">
+					<label for="UDeclaracion"
+						style="font-size: 13px; font-weight: bold; color: blue;">
+						<input tabindex="41" name="UDeclaracion" id="UDeclaracion"
+						type="checkbox" ng-model="persona.UDeclaracion" ng-required="true">
+						Declaro bajo juramento
+					</label>
+					<div
+						ng-if="(MiForm.UDeclaracion.$touched || submitted)  && MiForm.UDeclaracion.$error.required ">
+						<span for="UDeclaracion" class="help-block">[Declaraci&oacute;n
+							Jurada] se debe marcar </span>
+					</div>
+				</div>
+				<div class="col-sm-12" style="margin-bottom: 20px;">
+					<textarea class="form-control" cols="20" readonly="readonly"
+						rows="6" style="font-size: 10px; height: 50px;">
+ 	 Que los datos consignados en la presente solicitud responden a la verdad. En caso de resultar falsa la información que proporciono, me sujeto a los alcances de lo establecido en el artículo
+	 411 del Código Penal, concordante con el artículo 33 del Texto Único Ordenado de la Ley Nro. 27444, Ley del Procedimiento Administrativo General.
+                    </textarea>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<label for="UCaptcha"
+						style="font-size: 13px; font-weight: bold; color: blue;">
+						Escriba el c&oacute;digo de seguridad mostrado en la imagen </label> </br> <img
+						alt="captcha" ng-src="{{capchaUrl}}">
+				</div>
+				<div class="col-sm-2">
+					<input tabindex="42" name="UCaptcha" id="UCaptcha"
+						class="form-control" ng-model="persona.UCaptcha" type="text"
+						ng-required="true" maxlength="7"
+						ng-class="{ 'is-invalid': (MiForm.UCaptcha.$dirty || MiForm.UCaptcha.$touched || submitted) && MiForm.UCaptcha.$error.required}">
+					<span
+						ng-if="(MiForm.UCaptcha.$dirty || MiForm.UCaptcha.$touched || submitted) && MiForm.UCaptcha.$error.required"
+						for="UCaptcha" class="invalid-feedback"> [Captcha] es
+						obligatorio </span> <input id="btnNuevo" ng-click="refreshCaptcha()"
+						name="btnNuevo" type="button"
+						value="Refrescar c&oacute;digo captcha" class="btn-primary"
+						style="height: 34px; font-size: 12px;">
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+
+		<!-- ng-disabled="MiForm.$invalid" -->
+		<button id="btnGrabar" type="submit" class="btn btn-primary">
+			<i class="fa fa-envelope"></i> Enviar
+		</button>
+		<button class="btn btn-secondary" type="button" ng-click="cancel()">
+			<i class="fa fa-share-square-o"></i> Cerrar
+		</button>
+	</div>
+</form>

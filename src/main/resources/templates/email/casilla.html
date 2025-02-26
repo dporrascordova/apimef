@@ -1,0 +1,96 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+	<table
+		style="background-color: #ffffff; width: 100%; border: #dadfe6 2px solid"
+		align="center" cellpadding="3" cellspacing="2">
+		<tbody>
+			<tr>
+				<td><span><table
+							style="background-color: #ffffff; width: 100%" cellspacing="0"
+							cellpadding="0" border="0">
+						</table>
+						<table
+							style="font-size: 11px; color: #000000; font-family: arial; text-align: justify; width: 100%; border-bottom: 1px"
+							cellspacing="2" border="0">
+							<tbody>
+								<tr>
+									<td style="height: 16px"><img src="logo.png"
+										th:src="|cid:${imageResourceName}|" /></td>
+								</tr>
+								<tr>
+									<td><h1
+											style="text-align: center; margin-top: 5px; margin-bottom: 5px">
+											<b style="color: #e23636; font-weight: 600; font-size: 20px;">
+												VENTANILLA ELECTR&Oacute;NICA</b>
+										</h1></td>
+								</tr>
+							</tbody>
+						</table>
+						<table
+							style="font-size: 11px; color: #000000; font-family: arial; text-align: justify; width: 100%; border-bottom: 1px"
+							cellspacing="2" border="0">
+							<tbody>
+								<tr>
+									<td style="height: 16px">Sr(a). <em th:text="${usuario}"></em>
+										mediante este correo le enviamos el c&oacute;digo de verificaci&oacute;n
+										para recuperar su clave.
+
+									</td>
+
+								</tr>
+							</tbody>
+						</table> </span>
+					<table
+						style="border: #dadfe6 1px solid; width: 100%; border-bottom: 1px"
+						cellspacing="0" cellpadding="2" width="55%">
+						<tbody>
+
+
+							<tr
+								style="font-weight: bold; font-size: 11px; letter-spacing: 1px; font-family: arial; background-color: #e23636; text-align: center;">
+								<td colspan="2"
+									style="color: #ffffff; padding: 3.75pt 3.75pt 3.75pt 3.75pt">
+									Informaci&oacute;n</td>
+							</tr>
+
+							<tr style="font-size: 11px; color: #000000; font-family: arial"></tr>
+							<tr style="font-size: 11px; color: #000000; font-family: arial">
+								<td
+									style="border: #dadfe6 1px solid; width: 130px; height: 20px">C&oacute;digo
+									:</td>
+								<td style="border: #dadfe6 1px solid; width: 75%; height: 20px"><em
+									th:text="${codigoclave}"></em></td>
+							</tr>
+							<tr style="font-size: 11px; color: #000000; font-family: arial"></tr>
+						</tbody>
+					</table></td>
+			</tr>
+
+			<tr>
+				<td><span></span>
+					<table
+						style="vertical-align: baseline; height: 20px; width: 100%; border-bottom: 1px solid #000000; border-top: 1px solid #000000"
+						cellspacing="0" cellpadding="5">
+						<tbody>
+							<tr
+								style="font-size: 11px; color: #ffffff; font-family: Arial; background-color: #e23636;">
+								<td style="text-align: center; font-weight: bold">Ministerio
+									de Econom&iacute;a y Finanzas</td>
+							</tr>
+						</tbody>
+					</table></td>
+			</tr>
+		</tbody>
+	</table>
+
+
+</body>
+</html>
+
+
+
+

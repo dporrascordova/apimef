@@ -1,0 +1,102 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title"><i class="fa fa-envelope"></i>&nbsp; Observaciónes</h3>
+</div>
+<form name="form.nuevoUsuario" ng-submit="submitForm()" novalidate>
+    <div class="modal-body">
+        
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">N°
+                Documento:
+            </label>
+            <div class="col-sm-3">
+                <input class="form-control" maxlength="100" ng-model="model.nro_documento" name="nroDocumento"  type="text" disabled>
+            </div>
+            <label class="col-sm-2 control-label text-right"
+                style="padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Fecha Recepción:
+            </label>
+            <div class="col-sm-3">
+                <input class="form-control" maxlength="100" ng-model="model.fec_recepcion" name="fec_recepcion" disabled
+                    type="text" />
+            </div>
+        </div>
+
+
+
+        
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">
+                Tipo Documento:
+            </label>
+            <div class="col-sm-3">
+                <input class="form-control" maxlength="100" ng-model="model.tipo_documento" name="tipo_documento"  type="text" disabled>
+            </div>
+            <label class="col-sm-2 control-label text-right"
+                style="padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Hoja Ruta:
+            </label>
+            <div class="col-sm-3">
+                <input class="form-control" maxlength="100" ng-model="model.hoja_ruta" name="hoja_ruta" disabled
+                    type="text" />
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="row" style="margin-bottom: 10px;">
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Destinatario:
+            </label>
+            <div class="col-sm-8">
+                   
+                    <input class="form-control" maxlength="100" ng-model="model.destinatario" name="destinatario"   type="text" disabled  />   
+                </div>  
+       </div>
+        
+
+
+
+       <div class="row"  ng-if="DataObservacion.length > 0" style="margin:auto;width: 98%;" >                    
+        <table class="table table-bordered" >
+            <thead>
+                <tr>
+                    <th><strong>N°</strong></th>
+                    <th style="width:200px;"><strong>Observación</strong></th>
+                    <th><strong>Usuario Creación</strong></th> 
+                    <th><strong>Fecha Creación</strong></th> 
+                    <th><strong>Ip Creación</strong></th>                               
+                </tr>
+            <thead>
+            <tbody ng-repeat="item in DataObservacion">
+                <tr>
+                    <td> {{$index +1}}</td>
+                    <td> {{item.observacion}} </td>
+                    <td> {{item.usu_creacion}}</td>
+                    <td> {{item.fec_creacion}}</td>
+                    <td> {{item.ip_creacion}}</td>                             
+                </tr>
+            </tbody>
+        </table>
+
+</div>
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="button" ng-click="close()" class="btn btn-secondary">
+            <i class="fa fa-share-square-o"></i>&nbsp; Cerrar</button>
+    </div>
+
+</form>

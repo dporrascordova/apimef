@@ -1,0 +1,164 @@
+
+<div
+	style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;">
+</div>
+<div class="row">
+	<div class="col-sm-12 alert alert-dark">Representante Legal</div>
+</div>
+<div class="row">
+
+	<label class="col-sm-3 control-label">Tipo de Documento</label>	
+	<div class="col-sm-3">	  
+      <select class="form-control" name="rep_legal_id_tipo_documento"
+		ng-model="request.rep_legal_id_tipo_documento"  >
+		<option value="0" >--Seleccione--</option>
+		<option data-ng-repeat="item in litTipoDocumento"
+			value={{item.id}}
+			ng-selected="item.id == request.rep_legal_id_tipo_documento">
+			{{item.descripcion}}</option>
+			
+	   </select> 
+    </div>
+
+
+	<label class="col-sm-3 control-label">N° Documento</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" maxlength="12"   maxlength="100"
+			ng-value="request.rep_legal_dni"  ng-model="request.rep_legal_dni" >
+	</div>
+
+	<label class="col-sm-3 control-label">Nombres</label>
+	<div class="col-sm-3">
+		<input class="form-control" type="text" maxlength="100"
+			ng-value="request.rep_legal_nombres" ng-model="request.rep_legal_nombres" >
+	</div>
+
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Apellido Paterno</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" maxlength="100"
+			ng-value="request.rep_legal_ape_pat" ng-model="request.rep_legal_ape_pat" style="background-color: white;">
+	</div>
+
+	<label class="col-sm-3 control-label">Apellido Materno</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" maxlength="100"
+			ng-value="request.rep_legal_ape_mat" ng-model="request.rep_legal_ape_mat" style="background-color: white;">
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+	<div class="col-sm-9">
+		<input class="form-control"  type="text"
+			ng-value="request.rep_legal_direccion" ng-model="request.rep_legal_direccion" maxlength="100"
+			style="background-color: white;" >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Celular</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" ng-model="request.rep_legal_celular"
+			onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="11"
+			ng-value="request.rep_legal_celular" style="background-color: white;">
+	</div>
+</div>
+
+<div>
+<div class="row">
+	<label class="col-sm-3 control-label">Correo</label>
+	<div class="col-sm-9">
+		<input class="form-control"  type="text" ng-model="request.rep_legal_correo"
+			ng-value="request.rep_legal_correo" style="background-color: white;">
+	</div>
+</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label"><i class="clip-paperclip"></i>
+		Resoluci&oacute;n de designaci&oacute;n &oacute; vigencia de poder</label> <label
+		class="col-sm-6" title="{{request.codigoarchivo}}"
+		style="margin-top: 6px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer; padding-left: 0px;"
+		ng-click="downloadFile()"> Descargar el archivo adjunto </label>
+</div>
+
+
+
+<div
+	style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;">
+</div>
+
+<div class="row">
+	<div class="col-sm-12 alert alert-dark">Secci&oacute;n de usuario
+		externo de tipo delegado</div>
+</div>
+
+<div class="row">
+
+	<label class="col-sm-3 control-label">Tipo de Documento</label>	
+	<div class="col-sm-3">	  
+      <select class="form-control" name="delegado_id_tipo_documento"
+			ng-model="request.delegado_id_tipo_documento" >
+			
+			<option value="0" selected>--Seleccione--</option>
+			
+			<option data-ng-repeat="item in litTipoDocumento"
+							value={{item.id}}
+							ng-selected="item.id == request.delegado_id_tipo_documento">
+							{{item.descripcion}}</option>
+			
+		
+	   </select> 
+    </div>
+
+	<label class="col-sm-3 control-label">N° Documento</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" maxlength="12"    ng-model="request.delegado_dni"
+			ng-value="request.delegado_dni" style="background-color: white;">
+	</div>
+	<label class="col-sm-3 control-label">Nombres</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" ng-model="request.delegado_nombres" maxlength="100"
+			ng-value="request.delegado_nombres" style="background-color: white;">
+	</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label">Apellido Paterno</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text"  ng-model="request.delegado_ape_pat" maxlength="100"
+			ng-value="request.delegado_ape_pat" style="background-color: white;">
+	</div>
+	<label class="col-sm-3 control-label">Apellido Materno</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text"  ng-model="request.delegado_ape_mat" maxlength="100"
+			ng-value="request.delegado_ape_mat" style="background-color: white;">
+	</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+	<div class="col-sm-9">
+		<input class="form-control"  type="text"  ng-model="request.delegado_direccion"
+			ng-value="request.delegado_direccion" maxlength="100"
+			style="background-color: white;" >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Celular</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text" ng-model="request.delegado_celular" 
+		onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="11"
+			ng-value="request.delegado_celular" style="background-color: white;">
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Correo</label>
+	<div class="col-sm-3">
+		<input class="form-control"  type="text"  ng-model="request.delegado_correo" maxlength="100"
+			ng-value="request.delegado_correo" style="background-color: white;">
+	</div>
+</div>
+

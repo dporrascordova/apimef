@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Observaciones
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Observación</th>
+                        <th class="text-center" style="width: 120px;">Fecha Registro</th>
+                       <!-- <th class="text-center" style="width: 120px;">Usuario registro</th>-->
+                    </tr>
+                </thead>
+                <tbody>                    
+                    <tr ng-repeat="request in requestsData">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ request.observacion }}</td>
+                        <td class="text-center">{{ request.fec_creacion }}</td>
+                        <!-- <td class="text-center">{{ request.usu_creacion }}</td>-->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-secondary" type="button" ng-click="close()">
+        <i class="fa fa-share-square-o"></i>Cerrar
+    </button>
+</div>

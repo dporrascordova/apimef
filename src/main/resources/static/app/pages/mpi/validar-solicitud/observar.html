@@ -1,0 +1,38 @@
+<form name="formObservarSolicitud" ng-submit="registrarObservacionSolcitud(IdSolicitud)">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <!-- <i class='clip-puzzle-3'></i> -->
+            Observar Solicitud
+        </h4>
+    </div>   
+    <div class="modal-body">
+       <div class="row">
+            <div class="col-12">
+                <textarea type="text" rows="5" class="form-control text-uppercase" style="font-size:12px" name="observacionSolicitud" ng-model="modelo.observacionSolicitud" 
+                ng-required="true" ng-minlength="10" ng-maxlength="4000" ng-keyup="contarCaracteres()" maxlength="4000"
+                ng-class="{'is-invalid': (formObservarSolicitud.observacionSolicitud.$dirty || formObservarSolicitud.observacionSolicitud.$touched) && formObservarSolicitud.observacionSolicitud.$error.required}">
+                </textarea>
+                <p ng-show="(formObservarSolicitud.observacionSolicitud.$dirty || formObservarSolicitud.observacionSolicitud.$touched) && formObservarSolicitud.observacionSolicitud.$error.required" class="invalid-feedback">
+                    [Observación] es obligatorio
+                </p> 
+            </div>
+            <div class="col-12">
+            <label id="lblCount1" style="width: 100%" class="Formato" runat="server" text="">Nº Caracteres:
+                {{contador}}
+                restan
+                {{4000 - contador}}</label>
+            </div>
+                
+       </div>
+    </div>    
+    <div class="modal-footer">
+        <button id="btnGrabar" type="submit" class="btn btn-primary" 
+            ng-disabled="formObservarSolicitud.$invalid || formObservarSolicitud.$pending">
+            <i class="fa fa-times"></i>
+            Observar
+        </button>
+        <button class="btn btn-secondary" type="button" ng-click="cancel()">
+            <i class="fa fa-share-square-o"></i>Cerrar
+        </button>
+    </div>
+</form>

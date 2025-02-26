@@ -1,0 +1,180 @@
+
+<div
+	style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;">
+</div>
+<div class="row">
+	<div class="col-sm-12 alert alert-dark">Representante Legal</div>
+</div>
+<div class="row">
+
+
+	<label class="col-sm-3 control-label">Tipo de Documento</label>	
+	<div class="col-sm-3">	  
+      <select class="form-control" name="rep_legal_id_tipo_documento"
+						ng-model="request.rep_legal_id_tipo_documento"  >
+						<option value="" >--Seleccione--</option>
+						<option data-ng-repeat="item in litTipoDocumento"
+							value={{item.id}}
+							ng-selected="item.id == request.rep_legal_id_tipo_documento">
+							{{item.descripcion}}</option>
+						
+						
+	   </select> 
+    </div>
+	<label class="col-sm-3 control-label">N° Documento</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_dni"  ng-value="request.rep_legal_dni"  >
+	</div>
+
+	<label class="col-sm-3 control-label">Nombres</label>
+	<div class="col-sm-3">
+		<input class="form-control" type="text"
+			ng-model="request.rep_legal_nombres" ng-value="request.rep_legal_nombres"  >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Apellido Paterno</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_ape_pat" ng-value="request.rep_legal_ape_pat" style="background-color: white;"
+			 >
+	</div>
+
+	<label class="col-sm-3 control-label">Apellido Materno</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_ape_mat" ng-value="request.rep_legal_ape_mat" style="background-color: white;"
+			 >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+	<div class="col-sm-9">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_direccion"  ng-value="request.rep_legal_direccion"
+			style="background-color: white;"  >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Celular</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_celular" ng-value="request.rep_legal_celular" style="background-color: white;"
+			 >
+	</div>
+</div>
+
+<div>
+<div class="row">
+	<label class="col-sm-3 control-label">Correo</label>
+	<div class="col-sm-9">
+		<input class="form-control"   type="text"
+			ng-model="request.rep_legal_correo"  ng-value="request.rep_legal_correo" style="background-color: white;"
+			 >
+	</div>
+</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label"><i class="clip-paperclip"></i>
+		Resoluci&oacute;n de designaci&oacute;n &oacute; vigencia de poder</label> <label
+		class="col-sm-6" title="{{request.codigoarchivo}}"
+		style="margin-top: 6px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer; padding-left: 0px;"
+		ng-click="downloadFile()"> Descargar el archivo adjuntado </label>
+</div>
+<div class="row"  >
+					<label class="col-sm-3 control-label"><i
+						class="clip-paperclip"></i> Resoluci&oacute;n de
+						designaci&oacute;n o vigencia de poder</label>
+					<div class="col-sm-9">
+						<input id="fileArchivo" class="form-control" name="fileArchivo"
+							size="4096" ng-model="request.fileArchivo" input-File type="file"
+							ng-change="UFile_DNI_handle()"  
+							 style="height: auto;">  
+					</div>
+				</div>
+
+
+<div
+	style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 10px;">
+</div>
+
+<div class="row">
+	<div class="col-sm-12 alert alert-dark">Secci&oacute;n de usuario
+		externo de tipo delegado</div>
+</div>
+
+<div class="row">
+
+
+	<label class="col-sm-3 control-label">Tipo de Documento</label>	
+	<div class="col-sm-3">	  
+      <select class="form-control" name="delegado_id_tipo_documento"
+			ng-model="request.delegado_id_tipo_documento"	>
+			
+			<option data-ng-repeat="item in litTipoDocumento"
+							value={{item.id}}
+							ng-selected="item.id == request.delegado_id_tipo_documento">
+							{{item.descripcion}}</option>
+			<option value="" selected>--Seleccione--</option>
+		
+	   </select> 
+    </div>
+
+	<label class="col-sm-3 control-label">N° Documento</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_dni" ng-value="request.delegado_dni" style="background-color: white;"
+			 >
+	</div>
+	<label class="col-sm-3 control-label">Nombres</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_nombres" ng-value="request.delegado_nombres" style="background-color: white;"
+			 >
+	</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label">Apellido Paterno</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_ape_pat" ng-value="request.delegado_ape_pat" style="background-color: white;"
+			 >
+	</div>
+	<label class="col-sm-3 control-label">Apellido Materno</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_ape_mat" ng-model="request.delegado_ape_mat" ng-value="request.delegado_ape_mat" style="background-color: white;"
+			 >
+	</div>
+</div>
+<div class="row">
+	<label class="col-sm-3 control-label">Direcci&oacute;n</label>
+	<div class="col-sm-9">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_direccion" ng-value="request.delegado_direccion"
+			style="background-color: white;"  >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Celular</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_celular" ng-value="request.delegado_celular" style="background-color: white;"
+			 >
+	</div>
+</div>
+
+<div class="row">
+	<label class="col-sm-3 control-label">Correo</label>
+	<div class="col-sm-3">
+		<input class="form-control"   type="text"
+			ng-model="request.delegado_correo" ng-value="request.delegado_correo" style="background-color: white;"
+			 >
+	</div>
+</div>
+

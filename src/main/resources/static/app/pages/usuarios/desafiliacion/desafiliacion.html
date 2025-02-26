@@ -1,0 +1,97 @@
+<div class="modal-content">
+	<form name="form.nuevoUsuario" ng-submit="submitForm()" novalidate>
+		<div class="modal-header">
+			<div class="col-sm-12 ">
+				<h4 class="modal-title">Desafiliaci&oacute;n del sistema</h4>
+			</div>
+		</div>
+
+		<div class="modal-body" style="background-color: #d5d5d5">
+			<div class="inline-container-Group">
+
+				<div class="row">
+					<div class="col-sm-12">
+						<table style="width: 100%">
+							<tr>
+								<td><img src="assets/images/logo_mef.jpg" height="40"
+									alt=""></td>
+								<td style="font-weight: bold; text-align: right;">
+									Formulario de Desafiliaci&oacute;n del Servicio de Ventanilla
+									Electr&oacute;nica del MEF</td>
+							</tr>
+
+						</table>
+
+
+					</div>
+					<div class="col-sm-12"
+						style="font-size: 17px; margin-bottom: 5px; margin-top: 20px">
+						Sr(a) Director/a de la Oficina de Gesti&oacute;n Documental y
+						Atenci&oacute;n al Usuario del Ministerio de Econom&iacute;a y
+						Finanzas (MEF).</div>
+					<div class="col-sm-12" style="font-size: 17px; margin-bottom: 5px;">
+						Quien suscribe, <b
+							ng-if="request.tipopersona == 1 || request.tipopersona == 3 ">{{request.nombres}}
+							{{request.apellidopaterno}} {{request.apellidomaterno}}</b> <b
+							ng-if="request.tipopersona == 2 ">{{request.razon_social}}</b>,
+						identificado con <b> {{request.desctipodoc}} </b> Nro <b
+							ng-if="request.tipopersona == 1 || request.tipopersona == 3 ">
+							{{request.nrodocumento}}</b><b ng-if="request.tipopersona == 2 ">{{request.ruc}}</b>,
+						SOLICITO la baja de mi credencial de acceso a la Ventanilla
+						Electr&oacute;nica del MEF.
+					</div>
+					<div class="col-sm-12" style="font-size: 17px; margin-bottom: 5px;">
+						En tal sentido, DECLARO tener conocimiento que una vez efectuada
+						la baja de mi credencial de acceso:</div>
+
+					<div class="col-sm-12">
+						<div class="col-sm-12"
+							style="font-size: 17px; margin-bottom: 10px;">1. Todas las
+							comunicaciones que el MEF remita a mi persona, ser&aacute;n
+							notificadas por medios f&iacute;sicos u otros que se pacten.</div>
+
+						<div class="col-sm-12"
+							style="font-size: 17px; margin-bottom: 10px;">2. No
+							podr&eacute; presentar documentos mediante medios digitales a
+							trav&eacute;s de la Ventanilla Electr&oacute;nica al MEF,
+							debiendo emplear el correo electr&oacute;nico
+							mesadepartes@mef.gob.pe o la Mesa de Partes Presencial ubicada en
+							la sede principal del MEF.</div>
+
+						<div class="col-sm-12"
+							style="font-size: 17px; margin-bottom: 10px;">3. No
+							podr&eacute; hacer uso de los servicios digitales de Mesa de
+							Partes Virtual, Casilla Electr&oacute;nica que requieran de
+							autenticaci&oacute;n.</div>
+
+						<div class="col-sm-12"
+							style="font-size: 17px; margin-bottom: 10px;">4. En ese
+							sentido, &uacute;nicamente podr&eacute; hacer uso de aquellos
+							servicios digitales disponibles que no requieran de
+							autenticaci&oacute;n para su uso.</div>
+
+					</div>
+					<div class="col-sm-12" style="font-size: 17px; margin-bottom: 5px;">Del
+						mismo modo, DECLARO, bajo mi responsabilidad, que los datos de
+						identificaci&oacute;n presentes son v&aacute;lidos, en prueba de
+						lo cual suscribo el presente documento.</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div style="width: 100%;">
+				<label    >Fecha y hora de registro
+					: {{Mifecha | date : 'dd/MM/yyyy hh:mm:ss a'}}</label>
+			</div>
+			 
+			<button class="btn btn-blue" type="submit">
+				<i class="clip-check"></i> Aceptar
+			</button>
+
+			<button id="btnCerrar" ng-click="close()" type="button"
+				class="btn btn-light-grey" data-dismiss="modal">
+				<i class="fa fa-share-square-o"></i> Cancelar
+			</button>
+		</div>
+	</form>
+</div>

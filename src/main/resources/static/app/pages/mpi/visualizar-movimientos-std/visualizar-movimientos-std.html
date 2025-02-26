@@ -1,0 +1,57 @@
+<div class="modal-header">
+	<h4 class="modal-title">
+		<!-- <i class='clip-puzzle-3'></i> -->
+		Movimientos STD
+	</h4>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-sm-5">
+			<iframe ng-src="{{documento.file}}"
+				style="background-color: white; height: 670px; width: 100%; float: left;"></iframe>
+		</div>
+		<div class="col-md-7">
+			<div class="row">
+				<div class="col-sm-5">
+					<label class="control-label">N° Solicitud: </label> <input
+						class="form-control" type="text" ng-model="documento.id_documento"
+						ng-disabled="true">
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label">Hoja de Ruta: </label> <input
+						class="form-control" type="text" ng-model="documento.hoja_ruta"
+						ng-disabled="true">
+				</div>
+			</div>
+			<div class="row form-group pt-3">
+				<div class="col-sm-12">
+					<h6 class="text-info">
+						<strong>Movimientos:</strong>
+					</h6>
+					<table class="table table-bordered" dt-options="dtOptions"
+						datatable="ng">
+						<thead>
+							<tr>
+								<th scope="col"><strong>Oficina</strong></th>
+								<th scope="col"><strong>Oficina Destino</strong></th>
+								<th scope="col"><strong>Fecha</strong></th>
+								<th scope="col"><strong>Estado</strong></th>
+							</tr>
+						</thead>
+						<tr ng-repeat="item in movimientosSTD">
+							<td>{{item.remitente}}</td>
+							<td>{{item.unidaddestino}}</td>
+							<td>{{item.fechadeestado}}</td>
+							<td>{{item.estado}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-secondary" type="button" ng-click="cancel()">
+		<i class="fa fa-share-square-o"></i>Cerrar
+	</button>
+</div>

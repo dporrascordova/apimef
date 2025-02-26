@@ -1,0 +1,184 @@
+<div class="modal-content">
+    <div class="modal-header">
+
+        <div class="col-sm-12 ">
+            <h4 class="modal-title">Validar Solicitud - {{request.idpersona}}
+            </h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="inline-container-Group">
+            <div class="row">
+                <div class="col-sm-12 alert alert-dark" ng-if="showExtraFields==true">
+                    Datos Personales
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-3 control-label">Persona</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" disabled ng-value="request.desctipopersona">
+                </div>
+                <label class="col-sm-3 control-label">Tipo Documento</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" disabled ng-value="request.desctipodoc">
+                </div>
+            </div>
+            <ng-include src="'pages/usuarios/view-user/natural.html'" ng-if="request.tipopersona == 1"></ng-include>
+            <ng-include src="'pages/usuarios/view-user/juridica.html'" ng-if="request.tipopersona == 2"></ng-include>
+
+            <div class="row">
+                <label class="col-sm-3 control-label">Correo</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" ng-model="request.correo" ng-value="request.correo" style="background-color: white;" maxlength="100" >
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-3 control-label">Teléfono</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" ng-model="request.telefono"  ng-value="request.telefono" style="background-color: white;" maxlength="7"
+						onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                </div>
+                <label class="col-sm-3 control-label">Celular</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" ng-value="request.celular" ng-model="request.celular"   style="background-color: white;" maxlength="9"
+						onkeypress="return event.charCode >= 48 && event.charCode <= 57" >
+                </div>
+            </div>
+    <!--  
+            <div class="row" ng-show="isPeruvian">
+                <label class="col-sm-3 control-label">Ubigeo</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" ng-value="request.departamento" disabled>
+                </div>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" ng-value="request.provincia" disabled>
+                </div>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" ng-value="request.distrito" disabled>
+                </div>
+            </div>
+             -->
+            
+              <div class="row" ng-show="isPeruvian">
+				<label class="col-sm-3 left control-label">Ubigeo</label>
+				<div class="col-sm-3">
+					<select id="cbodepartamento" tabindex="15" class="form-control"  
+						 
+						ng-model="request.iddepartamento" ng-required="true"
+						 
+						ng-change="onSelectChangeDepartamento()" >
+						<option value="">--Seleccione--</option>
+						 <option data-ng-repeat="item in listDepartamentos | orderBy:'desc_departamento'" value={{item.id_departamento}}>
+                                {{item.desc_departamento}}
+                            </option>
+					</select>  
+				</div>
+				<div id="cboprovincia"  class="col-sm-3">
+					<select tabindex="16" class="form-control" 
+						ng-model="request.idprovincia" ng-required="true"
+						ng-change="onSelectChangeProvincia()"
+						  >
+						<option value="">--Seleccione--</option>
+						<option data-ng-repeat="item in listProvincias | orderBy:'desc_provincia'" value={{item.id_provincia}}>
+                                {{item.desc_provincia}}
+                            </option>
+					</select>  
+				</div>
+				<div id="cbodistrito"  class="col-sm-3">
+					<select tabindex="17" class="form-control"  
+						ng-model="request.iddistrito" ng-required="true"  >
+						<option value="">--Seleccione--</option>
+						<option data-ng-repeat="item in listDistrito | orderBy:'desc_distrito'" value={{item.id_distrito}}>
+                                {{item.desc_distrito}}
+                            </option>
+					</select>  
+				</div>
+			</div>
+            
+            
+
+            <ng-include src="'pages/usuarios/view-user/representante.html'" ng-if="request.tipopersona == 2">
+            </ng-include>
+
+            <div ng-if="request.tipopersona == 1">
+                <div class="row">
+                    <div class="col-sm-12 alert alert-dark">
+                        Medidas de seguridad ingresadas
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="col-sm-3 control-label">Fecha de nacimiento</label>
+                    <div class="col-sm-3">
+                        <input class="form-control"  maxlength="11" placeholder="Ej. 1@s..2clave"
+                            style="width:100%" type="text" value="" ng-value="request.fecnacimiento" disabled>
+                    </div>
+                </div>
+                <div class="row" ng-show="isPeruvian">
+                    <label class="col-sm-3 control-label">C&oacute;digo verificador del DNI</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" maxlength="11"
+                            placeholder="Ej. 1@s..2clave" style="width:100%" type="text"  
+                            ng-value="request.codigoverificadni" disabled>
+                    </div>
+                </div>
+                <div class="row" ng-show="isPeruvian">
+                    <label class="col-sm-3 control-label">C&oacute;digo de UBIGEO del DNI</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" name="codigoubigeo" maxlength="11" placeholder="Ej. 1@s..2clave"
+                            style="width:100%" type="text" value="" ng-value="request.codigoubigeo" disabled>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="col-sm-3 control-label"><i class="clip-paperclip"></i> Imagen de DNI
+                    </label>
+                    
+                    <div class="col-sm-9">
+                        <label class="col-sm-6" title="{{request.codigoarchivo}}" ng-show="request.codigoarchivo != '-'"
+                            style="margin-top: 6px;margin-left: 0px;font-size: 12px;color: blue;cursor: pointer;padding-left: 0px;"
+                            ng-click="downloadFile()">
+                           		 Descargar el archivo adjunto           
+                        </label >
+                        <label ng-show="request.codigoarchivo == '-'" >
+                         <span class="text-danger">Esta solicitud no tiene DNI adjunto.</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="border-bottom: 1px solid #cccccc; margin: 5px 5px 10px; padding: 5px;" ng-if="showExtraFields==true">
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2 control-label">Comentario</label>
+                <div class="col-sm-9">
+                    <textarea required="required" style="font-size:12px" ng-value="model.comments" class="form-control text-uppercase" ng-model="model.comments" ng-trim="false" 
+                    required ng-class="{ 'is-invalid': submitted && model.comments.$invalid }"> </textarea>
+                    <div ng-show="submitted && model.comments.$invalid"
+					class="invalid-feedback">
+					<div ng-show="model.comments.$error.required">El
+						campo Nro Folios es requerido</div>
+				</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="aprobar()" class="btn btn-blue" type="button"><i class="clip-checkmark-2"></i>
+            Aprobar Solicitud
+        </button>
+        <button ng-click="eliminar()" class="btn btn-red" type="button"><i class="clip-close"></i>
+            Denegar Solicitud
+        </button>
+        <button ng-click="anular()" class="btn btn-red" type="button"><i class="fa fa-ban"></i>
+            Anular Solicitud
+        </button>
+        <button id="btnCerrar" ng-click="cancelar()" type="button" class="btn btn-light-grey" data-dismiss="modal"><i
+                class="fa fa-share-square-o"></i> Cerrar
+        </button>
+    </div>
+</div>

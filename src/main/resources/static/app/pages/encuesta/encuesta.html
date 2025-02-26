@@ -1,0 +1,58 @@
+<div ng-controller="encuestaController">
+	<uib-tabset active="active"> <uib-tab index="1">
+	<uib-tab-heading> Encuestas </uib-tab-heading>
+
+	<div class="tab-content">
+		<form [formGroup]="searchCriteria" ng-submit="search()"
+			class="text-sm">
+			<div class="row">
+				<div class="col-sm-12 inline-container-Group"
+					style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+					<p class="modal-title"
+						style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+						Actualizar enlace de la encuesta</p>
+					<fieldset style="width: 100%;">
+						<div class="row form-group">
+							<input type="hidden" ng-model="model.id_encuesta" />
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Mensaje: </label>
+							<div class="col-sm-7">
+								<textarea rows="4" cols="50" class="form-control" name="codigo"
+									maxlength="400" placeholder="texto del mensaje"
+									style="width: 100%" ng-model="model.mensaje_encuesta">									
+									</textarea>
+							</div>
+						</div>
+						<div class="row form-group">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Url: </label>
+							<div class="col-sm-7">
+								<input class="form-control" name="codigo" maxlength="255"
+									placeholder="www.enlaceencuesta.com.pe" style="width: 100%"
+									type="text" ng-model="model.url_encuesta">
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-sm-7 offset-sm-2">
+								<div class="alert alert-primary" role="alert">
+									Mensaje de salida:
+									<hr />
+									{{model.mensaje_encuesta}} <a href="{{model.url_encuesta}}"
+										target="_BLANK">aqu&iacute;</a>
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-sm-7 offset-sm-2" style="margin-right: 20px;">
+								<button id="btnBuscarUsuario" class="btn btn-blue" type="submit">
+									<i class="clip-search"></i>&nbsp; Guardar cambios
+								</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+	</div>
+	</uib-tab> </uib-tabset>
+</div>

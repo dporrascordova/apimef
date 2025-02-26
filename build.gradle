@@ -1,0 +1,178 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+apply plugin: 'application'
+
+group = 'mef'
+version = '1.1.0.D'
+sourceCompatibility = 1.8
+mainClassName='mef.application.AcervoOracleApplication'
+
+// tag::configurations[]
+configurations {
+	jaxb
+}
+// end::configurations[]
+
+repositories {
+	mavenCentral()
+}
+
+// tag::wsdl[]
+
+task genJaxb {
+	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+	ext.classesDir = "${buildDir}/classes/jaxb"
+//	ext.schema = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl"// Desarrollo
+	ext.schema = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl" //Prod
+
+	outputs.dir classesDir
+
+	doLast() {
+		project.ant {
+			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+					classpath: configurations.jaxb.asPath
+			mkdir(dir: sourcesDir)
+			mkdir(dir: classesDir)
+
+				 
+				//xjc(destdir: sourcesDir, schema: schema,
+						//package: "mef.application.consumingws2.wsdl") {  
+					//	arg(value: "-wsdl")
+					//produces(dir: sourcesDir, includes: "**/*.java")
+				//}
+				
+				javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+						debugLevel: "lines,vars,source",
+						classpath: configurations.jaxb.asPath) {
+					src(path: sourcesDir)
+					include(name: "**/*.java")
+					include(name: "*.java")
+					}
+
+				copy(todir: classesDir) {
+						fileset(dir: sourcesDir, erroronmissingdir: false) {
+						exclude(name: "**/*.java")
+				}
+			}
+		}
+	}
+}
+// end::wsdl[]
+
+dependencies {
+// tag::dependency[]
+	implementation ('org.springframework.boot:spring-boot-starter-web-services') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+	implementation 'org.springframework.ws:spring-ws-core'
+	// For Java 11:
+	//implementation 'org.glassfish.jaxb:jaxb-runtime'
+	compile(files(genJaxb.classesDir).builtBy(genJaxb))   
+
+	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+// end::dependency[]
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-web') 
+	{
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+    //compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('org.springframework.boot:spring-boot-starter-jersey') 
+	{
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+	
+	providedRuntime('org.springframework.boot:spring-boot-starter-undertow')
+	providedCompile('javax.servlet:javax.servlet-api')
+	compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	//compile('org.glassfish.jersey.containers:jersey-container-servlet:2.25.1')
+	compile('org.springframework.boot:spring-boot-starter-security') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}		
+	//compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
+	compile group: 'javax.mail', name: 'mail', version: '1.4.7'	
+	compile group: 'org.apache.poi', name: 'poi', version: '4.0.1'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.1'
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.10.7'
+	runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.7'
+	runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.7'
+	compile group: 'org.json', name: 'json', version: '20180813'
+	compile files('libs/ojdbc6.jar') // agrega nuestro ojdbc
+	compile files('libs/javax.ws.rs-api-2.1.1.jar')
+	//compile files('libs/spring-boot-starter-mail-2.0.3.RELEASE.jar')
+    compile('org.liquibase:liquibase-core') // agrega liquibase
+	runtime('org.springframework.boot:spring-boot-devtools')	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	//compile files('libs/org.apache.axis_1.4.0.v201411182030.jar')
+    //compile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.13.0.Final'
+    
+  /*  compile files('libs/org.apache.commons.discovery_0.2.0.v201004190315.jar')
+	compile files('libs/org.apache.ant_1.10.5.v20190526-1402.jar')
+	compile files('libs/javax.xml.rpc-api-1.1.1.jar')*/
+	
+	 
+	 
+	compile files('libs/axis-1.4.jar') 
+	compile files('libs/axis-jaxrpc-1.4.jar') 
+	compile files('libs/axis-saaj-1.4.jar') 
+	compile files('libs/axis-wsdl4j-1.5.1.jar')  
+	compile files('libs/commons-logging-1.0.4.jar') 
+	compile files('libs/commons-discovery-0.2.jar') 
+	compile files('libs/com.lowagie.text-2.1.7.jar') 
+	
+	
+	compile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.13.0.Final'
+
+	implementation 'org.javassist:javassist:3.27.0-GA'
+ 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+	implementation 'jcifs:jcifs:1.3.17'
+
+
+}
+bootWar {
+	baseName = 'ventanilla'
+	archiveName 'ventanilla.war'
+	manifest {
+		attributes 'Implementation-Title': project.name,
+				'Implementation-Version': version
+	}
+}
+// tag::bootjar[]
+bootJar {
+	baseName = 'api-mef-service'
+	version =  '0.0.1'
+}
+// end::bootjar[]
+war {
+enabled=true
+	manifest {
+		attributes 'Dependencies': 'jdk.unsupported'
+	}
+}
+
+processResources {
+	filesMatching("**/application.properties") {
+		expand(project.properties)
+	}
+}
+bootRun {
+	systemProperty 'app.version', version
+}

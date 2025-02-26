@@ -1,0 +1,479 @@
+<style>
+.dataTables_paginate {
+	display: none;
+}
+</style>
+<form name="formvalidarSolicitud" ng-submit="submitForm()">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			<!-- <i class='clip-puzzle-3'></i> -->
+			Validar Solcitud
+		</h4>
+	</div>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-sm-5">
+				<iframe ng-src="{{documento.file}}"
+					style="background-color: white; height: 670px; width: 100%; float: left;"></iframe>
+			</div>
+			<div class="col-sm-7">
+				<div class="row">
+					<div class="col-sm-6">
+						<label class="control-label">Nro Solicitud: </label> <input
+							class="form-control" type="text"
+							style="font-size: 12px !important;"
+							ng-model="documento.id_documento" ng-disabled="true">
+					</div>
+					<div class="col-sm-6">
+						<label class="control-label">Nro Documento: </label> <input
+							class="form-control" type="text" name="nro_documento"
+							ng-model="documento.nro_documento"
+							style="font-size: 12px !important;" ng-required="true"
+							maxlength="255"
+							ng-class="{'is-invalid': (formvalidarSolicitud.nro_documento.$dirty || formvalidarSolicitud.nro_documento.$touched) && formvalidarSolicitud.nro_documento.$error.required}">
+						<p
+							ng-if="(formvalidarSolicitud.nro_documento.$dirty || formvalidarSolicitud.nro_documento.$touched) && formvalidarSolicitud.nro_documento.$error.required"
+							class="invalid-feedback">[Nro Documento] es obligatorio</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<label class="control-label">Tipo Documento: </label> <select
+							class="form-control" name="tipoDocumento" required
+							ng-model="documento.id_tipo_documento"
+							style="font-size: 12px !important;"
+							ng-class="{'is-invalid': (formvalidarSolicitud.tipoDocumento.$dirty || formvalidarSolicitud.tipoDocumento.$touched) && formvalidarSolicitud.tipoDocumento.$error.required}">
+							<option value="">--Seleccione--</option>
+							<option data-ng-repeat="item in tipoDocumento"
+								value={{item.id_tipodocumento}}
+								ng-selected="item.id_tipodocumento == documento.id_tipo_documento">
+								{{item.desc_tipodocumento}}</option>
+						</select>
+						<p
+							ng-if="(formvalidarSolicitud.tipoDocumento.$dirty || formvalidarSolicitud.tipoDocumento.$touched) && formvalidarSolicitud.tipoDocumento.$error.required"
+							class="invalid-feedback">[Tipo de Documento] es obligatorio</p>
+
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<label class="control-label">Fecha Presentaci&oacute;n: </label> <input
+							class="form-control" type="text"
+							style="font-size: 12px !important;"
+							ng-model="documento.srt_fecha_creacion" ng-disabled="true">
+					</div>
+
+					<div class="col-sm-3">
+						<label class="control-label">Nro Folios: </label> <input
+							class="form-control" type="text" name="nro_folios" maxlength="7"
+							ng-model="documento.nro_folios" ng-required="true" numbers-only
+							ng-change="foliosChange()" required
+							ng-class="{'is-invalid': (formvalidarSolicitud.nro_folios.$dirty || formvalidarSolicitud.nro_folios.$touched) && formvalidarSolicitud.nro_folios.$error.required}">
+						<p
+							ng-if="(formvalidarSolicitud.nro_folios.$dirty || formvalidarSolicitud.nro_folios.$touched) && formvalidarSolicitud.nro_folios.$error.required"
+							class="invalid-feedback">[Folios] es obligatorio</p>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<label class="control-label">Asunto: </label>
+						<textarea class="form-control" name="asunto" uppercased
+							ng-model="documento.asunto" cols="20" maxlength="4000"
+							ng-keyup="contarCaracteres()" ng-required="true"
+							ng-minlength="10" 
+							style="font-size: 12px !important;"
+							ng-class="{'is-invalid': (formvalidarSolicitud.asunto.$dirty || formvalidarSolicitud.asunto.$touched) && formvalidarSolicitud.asunto.$error.required}">
+                        </textarea>
+						<p
+							ng-if="(formvalidarSolicitud.asunto.$dirty || formvalidarSolicitud.asunto.$touched) && formvalidarSolicitud.asunto.$error.required"
+							class="invalid-feedback">[Asunto] es obligatorio</p>
+						<label id="lblCount1" style="width: 100%" class="Formato"
+							runat="server" text="">Nº Caracteres: {{contador}}
+							restan {{4000 - contador}}</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<label class="control-label">Remitente: </label> <input
+							class="form-control" type="text" value="Validacion de usuario"
+							ng-model="documento.nombre_persona" ng-disabled="true">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<label class="control-label">Hoja de Ruta referencia: </label>
+						<div class="input-group mb-3">
+							<!--<input class="form-control" type="text" ng-model="documento.hoja_ruta"  ng-disabled="false" ng-disabled="!formvalidarSolicitud.hoja_ruta.$error.pattern">-->
+							<input type="text" class="form-control" name="hoja_ruta"
+								maxlength="11" ng-pattern="/^[0-9]{6}-[0-9]{4}$/"
+								style="font-size: 12px !important;"
+								ng-model="documento.hoja_ruta" placeholder="000000-0000"
+								ng-class="{ 'is-invalid': formvalidarSolicitud.hoja_ruta.$error.pattern}" />
+							<div ng-show="formvalidarSolicitud.hoja_ruta.$error.pattern"
+								class="invalid-feedback">La Hoja de ruta de referencia no
+								coincide con el formato.</div>
+							<div
+								ng-if="documento.hoja_ruta != '' && !formvalidarSolicitud.hoja_ruta.$error.pattern"
+								class="input-group-append">
+								<button class="btn btn-green" type="button"
+									ng-click="validarExpediente(documento.hoja_ruta)">
+									<i class="clip-checkmark-2"></i>&nbsp; Validar
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-6">
+						<br> <br> <strong
+							ng-if="documento.situacionactual=='FINALIZADO'"
+							class="text-success">{{documento.situacionactual}}</strong> <strong
+							ng-if="documento.situacionactual!='FINALIZADO'"
+							class="text-warning">{{documento.situacionactual}}</strong>
+					</div>
+				</div>
+
+
+
+
+
+				<div class="row">
+					<div class="col-sm-6">
+						<label class="control-label">Prioridad: </label> <select
+							class="form-control" required id="id_prioridad"
+							name="id_prioridad" ng-model="documento.id_prioridad"
+							style="font-size: 12px !important;"
+							data-placeholder="--Seleccione--" data-allow-clear="true"
+							ng-class="{'is-invalid': (formvalidarSolicitud.id_prioridad.$dirty || formvalidarSolicitud.id_prioridad.$touched) && formvalidarSolicitud.id_prioridad.$error.required}">
+							<option value>-- Seleccione --</option>
+							<option value="0" selected>Normal</option>
+							<option value="1">Urgente</option>
+							<option value="2">Confidencial</option>
+							<option value="3">Secreto</option>
+							<option value="4">Reservado</option>
+							<option value="5">Otro</option>
+
+						</select>
+						<div ng-if="formvalidarSolicitud.id_prioridad.$invalid"
+							class="invalid-feedback">
+							<div ng-if="formvalidarSolicitud.id_prioridad.$error.required">La
+								Prioridad es requerido</div>
+						</div>
+					</div>
+					<div class="col-sm-6" ng-show="documento.tipopersona == 1">
+						<label class="control-label">Congresista: </label> <select
+							data-placeholder="--Seleccione--" data-allow-clear="true"
+							id="id_congresista" name="id_congresista"
+							ng-model="documento.id_congresista"
+							style="font-size: 12px !important;" select2 class="form-control">
+							<option></option>
+							<option data-ng-repeat="item in Congresistas" value={{item.id}}>
+								{{item.valor}}</option>
+						</select>
+						<!--  <div ng-if="formvalidarSolicitud.id_congresista.$invalid"
+							class="invalid-feedback">
+							<div ng-if="formvalidarSolicitud.id_congresista.$error.required">
+								Congresista es requerido</div>
+						</div>		
+					</div>	-->
+					</div>
+					<div class="col-sm-6">
+						<label class="control-label">Clasificaci&oacute;n: </label> <select
+							class="form-control" id="id_clasificacion"
+							name="id_clasificacion" ng-model="documento.id_clasificacion"
+							style="font-size: 12px !important;"
+							data-placeholder="--Seleccione--" data-allow-clear="true" select2
+							ng-class="{'is-invalid': (formvalidarSolicitud.id_clasificacion.$dirty || formvalidarSolicitud.id_clasificacion.$touched) && formvalidarSolicitud.id_clasificacion.$error.required}">
+							<option></option>
+							<option data-ng-repeat="item in Clasificaciones"
+								value={{item.idinfocomp}}>{{item.informacion}}</option>
+
+						</select>
+						<!--   <div ng-if="formvalidarSolicitud.id_clasificacion.$invalid"
+							class="invalid-feedback">
+							<div ng-if="formvalidarSolicitud.id_clasificacion.$error.required">
+								Clasificaci&oacute;n es requerido</div>
+						</div> -->
+					</div>
+					<div class="col-sm-6">
+						<label class="control-label">Comisi&oacute;n: </label> <select
+							data-placeholder="--Seleccione--" data-allow-clear="true"
+							id="id_comision" name="id_comision"
+							ng-model="documento.id_comision"
+							style="font-size: 12px !important;" select2 class="form-control">
+							<option></option>
+							<option data-ng-repeat="item in Comisiones" value={{item.id}}>
+								{{item.valor}}</option>
+						</select>
+						<!--  <div ng-if="formvalidarSolicitud.id_congresista.$invalid"
+							class="invalid-feedback">
+							<div ng-if="formvalidarSolicitud.id_congresista.$error.required">
+								Congresista es requerido</div>
+						</div>		
+					</div>	-->
+					</div>
+
+
+				</div>
+
+
+				<div class="row"></div>
+
+
+
+				<div class="row">
+					<div class="col-sm-12">
+						<label class="control-label">Organo Destino: </label> <select
+							select2 class="form-control" required id="id_oficina"
+							name="oficina" ng-model="documento.id_oficina"
+							style="font-size: 12px !important;"
+							ng-class="{'is-invalid': (formvalidarSolicitud.oficina.$dirty || formvalidarSolicitud.oficina.$touched) && formvalidarSolicitud.oficina.$error.required}"
+							data-placeholder="--Seleccione--" data-allow-clear="true">
+							<option></option>
+							<option data-ng-repeat="item in oficinas" value={{item.idunidad}}
+								ng-selected="item.idunidad == documento.id_oficina">
+								{{item.descripcioncompleta}}</option>
+						</select>
+						<div ng-if="formvalidarSolicitud.oficina.$invalid"
+							class="invalid-feedback">
+							<div ng-if="formvalidarSolicitud.oficina.$error.required">El
+								campo Oficina es requerido</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<label class="control-label">Comentario: </label>
+						<textarea class="form-control"
+							name="formvalidarSolicitud.comentario" uppercased maxlength="255"
+							ng-model="documento.comentario"
+							style="font-size: 12px !important;" rows="3"
+							ng-keyup="contarCaracteresComentario2()"></textarea>
+						<label id="lblCount1" style="width: 100%" class="Formato"
+							runat="server" text="">Nro Caracteres:
+							{{contadorComentario2}} restan {{255 - contadorComentario2}}</label>
+
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<table class="table table-hover" datatable="ng"
+							dt-options="showCase.dtOptions"
+							dt-column-defs="showCase.dtColumnDefs" class="row-border hover">
+							<thead>
+								<tr>
+									<th colspan="4">
+										<!-- <form name="MiForm" ng-submit="vm.addOrganos()"> -->
+										<div class="row">
+											<div class="col-9">
+												<label class="control-label">Otro Organo Destino: </label> <select
+													select2 class="form-control" name="idorgano"
+													ng-model="vm.ConfigurarOrgano.idorgano"
+													style="font-size: 12px !important;"
+													ng-change="vm.GetTextOrgano()"
+													data-placeholder="--Seleccione--" data-allow-clear="true">
+													<option></option>
+													<option data-ng-repeat="item in oficinas"
+														value={{item.idunidad}}
+														ng-selected="item.idunidad == ConfigurarOrgano.idorgano">
+														{{item.descripcioncompleta}}</option>
+												</select>
+												<!--ng-class="{'is-invalid':(MiForm.idorgano.$dirty || MiForm.idorgano.$touched) && MiForm.idorgano.$error.required}"
+                                                     <span ng-if="(MiForm.idorgano.$dirty || MiForm.idorgano.$touched) && MiForm.idorgano.$error.required" for="idorgano" class="invalid-feedback">
+                                                    [Organo destino] es obligatorio
+                                                </span>   -->
+												<input type="hidden" name="idorganoText"
+													ng-model="vm.ConfigurarOrgano.idorganoText"
+													value="{{vm.ConfigurarOrgano.idorganoText}}">
+											</div>
+											<div class="col-3">
+												<label class="control-label"
+													style="width: 100%; text-align: left !important;">Conocimiento</label>
+												<!-- <label class="control-label">                          
+                                                    <input type="checkbox" class="" name="Conocimiento" ng-model="vm.ConfigurarOrgano.Conocimiento" value="Conocimiento">  
+                                                    Conocimiento
+                                                </label> -->
+												<select class="form-control" name="idAcciones"
+													ng-model="vm.ConfigurarOrgano.idAcciones"
+													ng-change="vm.GetTextAcciones()">
+													<option value="">--Seleccione--</option>
+													<option data-ng-repeat="item in ListAcciones"
+														value={{item.id}}
+														ng-selected="item.id == ConfigurarOrgano.idAcciones">
+														{{item.valor}}</option>
+												</select>
+												<!--ng-class="{'is-invalid':(MiForm.idAcciones.$dirty || MiForm.idAcciones.$touched) && MiForm.idAcciones.$error.required} 
+                                                    <span ng-if="(MiForm.idAcciones.$dirty || MiForm.idAcciones.$touched) && MiForm.idAcciones.$error.required" for="idAcciones" class="invalid-feedback">
+                                                    [Conocimiento] es obligatorio
+                                                </span>   -->
+												<input type="hidden" name="idaccionText"
+													ng-model="vm.ConfigurarOrgano.idaccionText"
+													style="font-size: 12px !important;"
+													value="{{vm.ConfigurarOrgano.idaccionText}}">
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-10">
+												<label class="control-label">Comentario: </label>
+												<textarea class="form-control text-uppercase"
+													name="comentario" uppercased maxlength="255"
+													ng-model="vm.ConfigurarOrgano.comentario"
+													style="font-size: 12px !important;" rows="3"
+													ng-keyup="contarCaracteresComentario()"></textarea>
+												<label id="lblCount1" style="width: 100%" class="Formato"
+													runat="server" text="">Nro Caracteres:
+													{{contadorComentario}} restan {{255 - contadorComentario}}</label>
+												<!-- ng-class="{'is-invalid':(MiForm.comentario.$dirty || MiForm.comentario.$touched) && MiForm.comentario.$error.required}
+                                                    <span ng-if="(MiForm.comentario.$dirty || MiForm.comentario.$touched) && MiForm.comentario.$error.required" for="comentario" class="invalid-feedback">
+                                                    [Comentario] es obligatorio
+                                                </span>                                                                       -->
+											</div>
+											<div class="col-2 text-right">
+												<br /> <br /> <br /> <br />
+												<button class="btn btn-blue" type="submit"
+													ng-click="vm.addOrganos()">
+													<i class="fa fa-plus"></i>
+												</button>
+												<!-- <button class="btn btn-blue" type="submit" ng-disabledg="MiForm.$invalid">                                                    
+                                                    <i class="fa fa-plus"></i>
+                                                </button>   -->
+
+											</div>
+										</div> <!-- </form> -->
+									</th>
+								</tr>
+								<tr>
+									<th>Otro organo Destino</th>
+									<th>Conocimiento</th>
+									<th>Comentario</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="item in vm.TablaOrganos">
+									<td>{{ item.selectOrganoText}}</td>
+									<td>{{ item.selectAccionText }}</td>
+									<td>{{ item.comentario }}</td>
+									<td>
+										<!-- <button type="button" ng-click="vm.modifyOrganos($index)"
+											class="btn btn-link">
+											<i class="fa fa-edit"></i>
+										</button> -->
+										<button type="button" ng-click="vm.removeOrganos($index)"
+											class="btn btn-link text-danger">
+											<i class="fa fa-trash-o"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="row"
+					style="border-top: 1px solid #d5d5d5; padding-top: 15px; margin-bottom: 5px;">
+
+					<div class="col-sm-8">
+						<input input-file type="file" id="filesAnexo"
+							ng-model="filesAnexo" ng-change="doFileChange()"
+							name="fileArchivo" style="color: blue; font-weight: bold;">
+					</div>
+
+					<div class="col-sm-4 text-right">
+						<button id="btnAgregarArchivo" ng-click="addFile()"
+							class="btn btn-blue" type="button"
+							title="Click para agregar el archivo a la lista.">
+							<i class="fa fa-plus"></i>&nbsp;Agregar anexo
+						</button>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th>Nro</th>
+									<th>Nombre de Archivo</th>
+									<th>Fecha</th>
+									<th>Tamaño</th>
+									<th></th>
+								</tr>
+							<thead>
+							<tbody ng-repeat="item in documento.anexos">
+								<tr>
+									<td>{{$index+1}}</td>
+									<td style="max-width: 250px;"><label class="col-sm-6"
+										title="Descargar"
+										ng-show="(item.flg_link == '1' || item.flg_link == 'null') && item.flg_estado == 1"
+										target="_self"
+										style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer"
+										ng-click="downloadFile(item.id_documento,item.extension_archivo,item.codigo_archivo)">
+											{{item.nombre_archivo}} </label> <a class="col-sm-6" title="ver link"
+										href="{{item.nombre_archivo}}"
+										ng-show="item.flg_link == '2' && item.flg_estado == 1" item
+										target="_black"
+										style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: blue; cursor: pointer; word-wrap: break-word; display: inline-block; max-width: 100%;">
+											{{item.nombre_archivo}} </a> 
+											<label class="col-sm-6"
+										ng-show="item.flg_estado == 0"  
+										style="margin-top: 10px; margin-left: 0px; font-size: 12px; color: black; cursor: default">
+											{{item.nombre_archivo}} </label>
+											</td>
+
+									<td>{{item.fec_creacion}}</td>
+									<td>{{item.tamanio_archivo | Filesize}}</td>
+									<td>
+										<button class="ml-1 btn btn-link text-danger"
+											ng-show="item.crea_MPI" ng-show="item.flg_estado == 1"
+											ng-click="removeFile(item.codigo_archivo)" type="button"
+											title="Remover de la lista" style="outline: none;">
+											<i class="clip-close"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+							<tbody ng-repeat="item in files">
+								<tr>
+									<td>{{documento.anexos.length + $index + 1}}</td>
+									<td>{{item.fileName}}</td>
+									<td>{{item.date}}</td>
+									<td>{{item.size | Filesize}}</td>
+									<!--<td>
+										<button class="ml-1 btn btn-link text-danger"
+											ng-click="onArrayFileDelete($index)" type="button"
+											title="Remover de la lista" style="outline: none;">
+											<i class="clip-close"></i>
+										</button>
+									</td>-->
+								</tr>
+							</tbody>
+							<tbody
+								ng-if="documento.anexos.length == 0 && documento.anexo == null">
+								<tr>
+									<td colspan="4"><span class="text-info"> Sin Anexos
+									</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button id="btnGrabar" type="submit" class="btn btn-blue"
+			ng-disabledg="MiForm.$invalid"
+			ng-if="(documento.hoja_ruta == '') || (documento.hoja_ruta != '' && documento.situacionactual !='')"
+			ng-click="recibirSolicitud(IdSolicitud)">
+			<i class="fa fa-check"></i> Recibir
+		</button>
+		<button id="btnGrabar" type="button" class="btn btn-primary"
+			ng-click="openModalObservarSolicitud(IdSolicitud)">
+			<i class="fa fa-times"></i> Observar
+		</button>
+		<button class="btn btn-secondary" type="button" ng-click="cancel()">
+			<i class="fa fa-share-square-o"></i>Cerrar
+		</button>
+	</div>
+</form>

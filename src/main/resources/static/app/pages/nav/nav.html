@@ -1,0 +1,77 @@
+<!-- <div class="text-white font-r menu-sidebar">
+    <div><img src="assets/images/logo_mef.jpg" /> </div>
+    <div active-menu class="main-navigation" style="min-height: 846px;"> -->
+        <ul active-menu class="sidebar-menu nav flex-column" style="margin-top: 15px">
+            <li class="nav-item">
+                <a class="nav-link"  >
+                    <i class="clip-home-3"></i>&nbsp;
+                    <span class="title">Menú - Opciones </span>
+                </a>
+            </li>
+            <li class="nav-item" ng-repeat="menu in MenuUser" >
+                <a class="nav-link" href="#!{{menu.id_a}}" id="{{menu.id_sistema_modulo}}">
+                    <i class="{{menu.imagen}}"></i>&nbsp;
+                    <span class="title">{{menu.desc_modulo}}</span>
+                     
+            
+                    <div ng-show="menu.flg_alerta == 1" style="
+                      margin-right: -10px;
+                        border: none;
+                        border-radius: 50%;
+                        float: right;
+                        text-align: center;
+                        background-color: rgb(240 173 78);
+                        margin-left: 10px;
+                        padding: 0px 3px 0px 3px;
+                        box-sizing: border-box;" class="">
+                        <b style="color: rgb(0, 0, 0)" class="ng-binding Show_Alert"   id="Alert_{{menu.id_sistema_modulo}}" > {{menu.count_alera}} </b>
+                    </div>
+
+                </a>
+            </li>   
+            <!-- <li>
+                <a href="#!" ng-click="logout()" style="color:gray">
+                    <i class="clip-exit"></i>
+                    <span class="title">Cerrar Sesión</span>
+                </a>
+            </li>            -->
+            <!-- 
+
+            <li>
+                <a href="#!mesa-partes-externa" id="aMesaExterno" style="color:gray">
+                    <i class="clip-screen"></i>
+                    <span class="title">Mesa de Partes Externo</span>
+                </a>
+            </li>
+
+            <li [routerLink]="'casilla'">
+                <a href="javascript:void(0);" id="aCasilla" style="color:gray">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="title">Casilla Electrónica</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#!mesa-partes-interna" id="aMesaInterno" style="color:gray">
+                    <i class="clip-screen"></i>
+                    <span class="title">Mesa de Partes Interno</span>
+                </a>
+            </li> -->
+
+            <!-- <li routerLinkActive="active open" [routerLink]="'notificaciones'">
+                <a href="javascript:void(0);" id="aNotificaciones" style="color:gray">
+                    <i class="clip-book"></i>
+                    <span class="title">Notificaciones</span>
+                </a>
+            </li>-->
+
+            <!-- <li routerLinkActive="active open" [routerLink]="'usuarios'">
+                <a href="javascript:void(0);" id="aUsuarios" style="color:gray">
+                    <i class="clip-users"></i>
+                    <span class="title">Usuarios</span>
+                </a>
+            </li>
+
+             -->
+  </ul>
+<!-- </div> -->

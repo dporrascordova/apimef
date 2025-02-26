@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title"><i class="clip-plus-circle-2"></i>&nbsp; Nuevo Mensaje</h3>
+</div>
+<form name="form.MensajeBody" ng-submit="submitForm()" novalidate>
+    <div class="modal-body">
+        <div class="row" style="margin-bottom: 10px;">
+
+            <label class="col-sm-3 control-label text-right"
+                style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Mensaje:
+            </label>
+            <div class="col-sm-8">
+                    <textarea  class="form-control"  class="form-control" maxlength="3000" ng-model="model.mensaje"
+                     required ng-class="{ 'is-invalid': submitted && form.MensajeBody.mensaje.$invalid }" ng-keyup="contarCaracteres()"> </textarea>
+                <div ng-show="submitted && form.MensajeBody.mensaje.$invalid" class="invalid-feedback">
+                    <div ng-show="form.MensajeBody.mensaje.$error.required">El campo mensaje es
+                        requerido</div>
+                </div>
+
+                <label id="lblCount1" style="width: 100%" class="Formato" runat="server" text="">Nº Caracteres:
+                    {{contador}}
+                    restan
+                    {{3000 - contador}}</label>
+            </div>
+    </div>
+
+
+
+    <div class="row" style="border-top: 1px solid #d5d5d5;padding-top: 15px;margin-bottom: 5px;">
+        <label class="col-sm-3 control-label text-right"
+            style="margin-left: -10px;padding-left: 0px;padding-top: 6px;text-align: right;padding-right: 5px;">Anexos:</label>
+        <div class="col-sm-5">
+            <input input-file type="file" id="filesAnexo" ng-model="filesAnexo" name="fileArchivo"
+                style="color: blue; font-weight: bold;">
+        </div>
+        <div class="col-sm-4">
+            <button id="btnAgregarArchivo" ng-click="addFile()" class="btn btn-blue" type="button"
+                title="Click para agregar el archivo a la lista."><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+        </div>
+    </div>
+    
+    <div class="row" style="margin-bottom: 10px;">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8 pl-0">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>N°</strong></th>
+                        <th><strong>Nombre de Archivo</strong></th>
+                        <th><strong>Fecha</strong></th>
+                        <th><strong>Tamaño</strong></th>
+                        <th class="width:10px;"></th>
+                    </tr>
+                    <thead>
+                    <tbody ng-repeat="item in files">
+                        <tr>
+                            <td> {{$index+1}}</td>
+                            <td> {{item.fileName}} </td>
+                            <td> {{item.date}}</td>
+                            <td> {{item.size | Filesize}}</td>
+                            <td> <button class="ml-1 btn btn-link text-danger" ng-click="onArrayFileDelete($index)"
+                                    type="button" title="Remover de la lista" style="outline: none;"><i
+                                        class="clip-close"></i></button></td>
+                        </tr>
+                    </tbody>
+                <tbody ng-if="files.length==0">
+                    <tr>
+                        <td colspan="5">
+                            <h6 class="text-info text-center" style="font-size: 0.8rem;">
+                                <strong>Sin Archivos</strong>
+                            </h6>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="modal-footer">
+        <button class="btn btn-red" type="submit" ng-disabledg="form.MensajeBody.$invalid"><i
+                class="fa fa-envelope"></i>&nbsp;Enviar</button>
+        <button type="button" ng-click="close()" class="btn btn-secondary">
+            <i class="fa fa-share-square-o"></i>&nbsp; Cerrar</button>
+    </div>
+</form>

@@ -1,0 +1,97 @@
+<!-- ng-submit="submit_correo()" -->
+<form name="form.userForm">
+    <div class="modal-header">
+        <h6 class="modal-title" id="modal-title">Recuperar contraseña</h3>
+    </div>
+    <div class="modal-body" id="modal-body">    
+        <div style="padding: 10px;">
+            <div class="inline-container-Group"> 
+                <div class="row" style="margin-bottom: 2px;">
+                    <div class="col-sm-12">
+                        <table class="cssTablaDetalleDoc">
+                        <tbody>
+                            <tr>
+                            <td ng-if="P_MostrarCodigo == false" style="padding: 7px;background-color: #f7f7f7;text-align: center;">
+                                Ingrese el correo
+                                electr&oacute;nico asociado a su cuenta</td>
+                            <td ng-if="P_MostrarCodigo == true" style="padding: 7px;background-color: #f7f7f7;text-align: center;">
+                                Ingrese el c&oacute;digo
+                                enviado a su correo electr&oacute;nico</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-if="P_MostrarCodigo==false" class="row">
+                    <div class="col-sm-12" ng-class="{ 'has-error' : form.userForm.UCorreo.$invalid && !form.userForm.UCorreo.$pristine }">
+                        
+                        <input class="form-control" type="email" name="UCorreo" ng-model="form.UCorreo" 
+                        ng-minlength="3" ng-maxlength="100" ng-required="true" autocomplete="off" placeholder="Ej. richard123@gmail.com" 
+                        style="text-align: center;">                        
+
+                        <p ng-show="(form.userForm.UCorreo.$dirty || form.userForm.UCorreo.$touched) && form.userForm.UCorreo.$error.required" class="help-block">
+                            [Correo] es obligatorio
+                        </p>  
+                        <p ng-show="form.userForm.UCorreo.$error.email" class="help-block">
+                            [Correo] es invalido</p> 
+                        <div ng-show="P_CorreoNoEncontrado==true">
+                            <span for="UCorreo" generated="true" class="help-block" style="text-align: center;">[Correo] ingresado no
+                            fue encontrado </span>
+                        </div>    
+                    </div> 
+                </div>                
+                <!-- -->
+                <div ng-if="P_MostrarCodigo==true"  class="row">
+                    <div class="col-sm-12" ng-class="{ 'has-error' : form.userForm.UCodigo.$invalid && !form.userForm.UCodigo.$pristine }">                        
+                        <input class="form-control" type="text" name="UCodigo" ng-model="form.UCodigo" placeholder="Ej. 4a51-a6cc-b8710b3d5e2d" 
+                        style="text-align: center;" ng-minlength="3" ng-maxlength="100" ng-required="true">
+
+                        <div ng-show="(form.userForm.UCodigo.$dirty || form.userForm.UCodigo.$touched) && form.userForm.UCodigo.$error.required" class="help-block text-center">                                                    
+                                [C&oacute;digo] es obligatorio                        
+                        </div>
+                        <div ng-if="P_CodigoNoEncontrado==true" class="help-block text-center">
+                            [C&oacute;digo] ingresado no fue encontrado
+                        </div>            
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <!--  -->
+        <div class="form-group">
+						<!-- -		<div class="col-md-6">
+									<img  alt="captcha" ng-src="{{capchaUrl}}">
+								</div>
+								<div class="col-md-6">
+									<input name="UCaptcha" id="UCaptcha" ng-model="form.UCaptcha" type="text" ng-required="true" maxlength="7">
+									<input id="btnNuevo" ng-click="refreshCaptcha()" name="btnNuevo" type="button" value="Refrescar c&oacute;digo captcha" class="btn-primary" style="height:34px; font-size: 12px;">
+								</div> -->
+
+                                <div class="col-sm-12 form-group " style="margin:0px;padding: 0px;">
+                                    <div class="col-sm-8" style="text-align: left; padding-right: 0px;">	<img alt="captcha" ng-src="{{capchaUrl}}" style=" height: 100%; width: 100%;" /> </div>
+                                    <div class="col-sm-4" style="    text-align: left;  padding-left: 0px;">
+                                      <button type="button" class="btn-primary"  style=" height: 43px;width:100%; font-size: 15px;" ng-click="refreshCaptcha()"><i class="fa fa-refresh"></i></button>
+                                  </div>
+                                  
+                                </div>
+                               <div class="col-sm-12 form-group">
+                                  <div class="col-sm-12" style="text-align: left;padding: 0px;">
+                                  <input
+                                      name="UCaptcha" id="UCaptcha" class="form-control"
+                                      ng-model="form.UCaptcha" type="text" ng-required="true"
+                                      maxlength="7" style="width: 100%;margin: 0px;" >
+                                  </div>
+ 
+                                  </div> 
+
+		   </div>
+        <button ng-if="P_MostrarCodigo==false" class="btn btn-primary" type="button" ng-disabled="form.userForm.$invalid" ng-click="submit_correo()">
+            <i class="fa fa-envelope"></i> Enviar</button>
+            <!--  -->
+        <button ng-if="P_MostrarCodigo==true"  class="btn btn-primary" type="button" ng-disabled="form.userForm.$invalid" ng-click="submit_verificarCodigo()">
+                <i class="clip-checkmark-2"></i> Verificar</button>        
+        <button id="Solicitud_Registrar_btnCerrar" type="button" class="btn btn-secondary" ng-click="cancel()">
+            <i class="fa fa-share-square-o"></i> Cerrar</button>
+    </div>    
+</form>

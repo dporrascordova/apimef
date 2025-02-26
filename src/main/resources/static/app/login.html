@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Last-Modified" content="0">
+<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+<meta http-equiv="Pragma" content="no-cache">
+  
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="msapplication-tap-highlight" content="no">
+
+<title>Ventanilla Electrónica</title>
+<link rel="icon" type="image/png" href="assets/images/ico.png"
+	sizes="192x192">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href='https://fonts.googleapis.com/css?family=Lato:300,400,700'
+	rel='stylesheet' type='text/css'>
+<!-- <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="../app/assets/styles/app.css">
+<link rel="stylesheet" href="../app/assets/styles/font-awesome.min.css">
+<link rel="stylesheet"
+	href="../node_modules/angularjs-toaster/toaster.min.css">
+<!-- build:css assets/css/styles.css -->
+<link rel="stylesheet" href="../app/assets/styles/main_login.css">
+<link rel="stylesheet" href="../app/assets/styles/main.css">
+<link rel="stylesheet" href="../app/assets/styles/custom.css">
+
+<!-- endbuild -->
+
+<script type="text/javascript">
+	// //<![CDATA[
+	// (function() {
+	//     var shr = document.createElement('script');
+	//     shr.setAttribute('data-cfasync', 'false');
+	//     shr.src = '//dsms0mj1bbhn4.cloudfront.net/assets/pub/shareaholic.js';
+	//     shr.type = 'text/javascript'; shr.async = 'true';
+	//     shr.onload = shr.onreadystatechange = function() {
+	//         var rs = this.readyState;
+	//         if (rs && rs != 'complete' && rs != 'loaded') return;
+	//         var site_id = 'eafbfda40f862712debe1bc8fcb68c8f';
+	//         try { Shareaholic.init(site_id); } catch (e) {}
+	//     };
+	//     var s = document.getElementsByTagName('script')[0];
+	//     s.parentNode.insertBefore(shr, s);
+	// })();
+	// //]]>
+</script>
+</head>
+<body class="login linkfish theme-mef" ng-controller="LoginController"
+	loading>
+	<toaster-container></toaster-container>
+	<div class="main-login col-sm-4 col-sm-offset-4">
+		<div class="logo" style="color: #ed3238">Ventanilla Electrónica
+		</div>
+		<div ng-controller="LoginController" class="box-login"
+			style="display: block; text-align: center;">
+			<div class="logo"
+				style="display: flex; flex-wrap: wrap; text-align: center; justify-content: center; padding: 0px">
+				<img src="assets/images/logo_mef.jpg" style="width: 50%" />
+			</div>
+			<h3 style="width: 100%">Inicio de Sesión</h3>
+			<p style="float: left">Ingrese su usuario y clave para ingresar</p>
+			<br />
+			<form name="loginForm" role="login" style="text-align: left;"
+				ng-submit="login()">
+				<fieldset style="float: left; width: 100%;">
+					<div class="form-group"
+						ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
+						<span class="input-icon"> <input type="text" nospecialchar
+							required name="username" class="form-control"
+							placeholder="Nombre de usuario" ng-model="usuario.username"
+							ng-minlength="3" ng-maxlength="20" ng-required="true"
+							autocomplete="off" class="form-control"
+							ng-class="{'is-invalid': (loginForm.username.$dirty || loginForm.username.$touched) && loginForm.username.$error.required}">
+							<i class="fa fa-user"></i>
+							<p
+								ng-show="(loginForm.username.$dirty || loginForm.username.$touched) && loginForm.username.$error.required"
+								class="invalid-feedback">[Nombre de usuario] es obligatorio
+							</p>
+						</span>
+					</div>
+					<div class="form-group"
+						ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
+						<span class="input-icon"> <input type="password"
+							name="password" class="form-control" placeholder="Contraseña"
+							ng-model="usuario.password" ng-minlength="3" ng-maxlength="50"
+							ng-required="true" autocomplete="new-password"
+							ng-class="{'is-invalid': (loginForm.password.$dirty || loginForm.password.$touched) && loginForm.password.$error.required}">
+							<i class="fa fa-lock"></i>
+							<p
+								ng-show="(loginForm.password.$dirty || loginForm.password.$touched) && loginForm.password.$error.required"
+								class="invalid-feedback">[Contraseña] es obligatorio</p>
+						</span> <a id="btn_OlvidoContrasenia"
+							style="cursor: pointer; margin: 10px; padding: 2px 2px 2px 0px; color: blue"
+							class="register pull-left" ng-click="openModalOlvideClave('md')">
+							¿Olvide mi contraseña?</a> <br />
+					</div>
+					<div class="errorHandler alert alert-danger no-display">
+						<i class="clip-warning"></i> Usuario y/o contraseña no validos.
+					</div>
+
+					<!-- 
+					<div  class="row" style="text-align: right;"> 
+						<div class="col-sm-12 pull-right" style="text-align: center;">
+						  <div class="col-sm-12 form-group " style="margin:0px;padding: 0px;">
+							  <div class="col-sm-8" style="text-align: left; padding-right: 0px;">	<img alt="captcha" ng-src="{{capchaUrl}}" style=" height: 100%; width: 100%;" /> </div>
+							  <div class="col-sm-4" style="    text-align: left;  padding-left: 0px;">
+								<button type="button" class="btn-primary"  style="height: 100%;width:100%; font-size: 15px;" ng-click="refreshCaptcha()"><i class="fa fa-refresh"></i></button>
+							</div>
+							
+						  </div>
+						 <div class="col-sm-12 form-group">
+							<div class="col-sm-12" style="text-align: left;padding: 0px;">
+							<input
+								name="UCaptcha" id="UCaptcha" class="form-control"
+								ng-model="usuario.captcha" type="text" ng-required="true"
+								maxlength="7" style="width: 100%;margin: 0px;"
+								ng-class="{ 'is-invalid': (loginForm.captcha.$dirty || loginForm.captcha.$touched || submitted) && loginForm.captcha.$error.required}">
+							</div>
+							<span
+								ng-if="(loginForm.captcha.$dirty || loginForm.captcha.$touched || submitted) && loginForm.captcha.$error.required"
+								for="UCaptcha" class="invalid-feedback"> [Captcha] es
+								obligatorio </span> 
+							</div> 	
+						</div> 
+					</div> -->
+					<div class="row content_capcha " style="width: 190px;">
+						<div class="" style="height: 100%; width: 150px; float: left;">
+							<img alt="captcha" ng-src="{{capchaUrl}}"
+								style="height: 40px; width: 100%" />
+						</div>
+						<div class="" style="height: 100%; width: 30px; float: right;">
+							<button type="button" class="btn-primary"
+								style="height: 40px; width: 100%; font-size: 15px;"
+								ng-click="refreshCaptcha()">
+								<i class="fa fa-refresh"></i>
+							</button>
+						</div>
+
+						<input name="UCaptcha" id="UCaptcha" class="form-control"
+							ng-model="usuario.captcha" type="text" ng-required="true"
+							maxlength="7"
+							style="width: 180px; margin: 0px; height: 40px; clear: both; font-size: 20px; TEXT-ALIGN: center;"
+							ng-class="{ 'is-invalid': (loginForm.captcha.$dirty || loginForm.captcha.$touched || submitted) && loginForm.captcha.$error.required}">
+
+						<span
+							ng-if="(loginForm.captcha.$dirty || loginForm.captcha.$touched || submitted) && loginForm.captcha.$error.required"
+							for="UCaptcha" class="invalid-feedback"> [Captcha] es
+							obligatorio </span>
+
+
+					</div>
+					<div class="new-account">
+						¿ Todavía no tienes una cuenta ?
+						<button type="submit" class="btn btn-primary pull-right"
+							ng-disabled="loginForm.$invalid || loginForm.$pending">
+							Ingresar <i class="fa fa-arrow-circle-right"></i>
+						</button>
+					</div>
+
+					<div class="new-account">
+						<b> Persona Natural o Jurídica:</b> <a id="btn_CrearCuenta"
+							style="cursor: pointer; margin: 10px; padding: 4px; color: blue"
+							class="register" ng-click="openModalUsuarioRegistrar('xl')">
+							Crear una cuenta</a> <br /> <b ng-click="downloadFile()"
+							style="color: #007BE8; font-size: 12px;cursor: pointer;"> - Manual de Usuario</b>
+
+						<!--  <a id="btn_ProbarApi" style="cursor: pointer;margin: 10px;padding: 4px;border: 1px solid #b7aeae;"
+                            class="register" ng-click="probarAPI()"> Probar API</a> 
+						<br /> <b style="color: #007BE8; font-size: 12px;"> -
+							T&eacute;rminos y Condiciones de uso</b> <br /> <b
+							style="color: #007BE8; font-size: 12px;"> - Manual de Usuario</b>
+						<br /> <b style="color: #007BE8; font-size: 12px;"> -
+							Instructivo creaci&oacute;n de Usuario - car&aacute;cter excepcional y
+							transitorio </b>  -->
+					</div>
+				</fieldset>
+			</form>
+		</div>
+
+		<div class="copyright">{{anio}} © Ministerio de Econom&iacute;a
+			y Finanzas  V 1.1.0 P </div>
+
+	</div>
+	<!-- build:assets assets.min.js -->
+	<!-- ASSETS -->
+	<script src="../node_modules/jquery/dist/jquery.js"
+		crossorigin="anonymous"></script>
+	<!-- <script src="/node_modules/moment/moment.js"></script>
+    <script src="/node_modules/moment/dist/locale/es.js"></script>
+    <script src="/node_modules/angular-moment/angular-moment.min.js"></script> -->
+
+	<!-- <script src="/node_modules/popper.js/dist/popper.js"  crossorigin="anonymous"></script> -->
+	<!-- 
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+     
+     
+    
+    <script src="../node_modules/popper.js/dist/popper.min.js"></script>
+     -->
+	<script src="../app/assets/js/popper.min.js" crossorigin="anonymous"></script>
+	<script src="../app/assets/js/angular.min.js" crossorigin="anonymous"></script>
+	<script src="../app/assets/js/angular-route.min.js"
+		crossorigin="anonymous"></script>
+	<script src="../app/assets/js/angular-cookies.min.js"></script>
+	<script src="../app/assets/js/angular-animate.min.js"></script>
+	<script src="../app/assets/js/angular-touch.min.js"></script>
+	<script src="../app/assets/js/angular-sanitize.min.js"></script>
+	<script src="../node_modules/angular-jwt/dist/angular-jwt.min.js"></script>
+	<script src="../app/assets/js/angular-resource.min.js"
+		crossorigin="anonymous"></script>
+
+	<script src="../node_modules/ui-bootstrap4/dist/ui-bootstrap-tpls.js"></script>
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"
+		crossorigin="anonymous"></script>
+	<script src="../node_modules/angularjs-toaster/toaster.min.js"
+		crossorigin="anonymous"></script>
+	<script src="../node_modules/bootbox/dist/bootbox.min.js"></script>
+	<script src="../node_modules/ngbootbox/dist/ngBootbox.min.js"></script>
+	<script
+		src="../node_modules/angularjs-google-recaptcha-v3/release/angularjs-google-recaptcha-v3.min.js"></script>
+	<script
+		src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script
+		src="../node_modules/angular-datatables/dist/angular-datatables.min.js"></script>
+	<script src="../node_modules/moment/min/moment-with-locales.js"></script>
+	<!-- / -->
+	<!-- endbuild -->
+	<!-- build:js app.min.js -->
+	<!-- MODULES -->
+	<script src="../app/app.routes.js"></script>
+	<script src="../app/app.config.js"></script>
+	<script src="../app/app.core.js"></script>
+	<script src="../app/app.services.js"></script>
+	<script src="../app/app.js"></script>
+	<!-- / -->
+	<!-- CONTROLLERS -->
+	<script src="pages/login/login.controller.js"></script>
+	<script src="pages/login/usuario-nuevo/usuarionuevo.controller.js"></script>
+	<script src="pages/login/usuario-nuevo/dni/dni.controller.js"></script>
+	<script src="pages/login/olvide-clave/olvideclave.controller.js"></script>
+	<script src="pages/main.controller.js"></script>
+	<script src="pages/home/home.controller.js"></script>
+	<!-- / -->
+	<!-- SERVICES -->
+	<script src="services/transversal.service.js"></script>
+	<script src="services/login.service.js"></script>
+	<script src="services/interceptor.service.js"></script>
+	<script src="services/home.service.js"></script>
+	<!-- / -->
+	<!-- DIRECTIVES -->
+	<script src="directives/directives.js"></script>
+	<!-- <script src="components/show/show.drct.js"></script>
+    <script src="directives/ngEnter.drct.js"></script> -->
+	<!-- / -->
+	<!-- inject:js -->
+	<!-- endinject -->
+	<!-- endbuild -->
+	<script>
+		var modal_lv = 0;
+		//var anio = 12;
+		$(document).on(
+				//  anio = new Date().getFullYear();
+				'shown.bs.modal',
+				function(e) {
+					$('.modal-backdrop:last').css('zIndex', 1051 + modal_lv);
+					$('.bootbox.modal').css('z-index',
+							(1053 + modal_lv) + ' !important');
+					$(e.target).css('zIndex', 1052 + modal_lv);
+					modal_lv++
+				}).on('hidden.bs.modal', function(e) {
+			if ($('body').hasClass('modal-open') == false) {
+				$('body').addClass('modal-open');
+			}
+			;
+			modal_lv--
+		});
+		// $(document).on('hidden.bs.modal', '.bootbox.modal', function (event) {
+		//     if ($('body').hasClass('modal-open') == false) {
+		//         $('body').addClass('modal-open');
+		//     };
+		// });
+		// var modal_lv = 1 ;
+		// $('body').on('shown.bs.modal', function(e) {
+		//     //debugger;
+		//     if ( modal_lv > 0 )
+		//     {
+		//         $('.modal-backdrop:last').css('zIndex',1050+modal_lv) ;
+		//         $('.bootbox.modal').css('z-index','9999 !important');
+		//         $(e.target).css('zIndex',1051+modal_lv) ;
+		//     }
+		//     modal_lv++ ;
+		// }).on('hidden.bs.modal', function() {
+		//     if ( modal_lv > 0 )
+		//         modal_lv-- ;
+		// });       
+		// $(document).on('hidden.bs.modal', '.bootbox.modal', function (event) {
+		//     if ($('.modal:visible').length) {
+		//         $('body').addClass('modal-open');
+		//     }
+		// });
+		// $(document).on('shown.bs.modal', function() {
+		//     debugger;
+		//     //To relate the z-index make sure backdrop and modal are siblings
+		//     $(this).before($('.modal-backdrop'));
+		//     //Now set z-index of modal greater than backdrop
+		//     $(this).css("z-index", parseInt($('.modal-backdrop').css('z-index')) + 1);
+		// });
+		// $(document).on('hidden.bs.modal', '.bootbox.modal', function (e) {    
+		//     if($(".modal").hasClass('show')) {
+		//         $('body').addClass('modal-open');
+		//     }
+		// });
+	</script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<div ng-controller="usuariosController">
+
+	<uib-tabset active="active"> 
+	<uib-tab index="0"
+		select="searchSolicitudesUsuario()"> <uib-tab-heading
+		select="alertMe()"> Solicitudes </uib-tab-heading>
+
+	<div class="tab-content" style="margin: 0px; padding: 0px;">
+		<form [formGroup]="searchCriteria"
+			ng-submit="searchSolicitudesUsuario()" class="text-sm">
+			<div class="row">
+				<div class="col-sm-12 inline-container-Group"
+					style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+					<p class="modal-title"
+						style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+						Criterios de b&uacute;squeda:</p>
+					<fieldset style="width: 100%;">
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Nombres /
+								Raz&oacute;n Social </label>
+							<div class="col-sm-2">
+								<input class="form-control" ng-model="model.nombretab1"
+									maxlength="100" placeholder="Nombres" style="width: 100%"
+									type="text" value="">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Correo: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.correotab1" class="form-control"
+									maxlength="50" name="correotab1"
+									placeholder="Ej. rony@vimero.io" style="width: 100%"
+									type="text">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tel&eacute;fono:
+							</label>
+							<div class="col-sm-2">
+								<input class="form-control" ng-model="model.telefonotab1"
+									name="telefonotab1" maxlength="11" placeholder="Teléfono"
+									style="width: 100%" type="text">
+							</div>
+						</div>
+
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Persona: </label>
+							<div class="col-sm-2">
+								<select ng-model="model.personatab1" name="personatab1"
+									id="personatab1" class="form-control">
+									<option value="0" selected>-- Todos --</option>
+									<option value="1">Natural</option>
+									<option value="2">Jur&iacute;dica</option>
+								</select>
+							</div>
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Nro
+								Documento: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.nro_documetotab1" class="form-control"
+									name="nro_documetotab1" maxlength="11"
+									placeholder="N° Documento" type="text">
+							</div>
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right; padding-left: 0px;">Direcci&oacute;n:
+							</label>
+							<div class="col-sm-2">
+								<input ng-model="model.direcciontab1" class="form-control"
+									name="direcciontab1" maxlength="11" placeholder="Dirección"
+									type="text">
+							</div>
+						</div>
+
+						<div class="row">
+						
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tipo Documento: </label>
+							<div class="col-sm-2">
+		
+							  <select ng-model="model.Id_tipo_documento_tab1" name="Id_tipo_documento_tab1"
+									id="Id_tipo_documento_tab1" class="form-control">
+									<option value="" selected>-- Todos --</option>
+									 <option value="0">Ruc</option>
+									<option value="1">Dni</option>
+									<option value="2">Carnet Extranjeria</option>
+								    <option value="3">Pasarporte</option>
+					
+								</select>
+								
+							</div>
+							
+					  <label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaInicio_tab1" class="form-control"
+								type="date" name="fechaInicio_tab1" max="9999-12-31">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaFin_tab1" class="form-control" type="date"
+								name="fechaFin_tab1" max="9999-12-31">
+						</div>
+					
+                      </div>
+
+
+
+                        <div class="row">
+                        
+                        	<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Celular: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.celulartab1" class="form-control"
+									name="celulartab1" maxlength="50" placeholder="Ej. 990008575"
+									style="width: 100%" type="text">
+							</div>
+                                       
+							<div class="col-sm-3" style="margin-right: 20px;">
+								<button id="btnBuscar" class="btn btn-blue" type="submit">
+									<i class="clip-search"></i>&nbsp; Buscar
+								</button>
+
+								<button id="btnLimpiar" class="btn btn-warning" type="button"
+									ng-click="Limpiar('1');">
+									<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+								</button>
+							</div>
+
+						</div>
+					</fieldset>
+				</div>
+				<!--  </div>-->
+			</div>
+		</form>
+		<div class="flex flex-row">
+
+			<!--  <button id="btnExportar" ng-click="exportarAExcel()" class="btn btn-dark-grey mt-3" type="button"><i
+                    class="clip-file-excel"></i>&nbsp; Exportar a Excel</button> -->
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="tab-content"
+			style="margin: 0px; padding: 0px; width: 100%;">
+			<div class="inline-container-Group p-0 mt-3 bg-white">
+				<h2 class="grid-title">Listado de solicitudes para usuario</h2>
+				<!--<div class="col-sm-12 inline-container-Group">
+            <p class="modal-title" style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+                Listado de solicitudes para usuario </p>
+        </div>-->
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered">
+						<thead>
+							<tr>
+								<th></th>
+								<th class="text-center">Validar</th>
+								<th class="text-center">Persona</th>
+								<th class="text-center">Nombres / Raz&oacute;n Social</th>
+								<th class="text-center">Tipo Documento</th>
+								<th class="text-center">Nro Documento</th>
+								<th class="text-center">Celular</th>
+								<th class="text-center">Tel&eacute;fono</th>
+								<th class="text-center">Correo</th>
+								<th class="text-center">Direcci&oacute;n</th>
+								<th class="text-center">Usuario Creaci&oacute;n</th>
+								<th class="text-center">Fecha Creaci&oacute;n</th>
+								<th class="text-center">IP Creaci&oacute;n</th>
+							</tr>
+						</thead>
+						<tr ng-repeat="item in dataUsuSolictudes">
+							<td>{{item.numreg}}</td>
+							<td class="text-center" ng-click="validate(item)">
+								<button class="btn-link"
+									style="outline: none; border: none; background-color: transparent;"
+									type="button">
+									<i class="clip-checkmark-circle"
+										style="color: #b30a14; font-size: 20px;"></i>
+								</button>
+							</td>
+							<td class="text-center">{{item.desc_tipo_persona == 'Natural' ? 'Natural' : 'Jurídica'}}</td>
+							<td class="text-center">{{item.nom_persona}}</td>
+							<td class="text-center">{{item.desc_tipo_documento}}</td>
+							<td class="text-center">{{item.nro_documento}}</td>
+							<td class="text-center">{{item.celular}}</td>
+							<td class="text-center">{{item.telefono}}</td>
+							<td class="text-center">{{item.correo}}</td>
+							<td class="text-center">{{item.direccion}}</td>
+							<td class="text-center">{{item.usu_creacion}}</td>
+							<td class="text-center">
+							<span ng-bind="item.dfec_creacion | date : 'yyyy/MM/dd HH:mm:ss Z'" style="display:none"></span>{{item.fec_creacion}}</td>
+							<td class="text-center">{{item.ip_creacion}}</td>
+
+						</tr>
+					</table>
+				</div>
+				<div ng-show="totalItemsReg > 1" class="mt-3 row">
+					<div class="col-md-7">
+						<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+							next-text="Siguiente" total-items="totalItemsReg"
+							ng-model="currentPageReg" max-size="maxSize"
+							items-per-page="itemsPerPage" class="pagination-sm"
+							boundary-link-numbers="true" rotate="false" ng-change="pageChangedReg()"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</uib-tab> <uib-tab index="1" select="searchUsuario()"> <uib-tab-heading>
+	Usuarios </uib-tab-heading>
+	<div class="tab-content" style="margin: 0px; padding: 0px;">
+		<form [formGroup]="searchCriteria" ng-submit="searchUsuario()"
+			class="text-sm">
+			<div class="row">
+				<div class="col-sm-12 inline-container-Group"
+					style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+					<p class="modal-title"
+						style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+						Criterios de búsqueda:</p>
+					<fieldset style="width: 100%;">
+						<div class="row">
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Nombres / Razón Social </label>
+							<div class="col-sm-2">
+								<input class="form-control" name="nombretab2"
+									ng-model="model.nombretab2" minlength="0" maxlength="100"
+									placeholder="Nombres " style="width: 100%" type="text" value="">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Estado: </label>
+							<div class="col-sm-2">
+								<select name="estadotab2" id="estadotab2" class="form-control"
+									ng-model="model.estadotab2">
+									<option value="" selected>-- Todos --</option>
+									<option value="1">Activo</option>
+									<option value="0">Inactivo</option>
+
+								</select>
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Teléfono: </label>
+							<div class="col-sm-2">
+								<input class="form-control" name="telefonotab2"
+									ng-model="model.telefonotab2" placeholder="Ej. 57665874"
+									style="width: 100%" type="text" minlength="0" maxlength="15"
+									ng-pattern="/^-?[0-9]\d*(\.\d+)?$/">
+							</div>
+						</div>
+
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tipo Usuario: </label>
+							<div class="col-sm-2">
+								<select name="personatab2" id="personatab2" class="form-control"
+									ng-model="model.personatab2">
+									<option value="0" selected>-- Todos --</option>
+									<option value="1">Interno</option>
+									<option value="2">Externo</option>
+								</select>
+							</div>
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">N°
+								Documento: </label>
+							<div class="col-sm-2">
+								<input class="form-control" name="nro_documetotab2"
+									ng-model="model.nro_documetotab2" maxlength="15"
+									placeholder="N° Documento" type="text">
+							</div>
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Correo: </label>
+							<div class="col-sm-2">
+								<input class="form-control" minlength="0" maxlength="100"
+									name="correotab2" ng-model="model.correotab2"
+									placeholder="Ej. rony@vimero.io" style="width: 100%"
+									type="text">
+							</div>
+						</div>
+						
+					<div class="row">
+					
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tipo Documento: </label>
+							<div class="col-sm-2">
+								<select ng-model="model.Id_tipo_documento_tab2" name="Id_tipo_documento_tab2"
+									id="Id_tipo_documento_tab2" class="form-control">
+							        <option value="" selected>-- Todos --</option>
+							         <option value="0">Ruc</option>
+									<option value="1">Dni</option>
+									<option value="2">Carnet Extranjeria</option>
+							        <option value="3">Pasarporte</option>				
+								</select>
+							</div>
+							
+					  <label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaInicio_tab2" class="form-control"
+								type="date" name="fechaInicio_tab2" max="9999-12-31">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaFin_tab2" class="form-control" type="date"
+								name="fechaFin_tab2" max="9999-12-31">
+						</div>
+					
+                      </div>
+						
+				
+					
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Celular: </label>
+							<div class="col-sm-2">
+								<input class="form-control" name="celulartab2" minlength="0"
+									maxlength="15" placeholder="Ej. 990008575" style="width: 100%"
+									type="text" ng-model="model.celulartab2">
+							</div>
+
+
+							<div class="col-sm-3" style="margin-right: 20px;">
+								<button id="btnBuscarUsuario" class="btn btn-blue" type="submit">
+									<i class="clip-search"></i>&nbsp; Buscar
+								</button>
+
+								<button class="btn btn-warning" type="button"
+									ng-click="Limpiar('2');">
+									<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+								</button>
+
+							</div>
+
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="row" style="margin: 0px; padding: 0px 0px 0px 10px;">
+		<button id="btn_Nuevo" style="margin-right: 5px;"
+			ng-click="openCreate()" class="btn btn-red mt-3" type="button">
+			<i class="clip-plus-circle-2"></i>&nbsp; Nuevo
+		</button>
+		<!--  <button id="btnExportar" ng-click="exportarAExcel()" class="btn btn-dark-grey mt-3" type="button"><i
+                class="clip-file-excel"></i>&nbsp; Exportar a Excel</button> -->
+	</div>
+
+
+
+	<div class="row">
+		<div class="tab-content"
+			style="margin: 0px; padding: 0px; width: 100%;">
+			<div class="inline-container-Group p-0 mt-3 bg-white">
+				<h2 class="grid-title">Listado de usuarios aprobados</h2>
+				<!--<div class="col-sm-12 inline-container-Group">
+            <p class="modal-title" style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+                Listado de solicitudes para usuario </p>
+        </div>-->
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered">
+						<thead>
+							<tr>
+								<th></th>
+								<th class="text-center">Eliminar</th>
+								<th class="text-center">Actualizar</th>
+								<th class="text-center">Estado</th>
+								<th class="text-center">Tipo Usuario</th>
+
+								<th class="text-center">Persona</th>
+
+								<th class="text-center">Nombres / Razón Social</th>
+								<th class="text-center">Codigo Usuario</th>
+								<th class="text-center">Nro Documento</th>
+								<th class="text-center">Celular</th>
+								<th class="text-center">Teléfono</th>
+								<th class="text-center">Correo</th>
+								<th class="text-center">Fecha Activación</th>
+								<th class="text-center">Fecha Desactivación</th>
+								<th class="text-center">Usuario Aprobación</th>
+								<th class="text-center">Fecha Aprobación</th>
+								<th class="text-center">IP Creación</th>
+							</tr>
+						</thead>
+						<tr ng-repeat="item in dataUsuarios">
+							<td>{{item.numreg}}</td>
+							<td class="text-center" ng-click="Eliminar_Usuario(item)">
+								<button class="btn-link"
+									style="outline: none; border: none; background-color: transparent;"
+									type="button">
+									<i class="clip-cancel-circle-2"
+										style="color: #b30a14; font-size: 20px;"></i>
+								</button>
+							</td>
+
+							<td class="text-center" ng-click="openUpdate(item)">
+								<button class="btn-link"
+									style="outline: none; border: none; background-color: transparent;"
+									type="button">
+									<i class="clip-pencil-3"
+										style="color: #b30a14; font-size: 20px;"></i>
+								</button>
+							</td>
+
+
+							<td class="text-center"><label class="switch"> <!--  <input id="Vehiculos_chk_{{$index + 20}}" type="checkbox" checked  ng-if="item.flg_estado==1" ng-change="changeItem()">
+                           --> <input id="Vehiculos_chk_{{$index + 1}}"
+									type="checkbox" ng-model="item.flg_estado" ng-true-value="'1'"
+									ng-false-value="'0'" ng-change="CambiarEstado(item)"> <span
+									class="slider round"></span>
+							</label> </label></td>
+
+							<td class="text-center">{{item.desc_tipo_usuario}}</td>
+							<td class="text-center">{{item.desc_tipo_persona}}</td>
+							<td class="text-center">{{item.nom_persona}}</td>
+							<td class="text-center">{{item.cod_usuario}}</td>
+							<td class="text-center">{{item.nro_documento}}</td>
+							<td class="text-center">{{item.celular}}</td>
+							<td class="text-center">{{item.telefono}}</td>
+							<td class="text-center">{{item.correo}}</td>
+							<td class="text-center">
+							<span ng-bind="item.dfec_activacion | date : 'yyyy/MM/dd'" style="display:none"></span>{{item.fec_activacion}}</td>
+							<td class="text-center">
+							<span ng-bind="item.dfec_desactivacion | date : 'yyyy/MM/dd'" style="display:none"></span>{{item.fec_desactivacion}}</td>
+
+							<td class="text-center">{{item.usu_creacion}}</td>
+							<td class="text-center">
+							<span ng-bind="item.dfec_creacion | date : 'yyyy/MM/dd HH:mm:ss Z'" style="display:none"></span> {{item.fec_creacion}}</td>
+							 
+							<td class="text-center">{{item.ip_creacion}}</td>
+
+						</tr>
+					</table>
+				</div>
+				<div ng-show="totalItems > 1" class="mt-3 row">
+					<div class="col-md-7">
+						<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+							next-text="Siguiente" total-items="totalItems"
+							ng-model="currentPage" max-size="maxSize"
+							items-per-page="itemsPerPage" class="pagination-sm"
+							boundary-link-numbers="true" rotate="false" ng-change="pageChanged()"></ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	</uib-tab> <uib-tab index="2" select="searchObasrevadas()"> <uib-tab-heading
+		select="alertMe()"> Solicitudes Anuladas u
+	Observadas </uib-tab-heading>
+
+	<div class="tab-content" style="margin: 0px; padding: 0px;">
+		<form [formGroup]="searchCriteria" ng-submit="searchObasrevadas()"
+			class="text-sm">
+			<div class="row">
+				<div class="col-sm-12 inline-container-Group"
+					style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+					<p class="modal-title"
+						style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+						Criterios de búsqueda:</p>
+					<fieldset style="width: 100%;">
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Nombres / Razón Social </label>
+							<div class="col-sm-2">
+								<input class="form-control" ng-model="model.nombretab3"
+									maxlength="100" placeholder="Nombres" style="width: 100%"
+									type="text" value="">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Correo: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.correotab3" class="form-control"
+									maxlength="50" name="correotab1"
+									placeholder="Ej. rony@vimero.io" style="width: 100%"
+									type="text">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Teléfono: </label>
+							<div class="col-sm-2">
+								<input class="form-control" ng-model="model.telefonotab3"
+									name="telefonotab3" maxlength="11" placeholder="Teléfono"
+									style="width: 100%" type="text">
+							</div>
+						</div>
+
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Persona: </label>
+							<div class="col-sm-2">
+								<select ng-model="model.personatab3" name="personatab3"
+									id="personatab3" class="form-control">
+									<option value="0" selected>-- Todos --</option>
+									<option value="1">Natural</option>
+									<option value="2">Jurídica</option>
+								</select>
+							</div>
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">N° Documento: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.nro_documetotab3" class="form-control"
+									name="nro_documetotab3" maxlength="11"
+									placeholder="N° Documento" type="text">
+							</div>
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right; padding-left: 0px;">Dirección:
+							</label>
+							<div class="col-sm-2">
+								<input ng-model="model.direcciontab3" class="form-control"
+									name="direcciontab3" maxlength="11" placeholder="Dirección"
+									type="text">
+							</div>
+						</div>
+						
+						
+					<div class="row">
+					
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Tipo Documento: </label>
+							<div class="col-sm-2">
+								<select ng-model="model.Id_tipo_documento_tab3" name="Id_tipo_documento_tab3"
+									id="Id_tipo_documento_tab3" class="form-control">
+								     <option value="" selected>-- Todos --</option>
+								    <option value="0">Ruc</option>
+									<option value="1">Dni</option>
+									<option value="2">Carnet Extranjeria</option>
+									<option value="3">Pasarporte</option>					     
+								</select>
+							</div>
+							
+					  <label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaInicio_tab3" class="form-control"
+								type="date" name="fechaInicio_tab3" max="9999-12-31">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="model.fechaFin_tab3" class="form-control" type="date"
+								name="fechaFin_tab3" max="9999-12-31">
+						</div>
+					
+                      </div>
+						
+				
+
+						<div class="row">
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Celular: </label>
+							<div class="col-sm-2">
+								<input ng-model="model.celulartab3" class="form-control"
+									name="celulartab3" maxlength="50" placeholder="Ej. 990008575"
+									style="width: 100%" type="text">
+							</div>
+
+
+							<label class="col-sm-2 control-label"
+								style="margin-top: 5px; text-align: right;">Estado: </label>
+							<div class="col-sm-2">
+								<select ng-model="model.estadoobstab3" name="estadoobstab3"
+									id="estadoobstab3" class="form-control">
+									<option value="" selected>-- Todos --</option>
+									<option value="2">Observado</option>
+									<option value="3">Anulado</option>
+								</select>
+							</div>
+
+
+							<div class="col-sm-3" style="margin-right: 20px;">
+								<button id="btnBuscar" class="btn btn-blue" type="submit">
+									<i class="clip-search"></i>&nbsp; Buscar
+								</button>
+								<button id="btnLimpiar3" class="btn btn-secondary" type="button"
+									ng-click="Limpiar('3')">
+									<i class="clip-spinner-6"></i>&nbsp; Limpiar
+								</button>
+							</div>
+
+						</div>
+					</fieldset>
+				</div>
+				<!--  </div>-->
+			</div>
+		</form>
+		<div class="flex flex-row">
+
+			<!--  <button id="btnExportar" ng-click="exportarAExcel()" class="btn btn-dark-grey mt-3" type="button"><i
+                    class="clip-file-excel"></i>&nbsp; Exportar a Excel</button> -->
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="tab-content"
+			style="margin: 0px; padding: 0px; width: 100%;">
+			<div class="inline-container-Group p-0 mt-3 bg-white">
+				<h2 class="grid-title">Listado de solicitudes para usuario</h2>
+				<!--<div class="col-sm-12 inline-container-Group">
+            <p class="modal-title" style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+                Listado de solicitudes para usuario </p>
+        </div>-->
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered">
+						<thead>
+							<tr>
+								<th></th>
+								<th class="text-center">Ver Obs</th>
+								<th class="text-center">Persona</th>
+								<th class="text-center">Nombres / Razón Social</th>
+								<th class="text-center">Tipo Documento</th>
+								<th class="text-center">Nro Documento</th>
+								<th class="text-center">Celular</th>
+								<th class="text-center">Teléfono</th>
+								<th class="text-center">Correo</th>
+								<th class="text-center">Direccion</th>
+								<th class="text-center">Usuario Creación</th>
+								<th class="text-center">Fecha Creación</th>
+								<th class="text-center">IP Creación</th>
+							</tr>
+						</thead>
+						<tr ng-repeat="item in dataUsuObservadas">
+							<td>{{item.numreg}}</td>
+							<td class="text-center" ng-click="VerObs(item)">
+								<button class="btn-link"
+									style="outline: none; border: none; background-color: transparent;"
+									type="button">
+									<i class="clip-eye" style="color: #b30a14; font-size: 20px;"></i>
+								</button>
+							</td>
+							<td class="text-center">{{item.desc_tipo_persona == 'Natural' ? 'Natural' : 'Jurídica'}}</td>
+							<td class="text-center">{{item.nom_persona}}</td>
+							<td class="text-center">{{item.desc_tipo_documento}}</td>
+							<td class="text-center">{{item.nro_documento}}</td>
+							<td class="text-center">{{item.celular}}</td>
+							<td class="text-center">{{item.telefono}}</td>
+							<td class="text-center">{{item.correo}}</td>
+							<td class="text-center">{{item.direccion}}</td>
+							<td class="text-center">{{item.usu_creacion}}</td>
+							<td class="text-center">
+							<span ng-bind="item.dfec_creacion | date : 'yyyy/MM/dd HH:mm:ss Z'" style="display:none"></span>{{item.fec_creacion}}</td>
+							<td class="text-center">{{item.ip_creacion}}</td>
+
+						</tr>
+					</table>
+				</div>
+				<div ng-show="totalItemsObs > 1" class="mt-3 row">
+					<div class="col-md-7">
+						<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+							next-text="Siguiente" total-items="totalItemsObs"
+							ng-model="currentPageObs" max-size="maxSize"
+							items-per-page="itemsPerPage" class="pagination-sm"
+							boundary-link-numbers="true" rotate="false" ng-change="pageChangedObs()"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</uib-tab> </uib-tabset>
+
+
+
+</div>

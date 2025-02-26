@@ -1,0 +1,1254 @@
+<div ng-controller="mpiController">
+	<uib-tabset active="active"> <uib-tab index="0"
+		select="searchSolPendiente()"> <uib-tab-heading>
+	Solicitudes pendientes
+	<div ng-show="dataSolPendiente.length>0"
+		style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+		<b style="color: #fff">{{ totalItemsPendiente }}</b>
+	</div>
+	</uib-tab-heading>
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form ng-submit="searchSolPendiente()" class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Estado: </label>
+						<div class="col-sm-2">
+							<select ng-model="modelPendiente.estado" name="estado"
+								id="estado" class="form-control">
+								<option value="" selected>--Todos--</option>
+								<option value="1" selected>Pendiente</option>
+								<option value="4" selected>Subsanado</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Solicitud: </label>
+						<div class="col-sm-2">
+							<input class="form-control"
+								ng-model="modelPendiente.numeroSolicitud" name="numeroSolicitud"
+								maxlength="11" placeholder="Ej. 00002" style="width: 100%"
+								type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">&Oacute;rgano
+							destino: </label>
+						<div class="col-sm-2">
+							<select select2 ng-model="modelPendiente.organoDestino"
+								name="organoDestino" class="form-control"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinas"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="modelPendiente.fechaInicio" class="form-control"
+								type="date" name="fechaInicio">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelPendiente.fechaFin" class="form-control"
+								type="date" name="fechaFin">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right; padding-left: 0px;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select select2 class="form-control"
+								ng-model="modelPendiente.tipoDocumento" name="tipoDocumento"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumento"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelPendiente.numeroDocumento"
+								class="form-control" name="numeroDocumento" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelPendiente.asunto" class="form-control"
+								maxlength="50" name="asunto" placeholder="Ej. Asunto"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Raz&oacute;n
+							Social: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelPendiente.RazonSocial" class="form-control"
+								maxlength="50" name="RazonSocial"
+								placeholder="Ej. Raz&oacute;n Social" style="width: 100%"
+								type="text" value="">
+						</div>
+
+					</div>
+
+					<div class="row">
+
+						<label class="col-sm-2 control-label d-none"
+							style="margin-top: 5px; text-align: right;">Destino: </label>
+						<div class="col-sm-2 d-none">
+							<input ng-model="modelPendiente.Destino" class="form-control"
+								maxlength="50" name="Destino" placeholder="Ej. Destino"
+								style="width: 100%" type="text" value="">
+						</div>
+						<div class="col-sm-4">
+							<button id="btnBuscar" class="btn btn-blue mr-1" type="submit">
+								<i class="clip-search"></i>&nbsp; Buscar
+							</button>
+							<button class="btn btn-warning" type="button"
+								ng-click="limpiar(1);">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+						</div>
+					</div>
+
+				</fieldset>
+			</div>
+		</form>
+
+		<div class="flex flex-row">
+			<button ng-click="exportarAExcel(1)"
+				class="btn btn-dark-grey mt-3 mb-1" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+		<div class="d-flex">
+			<h2 class="grid-title">Listado de Solicitudes</h2>
+			<div class="ml-auto col-lg-3 col-md-4 col-xs-12 p-2">
+				<select select2 class="form-control" ng-model="modelPendiente.orden"
+					name="orden[]" multiple="multiple" ng-change="searchSolPendiente()"
+					data-placeholder="--Seleccionar Orden--" data-allow-clear="true">
+					<option></option>
+					<option data-ng-repeat="item in orden" value={{item.valor}}>
+						{{item.descripcion}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th></th>
+						<th class="text-center">Visualizar</th>
+						<th class="text-center">Validar</th>
+						<th class="text-center">Desasignar</th>
+						<!-- <th class="text-center">Movimientos STD</th>
+                                <th class="text-center">Estado STD</th> -->
+						<th class="text-center">Nro. Solicitud</th>
+						<th class="text-center">Tipo Documento</th>
+						<th>Nro. Documento</th>
+
+						<th class="text-center">Nombre / Raz&oacute;n social</th>
+						<th class="text-center">Fecha registro</th>
+						<th class="text-center">Estado</th>
+						<th class="text-center">Fecha observaci&oacute;n</th>
+						<th class="text-center">Fecha subsanaci&oacute;n</th>
+						<th class="text-center">&Oacute;rgano Destino</th>
+						<!-- 						<th class="text-center">Nro. Anexos</th> -->
+<!-- 						<th class="text-center">Hoja de Ruta Referencial</th> -->
+						<th class="text-center">Hoja de Ruta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="request in dataSolPendiente">
+						<td>{{ request.numreg }}</td>
+						<td class="text-center"><button title="Visualizar Solicitud"
+								class="btn btn-link" type="button" style="outline: none;"
+								ng-click="openModalVisualizarSolicitud(request.id_documento,'xl')">
+								<i class="fa fa-search" style="color: #b30a14; font-size: 18px;"></i>
+							</button></td>
+						<td class="text-center">
+							<button ng-show="request.id_estado_documento==1"
+								title="Validar Solicitud" class="btn btn-link" type="button"
+								style="outline: none; cursor: pointer;"
+								ng-click="openModalValidarSolicitud(request.id_documento,'xl')">
+								<i class="clip-checkmark-circle-2"
+									style="color: #b48426; font-size: 18px;"></i>
+							</button><span ng-show="request.id_estado_documento != 1">-</span>
+						</td>
+						<td class="text-center">
+							<button
+								ng-show="request.esta_asignado && request.id_estado_documento==1"
+								title="La solicitud esta asignada a {{ request.nomb_usu_asignacion }}"
+								class="btn btn-link" type="button"
+								style="outline: none; cursor: pointer !important;"
+								ng-click="desasignarSolicitud(request.id_documento)">
+								<i class="clip-user-5" aria-hidden="true"
+									style="color: #068538; font-size: 23px;"></i>
+							</button><span ng-show="request.id_estado_documento != 1">-</span>
+						</td>
+						<td class="text-center">{{ request.id_documento }}</td>
+						<td class="text-center">{{ request.desc_tipo_documento }}</td>
+						<td>{{ request.nro_documento }}</td>
+
+						<td class="text-center">{{ request.nombre_persona }}</td>
+						<td class="text-center">{{ request.srt_fecha_creacion }}</td>
+						<td class="text-center"><span style="font-size: 11px;"
+							class="badge"
+							ng-class="getStatusClass('badge',{{request.id_estado_documento}})">{{
+								request.estado_documento }}</span></td>
+						<td class="text-center">{{ request.fecha_observacion }}</td>
+						<td class="text-center">{{ request.fecha_subsanacion }}</td>
+						<td class="text-center">{{ request.desc_oficina }}</td>
+						<!-- 						<td class="text-center">{{ request.nro_anexos }}</td> -->
+<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<td class="text-center">{{ request.numero_sid }} - {{
+							request.anio }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="totalItemsPendiente > 1" class="mt-3 row">
+			<div class="col-md-7">
+				<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+					next-text="Siguiente" total-items="totalItemsPendiente"
+					ng-model="currentPagePendiente" max-size="maxSize"
+					items-per-page="itemsPerPage" class="pagination-sm"
+					boundary-link-numbers="true" rotate="false"
+					ng-change="pageChanged()"></ul>
+			</div>
+		</div>
+	</div>
+	</uib-tab> <uib-tab index="1" select="searchSolRecibida()"> <uib-tab-heading>
+	Solicitudes recibidas
+	<div ng-show="dataSolRecibida.length>0"
+		style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+		<b style="color: #fff">{{ totalItemsRecibida }}</b>
+	</div>
+	</uib-tab-heading>
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form ng-submit="searchSolRecibida()" class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Estado: </label>
+						<div class="col-sm-2">
+							<select ng-model="modelRecibida.estados" name="estado"
+								id="estado" class="form-control" ng-disabled="true">
+								<option value="" selected>Recibido</option>
+							</select>
+
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Solicitud: </label>
+						<div class="col-sm-2">
+							<input class="form-control"
+								ng-model="modelRecibida.numeroSolicitud" name="numeroSolicitud"
+								maxlength="11" placeholder="Ej. 00002" style="width: 100%"
+								type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">&Oacute;rgano
+							destino: </label>
+						<div class="col-sm-2">
+							<select select2 ng-model="modelRecibida.organoDestino"
+								name="organoDestino" class="form-control"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinas"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="modelRecibida.fechaInicio" class="form-control"
+								type="date" name="fechaInicio">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelRecibida.fechaFin" class="form-control"
+								type="date" name="fechaFin">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right; padding-left: 0px;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select select2 class="form-control"
+								ng-model="modelRecibida.tipoDocumento" name="tipoDocumento"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumento"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelRecibida.numeroDocumento"
+								class="form-control" name="numeroDocumento" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelRecibida.asunto" class="form-control"
+								maxlength="50" name="asunto" placeholder="Ej. Asunto"
+								style="width: 100%" type="text" value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Raz&oacute;n
+							Social: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelRecibida.RazonSocial" class="form-control"
+								maxlength="50" name="RazonSocial"
+								placeholder="Ej. Raz&oacute;n Social" style="width: 100%"
+								type="text" value="">
+						</div>
+
+					</div>
+
+
+					<div class="row">
+
+						<label class="col-sm-2 control-label d-none"
+							style="margin-top: 5px; text-align: right;">Destino: </label>
+						<div class="col-sm-2 d-none">
+							<input ng-model="modelRecibida.Destino" class="form-control"
+								maxlength="50" name="Destino" placeholder="Ej. Destino"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<div class="col-sm-4">
+							<button id="btnBuscar" class="btn btn-blue mr-1" type="submit">
+								<i class="clip-search"></i>&nbsp; Buscar
+							</button>
+							<button class="btn btn-warning" type="button"
+								ng-click="limpiar(2);">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+						</div>
+					</div>
+
+
+				</fieldset>
+			</div>
+		</form>
+		<div class="flex flex-row">
+			<button ng-click="exportarAExcel(2)"
+				class="btn btn-dark-grey mt-3 mb-1" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+		<div class="d-flex">
+			<h2 class="grid-title">Listado de Solicitudes</h2>
+			<div class="ml-auto col-lg-3 col-md-4 col-xs-12 p-2">
+				<select select2 class="form-control" ng-model="modelRecibida.orden"
+					multiple="multiple" ng-change="searchSolRecibida()"
+					data-placeholder="--Seleccionar Orden--">
+					<option></option>
+					<option data-ng-repeat="item in orden" value={{item.valor}}>
+						{{item.descripcion}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+						<th class="text-center">Visualizar</th>
+						<th class="text-center">Movimientos STD</th>
+						<!-- <th class="text-center">Estado STD</th> -->
+						<th class="text-center">Nro. Solicitud</th>
+						<th class="text-center">Tipo Documento</th>
+						<th>Nro. Documento</th>
+
+						<th class="text-center">Nombre / Raz&oacute;n social</th>
+						<th class="text-center">Fecha registro</th>
+						<th class="text-center">&Oacute;rgano Destino</th>
+						<th class="text-center">Nro. Anexos</th>
+<!-- 						<th class="text-center">Hoja de Ruta Referencial</th> -->
+						<th class="text-center">Hoja de Ruta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="request in dataSolRecibida">
+						<td>{{ request.numreg }}</td>
+						<td class="text-center">
+							<button title="Visualizar Solicitud" class="btn btn-link"
+								type="button" style="outline: none;"
+								ng-click="openModalVisualizarSolicitud(request.id_documento,'xl')">
+								<i class="fa fa-search" style="color: #b30a14; font-size: 18px;"></i>
+							</button>
+						</td>
+						<td class="text-center">
+							<button title="Ver movimientos" class="btn btn-link"
+								type="button" style="outline: none;"
+								ng-click="openModalVisualizarMovimientos(request.id_documento,'xl')">
+								<i class="clip-stack" style="color: #b48426; font-size: 18px;"></i>
+							</button>
+						</td>
+						<!-- <td class="text-center"></td> -->
+						<td class="text-center">{{ request.id_documento }}</td>
+						<td class="text-center">{{ request.desc_tipo_documento }}</td>
+						<td>{{ request.nro_documento }}</td>
+
+						<td class="text-center">{{ request.nombre_persona }}</td>
+						<td class="text-center">{{ request.srt_fecha_creacion }}</td>
+						<td class="text-center">{{ request.desc_oficina }}</td>
+						<td class="text-center">{{ request.nro_anexos }}</td>
+<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<td class="text-center">{{ request.numero_sid }} - {{
+							request.anio }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="totalItemsRecibida > 1" class="mt-3 row">
+			<div class="col-md-7">
+				<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+					next-text="Siguiente" total-items="totalItemsRecibida"
+					ng-model="currentPageRecibida" max-size="maxSize"
+					items-per-page="itemsPerPage" class="pagination-sm"
+					boundary-link-numbers="true" rotate="false"
+					ng-change="pageChanged()"></ul>
+			</div>
+		</div>
+	</div>
+	</uib-tab> <uib-tab index="3" select="searchSolObservada()"> <uib-tab-heading>
+	Solicitudes observadas
+	<div ng-show="dataSolObservada.length>0"
+		style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+		<b style="color: #fff">{{ totalItemsObservada }}</b>
+	</div>
+	</uib-tab-heading>
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form [formGroup]="searchCriteria" ng-submit="searchSolObservada()"
+			class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Estado: </label>
+						<div class="col-sm-2">
+							<select ng-model="modelObservada.estados" name="estado"
+								id="estado" class="form-control" ng-disabled="true">
+								<option value="" selected>Observado</option>
+							</select>
+
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Solicitud: </label>
+						<div class="col-sm-2">
+							<input class="form-control"
+								ng-model="modelObservada.numeroSolicitud" name="numeroSolicitud"
+								maxlength="11" placeholder="Ej. 00002" style="width: 100%"
+								type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">&Oacute;rgano
+							destino: </label>
+						<div class="col-sm-2">
+							<select select2 ng-model="modelObservada.organoDestino"
+								name="organoDestino" class="form-control"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinas"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="modelObservada.fechaInicio" class="form-control"
+								type="date" name="fechaInicio">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelObservada.fechaFin" class="form-control"
+								type="date" name="fechaFin">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right; padding-left: 0px;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select select2 class="form-control"
+								ng-model="modelObservada.tipoDocumento" name="tipoDocumento"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumento"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelObservada.numeroDocumento"
+								class="form-control" name="numeroDocumento" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelObservada.asunto" class="form-control"
+								maxlength="50" name="asunto" placeholder="Ej. Asunto"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Raz&oacute;n
+							Social: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelObservada.RazonSocial" class="form-control"
+								maxlength="50" name="RazonSocial"
+								placeholder="Ej. Raz&oacute;n Social" style="width: 100%"
+								type="text" value="">
+						</div>
+
+					</div>
+
+
+					<div class="row">
+						<label class="col-sm-2 control-label d-none"
+							style="margin-top: 5px; text-align: right;">Destino: </label>
+						<div class="col-sm-2 d-none">
+							<input ng-model="modelObservada.Destino" class="form-control"
+								maxlength="50" name="Destino" placeholder="Ej. Destino"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<div class="col-sm-4">
+							<button id="btnBuscar" class="btn btn-blue MR-1" type="submit">
+								<i class="clip-search"></i>&nbsp; Buscar
+							</button>
+							<button class="btn btn-warning" type="button"
+								ng-click="limpiar(3);">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+		</form>
+		<div class="flex flex-row">
+			<button ng-click="exportarAExcel(3)"
+				class="btn btn-dark-grey mt-3 mb-1" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+		<div class="d-flex">
+			<h2 class="grid-title">Listado de Solicitudes</h2>
+			<div class="ml-auto col-lg-3 col-md-4 col-xs-12 p-2">
+				<select select2 class="form-control" ng-model="modelObservada.orden"
+					multiple="multiple" ng-change="searchSolObservada()"
+					data-placeholder="--Seleccionar Orden--">
+					<option></option>
+					<option data-ng-repeat="item in orden" value={{item.valor}}>
+						{{item.descripcion}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+						<th class="text-center">Visualizar</th>
+						<th class="text-center">Ver Observaciones</th>
+						<!-- <th class="text-center">Movimientos STD</th>
+                                <th class="text-center">Estado STD</th> -->
+						<th class="text-center">Nro. Solicitud</th>
+						<th class="text-center">Tipo Documento</th>
+						<th>Nro. Documento</th>
+						<th class="text-center">Nombre / Raz&oacute;n social</th>
+						<th class="text-center">Fecha registro</th>
+						<th class="text-center">Fecha observaci&oacute;n</th>
+						<th class="text-center">&Oacute;rgano Destino</th>
+						<!-- 						<th class="text-center">Nro. Anexos</th> -->
+<!-- 						<th class="text-center">Hoja de Ruta Referencial</th> -->
+						<th class="text-center">Hoja de Ruta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="request in dataSolObservada">
+						<td>{{ request.numreg }}</td>
+						<td class="text-center"><button title="Visualizar Solicitud"
+								class="btn btn-link" type="button" style="outline: none;"
+								ng-click="openModalVisualizarSolicitud(request.id_documento,'xl')">
+								<i class="fa fa-search" style="color: #b30a14; font-size: 18px;"></i>
+							</button></td>
+
+						<td class="text-center"><button
+								title="Visualizar Observaciones" class="btn btn-link"
+								type="button" style="outline: none;"
+								ng-click="showObservaciones(request.id_documento,'xl')">
+								<i class="fa fa-eye" style="color: #b30a14; font-size: 18px;"></i>
+							</button></td>
+
+
+						<!-- <td class="text-center"></td>
+                                <td class="text-center"></td> -->
+						<td class="text-center">{{ request.id_documento }}</td>
+						<td class="text-center">{{ request.desc_tipo_documento }}</td>
+						<td>{{ request.nro_documento }}</td>
+
+						<td class="text-center">{{ request.nombre_persona }}</td>
+						<td class="text-center">{{ request.srt_fecha_creacion }}</td>
+						<td class="text-center">{{ request.fecha_observacion }}</td>
+						<td class="text-center">{{ request.desc_oficina }}</td>
+						<!-- 						<td class="text-center">{{ request.nro_anexos }}</td> -->
+<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<td class="text-center">{{ request.numero_sid }} - {{
+							request.anio }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="totalItemsObservada > 1" class="mt-3 row">
+			<div class="col-md-7">
+				<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+					next-text="Siguiente" total-items="totalItemsObservada"
+					ng-model="currentPageObservada" max-size="maxSize"
+					items-per-page="itemsPerPage" class="pagination-sm"
+					boundary-link-numbers="true" rotate="false"
+					ng-change="pageChanged()"></ul>
+			</div>
+		</div>
+	</div>
+	</uib-tab> <!-- 
+        <uib-tab index="4" select="searchSolAtendidos()">
+            <uib-tab-heading>
+                Solicitudes atendidos por tramite
+                <div ng-show="dataSolAtentidos.length>0"
+                    style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+                    <b style="color: #fff">{{ dataSolAtentidos.length }}</b>
+                </div>
+            </uib-tab-heading>
+            <div class="inline-container-Group p-0 mt-3 bg-white">
+                <form  ng-submit="searchSolAtendidos()" class="text-sm">
+                    <div class="col-sm-12 inline-container-Group" style="margin-top:10px;padding: 10px;border:1px solid #d5d5d5">
+                        <p class="modal-title" style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+                            Criterios de búsqueda: </p>
+                        <fieldset style="width: 100%;">
+                            <div class="row">
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Estado:
+                                </label>
+                                <div class="col-sm-2">
+                                    <select ng-model="modelAtendidos.estados" name="estado" id="estado" class="form-control" ng-disabled="true">
+                                        <option value="" selected>Recibido</option>
+                                    </select>
+        
+                                </div>
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Nro. Solicitud:
+                                </label>
+                                <div class="col-sm-3">
+                                    <input class="form-control" ng-model="modelAtendidos.numeroSolicitud" name="numeroSolicitud"
+                                        maxlength="11" placeholder="Ej. 00002" style="width:100%" type="text" value="">
+                                </div>
+        
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">&Oacute;rgano
+                                    destino: </label>
+                                <div class="col-sm-3">
+                                    <select ng-model="modelAtendidos.organoDestino" name="organoDestino" class="form-control">
+                                        <option value="" selected>-- Todos --</option>
+                                        <option data-ng-repeat="item in oficinas" value={{item.idunidad}}>
+                                            {{item.descripcioncompleta}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <div class="row">
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Fecha Inicio:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="modelAtendidos.fechaInicio" class="form-control" type="date" name="fechaInicio">
+                                </div>
+        
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Fecha Fin:
+                                </label>
+                                <div class="col-sm-3">
+                                    <input ng-model="modelAtendidos.fechaFin" class="form-control" type="date" name="fechaFin">
+                                </div>
+        
+                                <label class="col-sm-1 control-label"
+                                    style="margin-top: 5px; text-align: right;padding-left: 0px;">Tipo
+                                    Documento: </label>
+                                <div class="col-sm-3">
+                                    <select class="form-control" ng-model="modelAtendidos.tipoDocumento" name="tipoDocumento">
+                                        <option value="" selected>-- Todos --</option>
+                                        <option data-ng-repeat="item in tipoDocumento" value={{item.id_tipodocumento}}>
+                                            {{item.desc_tipodocumento}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <div class="row">
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Nro. Documento:
+                                </label>
+                                <div class="col-sm-2">
+                                    <input ng-model="modelAtendidos.numeroDocumento" class="form-control" name="numeroDocumento"
+                                        maxlength="50" placeholder="Ej. I008-500" style="width:100%" type="text" value="">
+                                </div>
+                                <label class="col-sm-1 control-label" style="margin-top: 5px; text-align: right;">Asunto:
+                                </label>
+                                <div class="col-sm-3">
+                                    <input ng-model="modelAtendidos.asunto" class="form-control" maxlength="50" name="asunto"
+                                        placeholder="Ej. Asunto" style="width:100%" type="text" value="">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button id="btnBuscar" class="btn btn-blue" type="submit"><i class="clip-search"></i>&nbsp;
+                                        Buscar</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+
+            
+                
+                <h2 class="grid-title">Listado de Atendidos</h2>
+                <div class="table-responsive">  
+                    <table class="table table-hover" dt-options="mpi.dtOptions" datatable="ng">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-center">Visualizar</th>
+                                <th class="text-center">Movimientos STD</th>
+                                <th class="text-center">Finalizar</th>
+                        
+                                <th class="text-center">Nro. Solicitud</th>
+                                <th class="text-center">Tipo Documento</th>
+                                <th>Nro. Documento</th>
+                                <th class="text-center">Nombre / Raz&oacute;n social</th>
+                                <th class="text-center">Fecha registro</th>
+                                <th class="text-center">&Oacute;rgano Destino</th>
+                                <th class="text-center">Nro. Anexos</th>
+                       
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="request in dataSolAtentidos">
+                                <td>{{ $index + 1 }}</td>
+                                <td class="text-center">
+                                    <button title="Visualizar Solicitud" class="btn btn-link"
+                                        type="button" style="outline: none;"
+                                        ng-click="openModalVisualizarSolicitud(request.id_documento,'xl')"><i
+                                            class="fa fa-search" style="color:#b30a14;font-size:18px;"></i>
+                                    </button></td>
+                                <td class="text-center">
+                                    <button title="Ver movimientos" class="btn btn-link" type="button"
+                                        style="outline: none;"
+                                        ng-click="openModalVisualizarMovimientos(request.id_documento,'xl')"><i
+                                            class="clip-stack" style="color:#b48426;font-size:18px;"></i>
+                                    </button>
+                                </td>
+
+                                <td class="text-center">
+                                    <button title="Visualizar Solicitud" class="btn btn-link"
+                                        type="button" style="outline: none;"
+                                        ng-click="Finalizar(request.id_documento)"><i
+                                            class="clip-upload-3" style="color:#b30a14;font-size:18px;"></i>
+                                    </button></td>
+                                
+                              
+                                <td class="text-center">{{ request.id_documento }}</td>
+                                <td class="text-center">{{ request.desc_tipo_documento }}</td>
+                                <td>{{ request.nro_documento }}</td>
+                                <td class="text-center">{{ request.nombre_persona }}</td>
+                                <td class="text-center">{{ request.srt_fecha_creacion }}</td>
+                                <td class="text-center">{{ request.desc_oficina }}</td>
+                                <td class="text-center">{{ request.nro_anexos }}</td>
+                               
+                            </tr>
+                        </tbody>
+                    </table>                    
+                </div>
+                <div ng-show="totalItems > 1" class="mt-3 row">
+                    <div class="col-md-7">
+                        <ul class="ml-2 mr-2" uib-pagination previous-text="Anterior" next-text="Siguiente"
+                            total-items="totalItems" ng-model="currentPage" max-size="maxSize"
+                            items-per-page="itemsPerPage" class="pagination-sm" boundary-link-numbers="true"
+                            rotate="false"></ul>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+    --> <uib-tab index="5" select="searchSolFinalizados()"> <uib-tab-heading>
+	Solicitudes finalizadas
+	<div ng-show="dataSolFinalizados.length>0"
+		style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+		<b style="color: #fff">{{ totalItemsFinalizados }}</b>
+	</div>
+	</uib-tab-heading>
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form ng-submit="searchSolFinalizados()" class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Estado: </label>
+						<div class="col-sm-2">
+							<select ng-model="modelfinalizados.estados" name="estado"
+								id="estado" class="form-control" ng-disabled="true">
+								<option value="" selected>Atendidos</option>
+							</select>
+
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Solicitud: </label>
+						<div class="col-sm-2">
+							<input class="form-control"
+								ng-model="modelfinalizados.numeroSolicitud"
+								name="numeroSolicitud" maxlength="11" placeholder="Ej. 00002"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">&Oacute;rgano
+							destino: </label>
+						<div class="col-sm-2">
+							<select select2 ng-model="modelfinalizados.organoDestino"
+								name="organoDestino" class="form-control"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinas"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="modelfinalizados.fechaInicio"
+								class="form-control" type="date" name="fechaInicio">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelfinalizados.fechaFin" class="form-control"
+								type="date" name="fechaFin">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right; padding-left: 0px;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select select2 class="form-control"
+								ng-model="modelfinalizados.tipoDocumento" name="tipoDocumento"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumento"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelfinalizados.numeroDocumento"
+								class="form-control" name="numeroDocumento" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelfinalizados.asunto" class="form-control"
+								maxlength="50" name="asunto" placeholder="Ej. Asunto"
+								style="width: 100%" type="text" value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Raz&oacute;n
+							Social: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelfinalizados.RazonSocial"
+								class="form-control" maxlength="50" name="RazonSocial"
+								placeholder="Ej. Raz&oacute;n Social" style="width: 100%"
+								type="text" value="">
+						</div>
+
+					</div>
+
+
+
+
+					<div class="row">
+
+						<label class="col-sm-2 control-label d-none"
+							style="margin-top: 5px; text-align: right;">Destino: </label>
+						<div class="col-sm-2 d-none">
+							<input ng-model="modelfinalizados.Destino" class="form-control"
+								maxlength="50" name="Destino" placeholder="Ej. Destino"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<div class="col-sm-4">
+							<button id="btnBuscar" class="btn btn-blue mr-1" type="submit">
+								<i class="clip-search"></i>&nbsp; Buscar
+							</button>
+							<button class="btn btn-warning" type="button"
+								ng-click="limpiar(4);">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+		</form>
+		<div class="flex flex-row">
+			<button ng-click="exportarAExcel(4)"
+				class="btn btn-dark-grey mt-3 mb-1" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+		<div class="d-flex">
+			<h2 class="grid-title">Listado de Solicitudes</h2>
+			<div class="ml-auto col-lg-3 col-md-4 col-xs-12 p-2">
+				<select select2 class="form-control"
+					ng-model="modelfinalizados.orden" multiple="multiple"
+					ng-change="searchSolFinalizados()"
+					data-placeholder="--Seleccionar Orden--">
+					<option selected></option>
+					<option data-ng-repeat="item in orden" value={{item.valor}}>
+						{{item.descripcion}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+						<th class="text-center">Visualizar</th>
+						<th class="text-center">Movimientos STD</th>
+						<!-- <th class="text-center">Estado STD</th> -->
+						<th class="text-center">Nro. Solicitud</th>
+						<th class="text-center">Tipo Documento</th>
+						<th>Nro. Documento</th>
+						<th class="text-center">Nombre / Raz&oacute;n social</th>
+						<th class="text-center">Fecha registro</th>
+						<th class="text-center">&Oacute;rgano Destino</th>
+						<th class="text-center">Nro. Anexos</th>
+<!-- 						<th class="text-center">Hoja de Ruta Referencial</th> -->
+						<th class="text-center">Hoja de Ruta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="request in dataSolFinalizados">
+						<td>{{ request.numreg }}</td>
+						<td class="text-center">
+							<button title="Visualizar Solicitud" class="btn btn-link"
+								type="button" style="outline: none;"
+								ng-click="openModalVisualizarSolicitud(request.id_documento,'xl')">
+								<i class="fa fa-search" style="color: #b30a14; font-size: 18px;"></i>
+							</button>
+						</td>
+						<td class="text-center">
+							<button title="Ver movimientos" class="btn btn-link"
+								type="button" style="outline: none;"
+								ng-click="openModalVisualizarMovimientos(request.id_documento,'xl')">
+								<i class="clip-stack" style="color: #b48426; font-size: 18px;"></i>
+							</button>
+						</td>
+						<!-- <td class="text-center"></td> -->
+						<td class="text-center">{{ request.id_documento }}</td>
+						<td class="text-center">{{ request.desc_tipo_documento }}</td>
+						<td>{{ request.nro_documento }}</td>
+						<td class="text-center">{{ request.nombre_persona }}</td>
+						<td class="text-center">{{ request.srt_fecha_creacion }}</td>
+						<td class="text-center">{{ request.desc_oficina }}</td>
+						<td class="text-center">{{ request.nro_anexos }}</td>
+<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<td class="text-center">{{ request.numero_sid }} - {{
+							request.anio }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="totalItemsFinalizados > 1" class="mt-3 row">
+			<div class="col-md-7">
+				<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+					next-text="Siguiente" total-items="totalItemsFinalizados"
+					ng-model="currentPageFinalizada" max-size="maxSize"
+					items-per-page="itemsPerPage" class="pagination-sm"
+					boundary-link-numbers="true" rotate="false"
+					ng-change="pageChanged()"></ul>
+			</div>
+		</div>
+	</div>
+	</uib-tab> <uib-tab index="6" select="searchSolAnulado()"> <uib-tab-heading>
+	Solicitudes Anulados <!-- 	<div ng-show="dataSolAnulados.length>0"
+			style="width: 15px; margin-right: -10px; margin-top: -5px; border: none; border-radius: 50%; float: right; text-align: center; background-color: #e01e1e">
+			<b style="color: #fff">{{ totalItemsAnulados }}</b>
+		</div> --> </uib-tab-heading>
+	<div class="inline-container-Group p-0 mt-3 bg-white">
+		<form ng-submit="searchSolAnulado()" class="text-sm">
+			<div class="col-sm-12 inline-container-Group"
+				style="margin-top: 10px; padding: 10px; border: 1px solid #d5d5d5">
+				<p class="modal-title"
+					style="color: #999; font-size: 15px; margin-bottom: 5px; margin-top: -5px">
+					Criterios de búsqueda:</p>
+				<fieldset style="width: 100%;">
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Estado: </label>
+						<div class="col-sm-2">
+							<select ng-model="modelAnulados.estados" name="estado"
+								id="estado" class="form-control" ng-disabled="true">
+								<option value="" selected>Anulados</option>
+							</select>
+
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Solicitud: </label>
+						<div class="col-sm-2">
+							<input class="form-control"
+								ng-model="modelAnulados.numeroSolicitud" name="numeroSolicitud"
+								maxlength="11" placeholder="Ej. 00002" style="width: 100%"
+								type="text" value="">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">&Oacute;rgano
+							destino: </label>
+						<div class="col-sm-2">
+							<select select2 ng-model="modelAnulados.organoDestino"
+								name="organoDestino" class="form-control"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in oficinas"
+									value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Inicio:
+						</label>
+						<div class="col-sm-2">
+							<input ng-model="modelAnulados.fechaInicio" class="form-control"
+								type="date" name="fechaInicio">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Fecha Fin: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelAnulados.fechaFin" class="form-control"
+								type="date" name="fechaFin">
+						</div>
+
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right; padding-left: 0px;">Tipo
+							Documento: </label>
+						<div class="col-sm-2">
+							<select select2 class="form-control"
+								ng-model="modelAnulados.tipoDocumento" name="tipoDocumento"
+								data-placeholder="--Seleccione--" data-allow-clear="true">
+								<option value="" selected>-- Todos --</option>
+								<option data-ng-repeat="item in tipoDocumento"
+									value={{item.id_tipodocumento}}>
+									{{item.desc_tipodocumento}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Nro.
+							Documento: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelAnulados.numeroDocumento"
+								class="form-control" name="numeroDocumento" maxlength="50"
+								placeholder="Ej. I008-500" style="width: 100%" type="text"
+								value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Asunto: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelAnulados.asunto" class="form-control"
+								maxlength="50" name="asunto" placeholder="Ej. Asunto"
+								style="width: 100%" type="text" value="">
+						</div>
+						<label class="col-sm-2 control-label"
+							style="margin-top: 5px; text-align: right;">Raz&oacute;n
+							Social: </label>
+						<div class="col-sm-2">
+							<input ng-model="modelAnulados.RazonSocial" class="form-control"
+								maxlength="50" name="RazonSocial"
+								placeholder="Ej. Raz&oacute;n Social" style="width: 100%"
+								type="text" value="">
+						</div>
+
+					</div>
+
+					<div class="row">
+						<label class="col-sm-2 control-label d-none"
+							style="margin-top: 5px; text-align: right;">Destino: </label>
+						<div class="col-sm-2 d-none">
+							<input ng-model="modelAnulados.Destino" class="form-control"
+								maxlength="50" name="Destino" placeholder="Ej. Destino"
+								style="width: 100%" type="text" value="">
+						</div>
+
+						<div class="col-sm-4">
+							<button id="btnBuscar" class="btn btn-blue mr-1" type="submit">
+								<i class="clip-search"></i>&nbsp; Buscar
+							</button>
+							<button class="btn btn-warning" type="button"
+								ng-click="limpiar(5);">
+								<i class="clip-cancel-circle"></i>&nbsp; Limpiar
+							</button>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+		</form>
+		<div class="flex flex-row">
+			<button ng-click="exportarAExcel(5)"
+				class="btn btn-dark-grey mt-3 mb-1" type="button">
+				<i class="clip-file-excel"></i>&nbsp; Exportar a Excel
+			</button>
+		</div>
+		<div class="d-flex">
+			<h2 class="grid-title">Listado de Solicitudes</h2>
+			<!-- 	<div class="ml-auto col-lg-3 col-md-4 col-xs-12 p-2">
+					<select select2 class="form-control"
+						ng-model="modelfinalizados.orden" multiple="multiple"
+						ng-change="searchSolFinalizados()"
+						data-placeholder="--Seleccionar Orden--">
+						<option selected></option>
+						<option data-ng-repeat="item in orden" value={{item.valor}}>
+							{{item.descripcion}}</option>
+					</select>
+				</div> -->
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+
+						<!-- <th class="text-center">Estado STD</th> -->
+						<th class="text-center">Nro. Solicitud</th>
+						<th class="text-center">Tipo Documento</th>
+						<th>Nro. Documento</th>
+						<th class="text-center">Nombre / Raz&oacute;n social</th>
+						<th class="text-center">Fecha registro</th>
+						<th class="text-center">Fecha Anulaci&oacute;n</th>
+						<th class="text-center">&Oacute;rgano Destino</th>
+						<th class="text-center">Cant. Folios</th>
+						<th class="text-center">Nro. Anexos</th>
+<!-- 						<th class="text-center">Hoja de Ruta Referencial</th> -->
+						<th class="text-center">Hoja de Ruta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="request in dataSolAnulados">
+						<td>{{ request.numreg }}</td>
+
+						<!-- <td class="text-center"></td> -->
+						<td class="text-center">{{ request.id_documento }}</td>
+						<td class="text-center">{{ request.desc_tipo_documento }}</td>
+						<td>{{ request.nro_documento }}</td>
+						<td class="text-center">{{ request.nombre_persona }}</td>
+						<td class="text-center">{{ request.srt_fecha_creacion }}</td>
+						<td class="text-center">{{ request.fecha_anulacion }}</td>
+						<td class="text-center">{{ request.desc_oficina }}</td>
+						<td class="text-center">{{ request.nro_folios }}</td>
+						<td class="text-center">{{ request.nro_anexos }}</td>
+<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<td class="text-center">{{ request.numero_sid }} - {{
+							request.anio }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="totalItemsAnulados > 1" class="mt-3 row">
+			<div class="col-md-7">
+				<ul class="ml-2 mr-2" uib-pagination previous-text="Anterior"
+					next-text="Siguiente" total-items="totalItemsAnulados"
+					ng-model="currentPageAnulado" max-size="maxSize"
+					items-per-page="itemsPerPage" class="pagination-sm"
+					boundary-link-numbers="true" rotate="false"
+					ng-change="pageChanged()"></ul>
+			</div>
+		</div>
+	</div>
+	</uib-tab> </uib-tabset>
+</div>

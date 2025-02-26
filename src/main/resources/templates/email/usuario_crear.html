@@ -1,0 +1,127 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+	<table
+		style="background-color: #ffffff; width: 100%; border: #dadfe6 2px solid"
+		align="center" cellpadding="3" cellspacing="2">
+		<tbody>
+			<tr>
+				<td><span><table
+							style="background-color: #ffffff; width: 100%" cellspacing="0"
+							cellpadding="0" border="0">
+						</table>
+						<table
+							style="font-size: 11px; color: #000000; font-family: arial; text-align: justify; width: 100%; border-bottom: 1px"
+							cellspacing="2" border="0">
+							<tbody>
+								<tr>
+
+									<td style="height: 16px"><img src="logo.png"
+										th:src="|cid:${imageResourceName}|" /></td>
+								</tr>
+								<tr>
+									<td><h1
+											style="text-align: center; margin-top: 5px; margin-bottom: 5px">
+											<b style="color: #e23636; font-weight: 600; font-size: 20px;">
+												VENTANILLA ELECTR&Oacute;NICA</b>
+										</h1></td>
+								</tr>
+							</tbody>
+						</table>
+						<table
+							style="font-size: 11px; color: #000000; font-family: arial; text-align: justify; width: 100%; border-bottom: 1px"
+							cellspacing="2" border="0">
+							<tbody>
+								<tr>
+									<td style="height: 16px">Sr(a).</td>
+								</tr>
+								<tr>
+								     <td style="height: 16px">Sr(a). <em th:text="${nombre}" style="font-style: normal; font-weight: bold;"></em>
+										registrado como persona <em th:text="${tipoper}" style="font-style: normal; font-weight: bold;"></em> e
+										identificado con el <em th:text="${tipodoc}" style="font-style: normal; font-weight: bold;"></em> : <em
+										th:text="${nro_documento}" style="font-style: normal; font-weight: bold;"></em>, mediante este correo le
+										enviamos su usuario y clave para ingresar a la Ventanilla
+										Electr&oacute;nica.
+
+									</td>
+									 
+								</tr>
+								<tr>
+									<td style="height: 16px">Usted ha recibido una
+										notificaci&oacute;n con los siguientes datos:</em>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<table
+							style="border: #dadfe6 1px solid; width: 100%; border-bottom: 1px"
+							cellspacing="0" cellpadding="2" width="55%">
+							<tbody>
+								<tr
+									style="font-weight: bold; font-size: 11px; letter-spacing: 1px; font-family: arial; background-color: #cac8c8; text-align: center;">
+									<td colspan="2"
+										style="color: #000000; padding: 3.75pt 3.75pt 3.75pt 3.75pt">
+										DATOS DE LA NOTIFICACI&Oacute;N</td>
+								</tr>
+								<tr style="font-size: 11px; color: #000000; font-family: arial"></tr>
+								<tr style="font-size: 11px; color: #000000; font-family: arial">
+									<td style="border: #dadfe6 1px solid; width: 25%; height: 20px">Usuario :</td>
+									<td style="border: #dadfe6 1px solid; width: 75%; height: 20px"><em
+										th:text="${codigousuario}" style="font-style: normal;"></em></td>
+								</tr>
+								<tr style="font-size: 11px; color: #000000; font-family: arial"></tr>
+								<tr style="font-size: 11px; color: #000000; font-family: arial">
+									<td style="border: #dadfe6 1px solid; width: 25%; height: 20px">Clave :</td>
+									<td style="border: #dadfe6 1px solid; width: 75%; height: 20px"><em
+										th:text="${codigoclave}" style="font-style: normal;"></em></td>
+								</tr>
+								<tr style="font-size: 11px; color: #000000; font-family: arial"></tr>
+ 
+							</tbody>
+						</table>
+						<table
+							style="font-size: 11px; color: #000000; font-family: arial; text-align: justify; width: 100%; border-bottom: 1px"
+							cellspacing="2" border="0">
+							<tbody>
+								<tr>
+									<td style="height: 16px">Atentamente,</td>
+								</tr>
+								<tr>
+									<td style="height: 16px; font-weight: bold;">Ministerio de
+										Econom&iacute;a y Finanzas - MEF</td>
+
+									<!-- <td style="height: 16px; text-align: right;"><img
+										src="peruprimero.png" th:src="|cid:${imageResourceName2}|" /></td> -->
+								</tr>
+							</tbody>
+						</table> </span></td>
+			</tr>
+
+			<tr>
+				<td><span></span>
+					<table
+						style="vertical-align: baseline; height: 20px; width: 100%; border-bottom: 1px solid #dadfe6; border-top: 1px solid #dadfe6"
+						cellspacing="0" cellpadding="5">
+						<tbody>
+							<tr
+								style="font-size: 11px; color: #000000; font-family: Arial; background-color: #ffffff;">
+								<td style="text-align: center; font-weight: bold">MEF
+									Copyright ${anio}, Todos los derechos reservados</td>
+							</tr>
+						</tbody>
+					</table></td>
+			</tr>
+		</tbody>
+	</table>
+
+
+</body>
+</html>
+
+
+ 
+
