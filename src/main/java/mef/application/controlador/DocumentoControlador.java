@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -32,14 +31,12 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,10 +56,8 @@ import mef.application.modelo.DocumentoFinalizar;
 import mef.application.modelo.DocumentoGrilla;
 import mef.application.modelo.DocumentoObservacion;
 import mef.application.modelo.EnlaceEncuesta;
-import mef.application.modelo.Oficinas;
 import mef.application.modelo.PersonaCorreo;
 import mef.application.modelo.RespuestaMessage;
-import mef.application.modelo.TipoDocumento;
 import mef.application.modelo.UsuarioPersona;
 import mef.application.service.CasillaService;
 import mef.application.service.DocumentoService;
@@ -75,10 +70,9 @@ import pe.gob.mef.std.bs.web.ws.AnexoDto;
 import pe.gob.mef.std.bs.web.ws.ErrorInfo;
 import pe.gob.mef.std.bs.web.ws.HrDto;
 import pe.gob.mef.std.bs.web.ws.IdValorDto;
-import pe.gob.mef.std.bs.web.ws.TdFlujoSDto;
-import pe.gob.mef.std.bs.web.ws.UnidadesOrganicasTreeDto;
-import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 import pe.gob.mef.std.bs.web.ws.TaFeriadosDto;
+import pe.gob.mef.std.bs.web.ws.TdFlujoSDto;
+import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 
 //@CrossOrigin(origins = "*")
 @RestController
@@ -213,39 +207,42 @@ public class DocumentoControlador {
 			if (auditoria.ejecucion_procedimiento) {
 				List<Documento> lista = (List<Documento>) auditoria.objeto;
 				for (Documento documento : lista) {
-					data.put("totalreg", documento.getTotalreg());
-					JSONObject jsonObject = new JSONObject();
+					if (Integer.parseInt(documento.getFlg_estado()) != 0) {
+						data.put("totalreg", documento.getTotalreg());
+						JSONObject jsonObject = new JSONObject();
 
-					jsonObject.put("id_documento", documento.getId_documento());
-					jsonObject.put("codigo_archivo", documento.getCodigo_archivo());
-					jsonObject.put("asunto", documento.getAsunto());
-					jsonObject.put("flg_estado", documento.getFlg_estado());
-					jsonObject.put("id_estado_documento", documento.getId_estado_documento());
-					jsonObject.put("estado_documento", documento.getDesc_estado_documento());
-					// estadoService.getEstado(documento.getId_estado_documento()).getDesc_estado());
+						jsonObject.put("id_documento", documento.getId_documento());
+						jsonObject.put("codigo_archivo", documento.getCodigo_archivo());
+						jsonObject.put("asunto", documento.getAsunto());
+						jsonObject.put("flg_estado", documento.getFlg_estado());
+						jsonObject.put("id_estado_documento", documento.getId_estado_documento());
+						jsonObject.put("estado_documento", documento.getDesc_estado_documento());
+						// estadoService.getEstado(documento.getId_estado_documento()).getDesc_estado());
 
-					jsonObject.put("desc_oficina", documento.getDesc_oficina());
-					jsonObject.put("desc_tipo_documento", documento.getDesc_tipo_documento());
-					jsonObject.put("nro_documento", documento.getNro_documento());
-					jsonObject.put("nro_folios", documento.getNro_folios());
-					jsonObject.put("nro_anexos", documento.getCuenta_anexos());
-					jsonObject.put("srt_fecha_creacion", documento.getFec_creacion());
-					jsonObject.put("srt_fecha_recibido", documento.getSrt_fecha_recibido());
-					jsonObject.put("srt_fecha_modificacion", documento.getStr_fec_modificacion());
-					jsonObject.put("anio", documento.getAnio() == 0 ? "" : documento.getAnio());
-					jsonObject.put("numero_sid", documento.getNumero_sid());
-					jsonObject.put("nombre_persona", documento.getNombre_persona());
-					jsonObject.put("ip_creacion", documento.getIp_creacion());
-					jsonObject.put("hoja_ruta_referencial", documento.getHoja_ruta());
-					jsonObject.put("numreg", documento.getNumreg());
-					jsonObject.put("fecha_anulacion", documento.getFecha_anulacion());
-					jsonObject.put("fecha_observacion", documento.getFecha_observacion());
-					jsonObject.put("fecha_subsanacion", documento.getFecha_subsanacion());
-					jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
-					jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
-					jsonObject.put("esta_asignado", documento.isAsignado());
-					jsonObject.put("nomb_usu_asignacion", documento.getNomb_usu_asignacion());
-					jsonArray.put(jsonObject);
+						jsonObject.put("desc_oficina", documento.getDesc_oficina());
+						jsonObject.put("desc_tipo_documento", documento.getDesc_tipo_documento());
+						jsonObject.put("nro_documento", documento.getNro_documento());
+						jsonObject.put("nro_folios", documento.getNro_folios());
+						jsonObject.put("nro_anexos", documento.getCuenta_anexos());
+						jsonObject.put("srt_fecha_creacion", documento.getFec_creacion());
+						jsonObject.put("srt_fecha_recibido", documento.getSrt_fecha_recibido());
+						jsonObject.put("srt_fecha_modificacion", documento.getStr_fec_modificacion());
+						jsonObject.put("anio", documento.getAnio() == 0 ? "" : documento.getAnio());
+						jsonObject.put("numero_sid", documento.getNumero_sid());
+						jsonObject.put("nombre_persona", documento.getNombre_persona());
+						jsonObject.put("ip_creacion", documento.getIp_creacion());
+						jsonObject.put("hoja_ruta_referencial", documento.getHoja_ruta());
+						jsonObject.put("numreg", documento.getNumreg());
+						jsonObject.put("fecha_anulacion", documento.getFecha_anulacion());
+						jsonObject.put("fecha_observacion", documento.getFecha_observacion());
+						jsonObject.put("fecha_subsanacion", documento.getFecha_subsanacion());
+						jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
+						jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
+						jsonObject.put("esta_asignado", documento.isAsignado());
+						jsonObject.put("nomb_usu_asignacion", documento.getNomb_usu_asignacion());
+						jsonArray.put(jsonObject);
+					}
+
 				}
 			}
 
@@ -609,7 +606,7 @@ public class DocumentoControlador {
 					// System.out.println("Plantilla:"+plantillaCorreo);
 					emailutil = new EmailUtil();
 
-					if(!"".equals(hojaRuta)) { //Valida que exista una Hoja de ruta
+					if (!"".equals(hojaRuta)) { // Valida que exista una Hoja de ruta
 						if (micorrreo.equals("L")) {
 							emailComponent.sendHTML(entidad.getCorreo(), "Mensaje de Mesa de Partes - MEF",
 									entidad.getCorreo_copia(), plantillaCorreo, params, resources);
