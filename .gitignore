@@ -291,3 +291,6 @@ misc.xml
 # Ignorar configuraciones específicas de Eclipse
 .settings/
 *.prefs
+
+
+.smarttomcat/
