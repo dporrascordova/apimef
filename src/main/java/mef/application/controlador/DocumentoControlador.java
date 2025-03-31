@@ -121,9 +121,11 @@ public class DocumentoControlador {
 	EnlaceEncuestaService enlaceEncuestaService;
 
 	private EmailUtil emailutil;
+	private final VentanillastdProxy ventanillastdProxy;
 
-	public DocumentoControlador(EmailComponent emailComponent) {
+	public DocumentoControlador(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
 		this.emailComponent = emailComponent;
+		this.ventanillastdProxy = ventanillastdProxy;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -278,10 +280,11 @@ public class DocumentoControlador {
 			if (auditoria.ejecucion_procedimiento) {
 				List<Documento> lista = (List<Documento>) auditoria.objeto;
 				if (lista.size() > 0) {
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					for (Documento documento : lista) {
 						try {
-							IdValorDto retorno = proxy.estadoDeExpediente("mchavez", documento.getNumero_sid(),
+							IdValorDto retorno = ventanillastdProxy.estadoDeExpediente("mchavez",
+									documento.getNumero_sid(),
 									documento.getAnio(), new UserIdentityHelper().getClientIpAddress());
 							// if(retorno.getTypeDesc())
 							if (retorno.getId().equals(4)) {
@@ -453,7 +456,7 @@ public class DocumentoControlador {
 						if (auditoriaPersona.ejecucion_procedimiento)
 							mipersona = (UsuarioPersona) auditoriaPersona.objeto;
 
-						VentanillastdProxy proxy = new VentanillastdProxy();
+						// VentanillastdProxy proxy = new VentanillastdProxy();
 
 						TdFlujoSDto[] oficinas = new TdFlujoSDto[1];
 						TdFlujoSDto oficina = new TdFlujoSDto();
@@ -494,7 +497,7 @@ public class DocumentoControlador {
 						String USU = "lmauricio";
 						System.out.println("Creando Expediente:");
 						// Crear expediente en el SGDD
-						expediente = proxy.crearExpediente(
+						expediente = ventanillastdProxy.crearExpediente(
 								USU,
 								auditoria.objeto.toString() + "",
 								Long.valueOf(doc.getId_tipo_documento()),
@@ -767,7 +770,7 @@ public class DocumentoControlador {
 					ArrayList<DocumentoAnexo> anexos = new ArrayList<DocumentoAnexo>();
 					DocumentoAnexo anexo = new DocumentoAnexo();
 					HrDto expediente = new HrDto();
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					Path path;
 					Integer totalFaileFiles = 0;
 					String message = "";
@@ -862,7 +865,8 @@ public class DocumentoControlador {
 
 					System.out.println("Total Anexos: " + anexoDto.size());
 
-					expediente = proxy.levantarObservacion(USU, documento.getNumero_sid(), documento.getAnio(),
+					expediente = ventanillastdProxy.levantarObservacion(USU, documento.getNumero_sid(),
+							documento.getAnio(),
 							documento.getNro_documento(), anexoDto.toArray(new AnexoDto[anexoDto.size()]),
 							UserIdentityHelper.getClientIpAddress(), anexosHR);
 
@@ -1087,7 +1091,7 @@ public class DocumentoControlador {
 						if (auditoria.ejecucion_procedimiento) {
 							try {
 								mipersona = (UsuarioPersona) auditoria.objeto;
-								VentanillastdProxy proxy = new VentanillastdProxy();
+								// VentanillastdProxy proxy = new VentanillastdProxy();
 
 								Path path = Paths.get(fileServer, doc.getId_documento() + "",
 										doc.getCodigo_archivo() + ".pdf");
@@ -1196,7 +1200,7 @@ public class DocumentoControlador {
 										}
 									}
 
-									expediente = proxy.crearExpediente(USU, doc.getId_documento() + "",
+									expediente = ventanillastdProxy.crearExpediente(USU, doc.getId_documento() + "",
 											Long.valueOf(documento.getId_tipo_documento()),
 											documento.getNro_documento(), documento.getNro_folios(),
 											documento.getAsunto(), apellido_paterno, apellido_materno, nombre, dni,
@@ -1327,7 +1331,7 @@ public class DocumentoControlador {
 						if (auditoria.ejecucion_procedimiento) {
 							UsuarioPersona mipersona = (UsuarioPersona) auditoria.objeto;
 
-							VentanillastdProxy proxy = new VentanillastdProxy();
+							// VentanillastdProxy proxy = new VentanillastdProxy();
 							Path path = Paths.get(fileServer, doc.getId_documento() + "",
 									doc.getCodigo_archivo() + ".pdf");
 							File file = path.toFile();
@@ -1436,7 +1440,7 @@ public class DocumentoControlador {
 
 								System.out.println("servicio anexar expediente 2  ");
 
-								expediente = proxy.anexarAExpediente(USU, documento.getNumero_sid(),
+								expediente = ventanillastdProxy.anexarAExpediente(USU, documento.getNumero_sid(),
 										documento.getAnio(), "", anexoDto, IP, documento.getOficinas());
 
 								System.out.println("servicio anexar expediente 3  ");
@@ -1657,7 +1661,7 @@ public class DocumentoControlador {
 	}
 
 	public String CalcularFechaAnulacion() throws ErrorInfo, RemoteException, ParseException {
-		VentanillastdProxy proxy = new VentanillastdProxy();
+		// VentanillastdProxy proxy = new VentanillastdProxy();
 		SimpleDateFormat fromaterF = new SimpleDateFormat("dd/MM/yyyy");
 		Date date_hoy = new Date();
 
@@ -1671,7 +1675,7 @@ public class DocumentoControlador {
 		String Fecha_Anu = "";
 		TaFeriadosDto[] ListaFeriados;
 		try {
-			ListaFeriados = proxy.listaDiasFeriados();
+			ListaFeriados = ventanillastdProxy.listaDiasFeriados();
 
 		} catch (Exception ex) {
 			// auditoria.Error(ex);

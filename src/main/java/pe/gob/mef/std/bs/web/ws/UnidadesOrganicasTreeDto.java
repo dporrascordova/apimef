@@ -7,7 +7,7 @@
 
 package pe.gob.mef.std.bs.web.ws;
 
-public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
+public class UnidadesOrganicasTreeDto implements java.io.Serializable {
     private java.lang.String acronimo;
 
     private java.lang.String codigo;
@@ -28,24 +28,23 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     }
 
     public UnidadesOrganicasTreeDto(
-           java.lang.String acronimo,
-           java.lang.String codigo,
-           boolean conjefe,
-           java.lang.String descripcion,
-           java.lang.String descripcionCompleta,
-           java.lang.Integer flagofgeneral,
-           java.lang.Long idunidad,
-           java.lang.String jefe) {
-           this.acronimo = acronimo;
-           this.codigo = codigo;
-           this.conjefe = conjefe;
-           this.descripcion = descripcion;
-           this.descripcionCompleta = descripcionCompleta;
-           this.flagofgeneral = flagofgeneral;
-           this.idunidad = idunidad;
-           this.jefe = jefe;
+            java.lang.String acronimo,
+            java.lang.String codigo,
+            boolean conjefe,
+            java.lang.String descripcion,
+            java.lang.String descripcionCompleta,
+            java.lang.Integer flagofgeneral,
+            java.lang.Long idunidad,
+            java.lang.String jefe) {
+        this.acronimo = acronimo;
+        this.codigo = codigo;
+        this.conjefe = conjefe;
+        this.descripcion = descripcion;
+        this.descripcionCompleta = descripcionCompleta;
+        this.flagofgeneral = flagofgeneral;
+        this.idunidad = idunidad;
+        this.jefe = jefe;
     }
-
 
     /**
      * Gets the acronimo value for this UnidadesOrganicasTreeDto.
@@ -56,7 +55,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return acronimo;
     }
 
-
     /**
      * Sets the acronimo value for this UnidadesOrganicasTreeDto.
      * 
@@ -65,7 +63,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setAcronimo(java.lang.String acronimo) {
         this.acronimo = acronimo;
     }
-
 
     /**
      * Gets the codigo value for this UnidadesOrganicasTreeDto.
@@ -76,7 +73,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return codigo;
     }
 
-
     /**
      * Sets the codigo value for this UnidadesOrganicasTreeDto.
      * 
@@ -85,7 +81,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setCodigo(java.lang.String codigo) {
         this.codigo = codigo;
     }
-
 
     /**
      * Gets the conjefe value for this UnidadesOrganicasTreeDto.
@@ -96,7 +91,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return conjefe;
     }
 
-
     /**
      * Sets the conjefe value for this UnidadesOrganicasTreeDto.
      * 
@@ -105,7 +99,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setConjefe(boolean conjefe) {
         this.conjefe = conjefe;
     }
-
 
     /**
      * Gets the descripcion value for this UnidadesOrganicasTreeDto.
@@ -116,7 +109,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return descripcion;
     }
 
-
     /**
      * Sets the descripcion value for this UnidadesOrganicasTreeDto.
      * 
@@ -125,7 +117,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setDescripcion(java.lang.String descripcion) {
         this.descripcion = descripcion;
     }
-
 
     /**
      * Gets the descripcionCompleta value for this UnidadesOrganicasTreeDto.
@@ -136,7 +127,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return descripcionCompleta;
     }
 
-
     /**
      * Sets the descripcionCompleta value for this UnidadesOrganicasTreeDto.
      * 
@@ -145,7 +135,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setDescripcionCompleta(java.lang.String descripcionCompleta) {
         this.descripcionCompleta = descripcionCompleta;
     }
-
 
     /**
      * Gets the flagofgeneral value for this UnidadesOrganicasTreeDto.
@@ -156,7 +145,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return flagofgeneral;
     }
 
-
     /**
      * Sets the flagofgeneral value for this UnidadesOrganicasTreeDto.
      * 
@@ -165,7 +153,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public void setFlagofgeneral(java.lang.Integer flagofgeneral) {
         this.flagofgeneral = flagofgeneral;
     }
-
 
     /**
      * Gets the idunidad value for this UnidadesOrganicasTreeDto.
@@ -176,7 +163,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         return idunidad;
     }
 
-
     /**
      * Sets the idunidad value for this UnidadesOrganicasTreeDto.
      * 
@@ -186,7 +172,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
         this.idunidad = idunidad;
     }
 
-
     /**
      * Gets the jefe value for this UnidadesOrganicasTreeDto.
      * 
@@ -195,7 +180,6 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     public java.lang.String getJefe() {
         return jefe;
     }
-
 
     /**
      * Sets the jefe value for this UnidadesOrganicasTreeDto.
@@ -207,44 +191,55 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof UnidadesOrganicasTreeDto)) return false;
+        if (!(obj instanceof UnidadesOrganicasTreeDto))
+            return false;
         UnidadesOrganicasTreeDto other = (UnidadesOrganicasTreeDto) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.acronimo==null && other.getAcronimo()==null) || 
-             (this.acronimo!=null &&
-              this.acronimo.equals(other.getAcronimo()))) &&
-            ((this.codigo==null && other.getCodigo()==null) || 
-             (this.codigo!=null &&
-              this.codigo.equals(other.getCodigo()))) &&
-            this.conjefe == other.isConjefe() &&
-            ((this.descripcion==null && other.getDescripcion()==null) || 
-             (this.descripcion!=null &&
-              this.descripcion.equals(other.getDescripcion()))) &&
-            ((this.descripcionCompleta==null && other.getDescripcionCompleta()==null) || 
-             (this.descripcionCompleta!=null &&
-              this.descripcionCompleta.equals(other.getDescripcionCompleta()))) &&
-            ((this.flagofgeneral==null && other.getFlagofgeneral()==null) || 
-             (this.flagofgeneral!=null &&
-              this.flagofgeneral.equals(other.getFlagofgeneral()))) &&
-            ((this.idunidad==null && other.getIdunidad()==null) || 
-             (this.idunidad!=null &&
-              this.idunidad.equals(other.getIdunidad()))) &&
-            ((this.jefe==null && other.getJefe()==null) || 
-             (this.jefe!=null &&
-              this.jefe.equals(other.getJefe())));
+        _equals = true &&
+                ((this.acronimo == null && other.getAcronimo() == null) ||
+                        (this.acronimo != null &&
+                                this.acronimo.equals(other.getAcronimo())))
+                &&
+                ((this.codigo == null && other.getCodigo() == null) ||
+                        (this.codigo != null &&
+                                this.codigo.equals(other.getCodigo())))
+                &&
+                this.conjefe == other.isConjefe() &&
+                ((this.descripcion == null && other.getDescripcion() == null) ||
+                        (this.descripcion != null &&
+                                this.descripcion.equals(other.getDescripcion())))
+                &&
+                ((this.descripcionCompleta == null && other.getDescripcionCompleta() == null) ||
+                        (this.descripcionCompleta != null &&
+                                this.descripcionCompleta.equals(other.getDescripcionCompleta())))
+                &&
+                ((this.flagofgeneral == null && other.getFlagofgeneral() == null) ||
+                        (this.flagofgeneral != null &&
+                                this.flagofgeneral.equals(other.getFlagofgeneral())))
+                &&
+                ((this.idunidad == null && other.getIdunidad() == null) ||
+                        (this.idunidad != null &&
+                                this.idunidad.equals(other.getIdunidad())))
+                &&
+                ((this.jefe == null && other.getJefe() == null) ||
+                        (this.jefe != null &&
+                                this.jefe.equals(other.getJefe())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -278,11 +273,12 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
     }
 
     // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(UnidadesOrganicasTreeDto.class, true);
+    private static org.apache.axis.description.TypeDesc typeDesc = new org.apache.axis.description.TypeDesc(
+            UnidadesOrganicasTreeDto.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://ws.web.bs.std.mef.gob.pe/", "unidadesOrganicasTreeDto"));
+        typeDesc.setXmlType(
+                new javax.xml.namespace.QName("http://ws.web.bs.std.mef.gob.pe/", "unidadesOrganicasTreeDto"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("acronimo");
         elemField.setXmlName(new javax.xml.namespace.QName("", "acronimo"));
@@ -351,24 +347,22 @@ public class UnidadesOrganicasTreeDto  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(
+                _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(
+                _javaType, _xmlType, typeDesc);
     }
 
 }

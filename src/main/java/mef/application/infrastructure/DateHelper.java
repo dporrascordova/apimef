@@ -11,7 +11,7 @@ import pe.gob.mef.std.bs.web.ws.TaFeriadosDto;
 import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 
 public class DateHelper {
-	
+
 	public static String CalcularFechaAnulacion() throws ErrorInfo, RemoteException, ParseException {
 		VentanillastdProxy proxy = new VentanillastdProxy();
 		SimpleDateFormat fromaterF = new SimpleDateFormat("dd/MM/yyyy");
@@ -47,12 +47,12 @@ public class DateHelper {
 				valido_rutina = Loop_Feriados(fecha_masuno, ListaFeriados);
 			}
 		}
-		
+
 		// Agregamos el 2do dia
 		calendar_hoy.add(Calendar.HOUR, Dias);
 		fecha_masuno = calendar_hoy.getTime();
 		valido_rutina = false;
-		
+
 		// agregar_dia = 0;
 		while (valido_rutina == false) {
 			// agregar_dia++;
@@ -71,7 +71,7 @@ public class DateHelper {
 
 		return Fecha_Anu;
 	}
-	
+
 	static boolean Loop_Feriados(Date fecha, TaFeriadosDto[] ListaFeriados)
 			throws ErrorInfo, RemoteException, ParseException {
 		boolean valido = true;
