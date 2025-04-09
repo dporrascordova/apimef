@@ -35,17 +35,7 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
             throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
-<<<<<<< Updated upstream
 
-    // Use to get a proxy class for VentanillaSTDPort
-    // private java.lang.String VentanillaSTDPort_address = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl";
-//    private java.lang.String VentanillaSTDPort_address = "http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl";  //error
-   private java.lang.String VentanillaSTDPort_address = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl";
-    //http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl
-    //http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl
-
-=======
->>>>>>> Stashed changes
     public java.lang.String getVentanillaSTDPortAddress() {
         return VentanillaSTDPort_address;
     }
