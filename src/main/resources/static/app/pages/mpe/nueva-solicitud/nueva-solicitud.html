@@ -86,7 +86,7 @@
 					data-placeholder="--Seleccione--" data-allow-clear="true">
 					<option value="">-- Seleccione --</option>
 					<option data-ng-repeat="item in listaDeOficinas"
-						value={{item.idunidad}}>{{item.descripcion}}</option>
+						value={{item.idunidad}}>{{item.codigo}} - {{item.descripcion}}</option>
 				</select>
 				<div
 					ng-show="submitted && form.nuevaSolicitud.organoDestino.$invalid"
