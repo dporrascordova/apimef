@@ -37,6 +37,7 @@ import mef.application.service.EstadoService;
 import mef.application.service.FilesStorageService;
 import mef.application.service.MefService;
 import mef.application.service.PersonaService;
+import mef.application.service.impl.OficinaServiceImpl;
 import pe.gob.mef.std.bs.web.ws.AcMsUbigwsDto;
 import pe.gob.mef.std.bs.web.ws.AnexoDto;
 import pe.gob.mef.std.bs.web.ws.HrDto;
@@ -79,6 +80,15 @@ public class DocumentScheduler {
 
 	private EmailUtil emailutil;
 
+<<<<<<< HEAD
+	@Autowired
+	private OficinaServiceImpl oficinaService;
+
+	public DocumentScheduler(EmailComponent emailComponent) {
+		this.emailComponent = emailComponent;
+	}
+
+=======
 	private final VentanillastdProxy ventanillastdProxy;
 
 	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
@@ -86,6 +96,7 @@ public class DocumentScheduler {
 		this.ventanillastdProxy = ventanillastdProxy;
 	}
 
+>>>>>>> develop
 	// Job de prueba para recar un nuevo registro en SGDD
 	public void TestSGDD() throws IOException {
 		System.out.println("-----TestSGDD-------");
@@ -343,43 +354,9 @@ public class DocumentScheduler {
 		Auditoria auditoria = new Auditoria();
 		try {
 
-			// VentanillastdProxy proxy = new VentanillastdProxy();
-			UnidadesOrganicasTreeDto[] mioficinas = ventanillastdProxy.unidadesOrganicas();
-			String cadena = "";
-			int cuenta = 0;
-			for (int i = 0; i < mioficinas.length; i++) {
-				String conjefe = "0";
-				String Jefe = "-";
-				if (mioficinas[i].isConjefe()) {
-					conjefe = "1";
-					Jefe = mioficinas[i].getJefe().isEmpty() ? "-" : mioficinas[i].getJefe();
-				}
-				if (cuenta != 0) {
-					cadena += "=";
-				}
-				Long Idunidad = mioficinas[i].getIdunidad();
-				String Acronimo = mioficinas[i].getAcronimo().isEmpty() ? "-" : mioficinas[i].getAcronimo();
-				String Codigo = mioficinas[i].getCodigo().isEmpty() ? "-" : mioficinas[i].getCodigo();
-				String Descripcion = mioficinas[i].getDescripcion().isEmpty() ? "-" : mioficinas[i].getDescripcion();
-				String DescripcionCompleta = mioficinas[i].getDescripcionCompleta().isEmpty() ? "-"
-						: mioficinas[i].getDescripcionCompleta();
-
-				cadena += Idunidad + "|" + Acronimo + "|" + Codigo + "|" + conjefe + "|" + Descripcion + "|"
-						+ DescripcionCompleta + "|" + Jefe.replace("'", "");
-				cuenta++;
-
-				if (cadena.length() > 3500) {
-					auditoria = mefService.Mef_Oficinas_Actualizar(cadena);
-					cadena = "";
-					cuenta = 0;
-				}
-			}
-			if (cadena != "") {
-				auditoria = mefService.Mef_Oficinas_Actualizar(cadena);
-				cadena = "";
-				cuenta = 0;
-			}
-			mioficinas = null;
+			VentanillastdProxy proxy = new VentanillastdProxy();
+			UnidadesOrganicasTreeDto[] mioficinas = proxy.unidadesOrganicas();
+			oficinaService.actualizarOficinasDesdeServicio(mioficinas);
 
 			// VentanillastdProxy proxy = new VentanillastdProxy();
 			AcMsUbigwsDto[] ubigeos = ventanillastdProxy.ubigeos();
@@ -389,8 +366,8 @@ public class DocumentScheduler {
 			// VentanillastdProxy proxy = new VentanillastdProxy();
 			// AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
 			// String
-			cadena = "";
-			cuenta = 0;
+			String cadena = "";
+			int cuenta = 0;
 			for (int i = 0; i < ubigeos.length; i++) {
 				AcMsUbigwsDto ubi = ubigeos[i];
 				if (ubi.getCodprov().equals(0) && ubi.getCoddist().equals(0)) {

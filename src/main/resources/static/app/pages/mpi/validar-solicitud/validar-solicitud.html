@@ -231,7 +231,7 @@
 							<option></option>
 							<option data-ng-repeat="item in oficinas" value={{item.idunidad}}
 								ng-selected="item.idunidad == documento.id_oficina">
-								{{item.descripcioncompleta}}</option>
+								{{item.codigo}} - {{item.descripcioncompleta}}</option>
 						</select>
 						<div ng-if="formvalidarSolicitud.oficina.$invalid"
 							class="invalid-feedback">

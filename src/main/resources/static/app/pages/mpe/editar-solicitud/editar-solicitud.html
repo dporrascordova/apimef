@@ -92,7 +92,7 @@
 							ng-class="{ 'is-invalid': submitted && form.nuevaSolicitud.organoDestino.$invalid }">
 							<option value="">-- Seleccione --</option>
 							<option data-ng-repeat="item in listaDeOficinas"
-								value={{item.idunidad}}>{{item.descripcioncompleta}}</option>
+								value={{item.idunidad}}>{{item.codigo}} -  {{item.descripcioncompleta}}</option>
 						</select>
 						<div
 							ng-show="submitted && form.nuevaSolicitud.organoDestino.$invalid"
