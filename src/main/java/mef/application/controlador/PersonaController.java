@@ -1,54 +1,14 @@
 
 package mef.application.controlador;
+
 import java.io.ByteArrayInputStream;
-import org.apache.commons.io.FileUtils;
-/*
-import org.json.JSONArray;
-import org.json.JSONObject;*/
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.springframework.core.io.InputStreamResource;
-
-import mef.application.component.EmailComponent;
-import mef.application.component.EmailUtil;
-import mef.application.dto.Resource;
-import mef.application.infrastructure.CommonHelpers;
-import mef.application.infrastructure.UbigeoHelpers;
-import mef.application.infrastructure.UserIdentityHelper;
-import mef.application.modelo.Auditoria;
-import mef.application.modelo.Casilla;
-import mef.application.modelo.Documento;
-import mef.application.modelo.PersonaCorreo;
-import mef.application.modelo.PersonaJuridica;
-import mef.application.modelo.PersonaNatural;
-import mef.application.modelo.PersonaUsuario;
-import mef.application.modelo.PersonaValida;
-import mef.application.modelo.UsuarioLogin;
-import mef.application.modelo.UsuarioNatural;
-import mef.application.modelo.UsuarioPersonaGrilla;
-import mef.application.modelo.UsuarioPersonaGrillaLibre;
-import mef.application.service.CasillaService;
-import mef.application.service.FilesStorageService;
-import mef.application.service.PersonaService;
-import pe.gob.mef.std.bs.web.ws.AcMsUbigwsDto;
-import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
-
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,6 +19,44 @@ import java.util.List;*/
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+
+import org.apache.commons.io.FileUtils;
+/*
+import org.json.JSONArray;
+import org.json.JSONObject;*/
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import mef.application.component.EmailComponent;
+import mef.application.component.EmailUtil;
+import mef.application.dto.Resource;
+import mef.application.infrastructure.CommonHelpers;
+import mef.application.infrastructure.UbigeoHelpers;
+import mef.application.infrastructure.UserIdentityHelper;
+import mef.application.modelo.Auditoria;
+import mef.application.modelo.Casilla;
+import mef.application.modelo.PersonaJuridica;
+import mef.application.modelo.PersonaNatural;
+import mef.application.modelo.PersonaUsuario;
+import mef.application.modelo.PersonaValida;
+import mef.application.modelo.UsuarioPersonaGrilla;
+import mef.application.modelo.UsuarioPersonaGrillaLibre;
+import mef.application.service.CasillaService;
+import mef.application.service.FilesStorageService;
+import mef.application.service.PersonaService;
+import pe.gob.mef.std.bs.web.ws.AcMsUbigwsDto;
+import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 
 //@CrossOrigin(origins = "*")
 @RestController
@@ -87,8 +85,11 @@ public class PersonaController {
 	@Value("${google.recaptcha.key.secret}")
 	private String secretKey;
 
-	public PersonaController(EmailComponent emailComponent) {
+	private final VentanillastdProxy proxy;
+
+	public PersonaController(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
 		this.emailComponent = emailComponent;
+		this.proxy = ventanillastdProxy;
 	}
 
 	@PostMapping("/crearpersonanatural")
@@ -104,8 +105,8 @@ public class PersonaController {
 			}
 
 			if (persona.getCaptcha().equals(capt)) {
-				
-				if(persona.getTipodoc() != 1){
+
+				if (persona.getTipodoc() != 1) {
 					persona.setIddepartamento("");
 					persona.setIdprovincia("");
 					persona.setIddistrito("");
@@ -113,12 +114,11 @@ public class PersonaController {
 					persona.setCodigoverificadni("");
 				}
 				auditoria.Limpiar();
-				
-				String Nombre_Archivo ="-"; 
-				if(!Objects.isNull(persona.getMifile()))
-				  Nombre_Archivo = CommonHelpers.Generar_Nombre_Archivo(persona.getMifile());
-				
-				
+
+				String Nombre_Archivo = "-";
+				if (!Objects.isNull(persona.getMifile()))
+					Nombre_Archivo = CommonHelpers.Generar_Nombre_Archivo(persona.getMifile());
+
 				persona.setCodigoarchivo(Nombre_Archivo);
 				persona.setIp_creacion(UserIdentityHelper.getClientIpAddress());
 				auditoria = personaService.PersonaNatural_Insertar(persona);
@@ -131,8 +131,8 @@ public class PersonaController {
 						Auditoria auditoriax = personaService.PersonaNatural_ListarUno(moll, 0);// rUno(ID_PERSONA,0);
 
 						PersonaNatural entidad = (PersonaNatural) auditoriax.objeto;
-						
-						if(!Objects.isNull(persona.getMifile()))
+
+						if (!Objects.isNull(persona.getMifile()))
 							storageService.save(fileServer, persona.getMifile(), Nombre_Archivo);
 
 						Map<String, Object> params = new HashMap<>();
@@ -189,8 +189,9 @@ public class PersonaController {
 	public ResponseEntity<Auditoria> PersonaJuridica_Insertar(@Valid @ModelAttribute PersonaJuridica persona,
 			HttpServletRequest request) {
 		Auditoria auditoria = new Auditoria();
-		//System.out.println("id tipo ducmento repre controller: " + persona.getRep_legal_id_tipo_documento()); 
-		System.out.println("id tipo ducmento delegado controller: " + persona.getDelegado_id_tipo_documento()); 
+		// System.out.println("id tipo ducmento repre controller: " +
+		// persona.getRep_legal_id_tipo_documento());
+		System.out.println("id tipo ducmento delegado controller: " + persona.getDelegado_id_tipo_documento());
 		try {
 			String capt = "";
 			if (request.getSession().getAttribute("info__captcha") != null) {
@@ -296,9 +297,10 @@ public class PersonaController {
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/reporte_usuarios")
-	public ResponseEntity<InputStreamResource> getExportarReporte_Usuarios(@Valid @RequestBody UsuarioPersonaGrilla modelo) {
+	public ResponseEntity<InputStreamResource> getExportarReporte_Usuarios(
+			@Valid @RequestBody UsuarioPersonaGrilla modelo) {
 		ByteArrayInputStream stream = null;
 		HttpHeaders headers = new HttpHeaders();
 
@@ -306,7 +308,7 @@ public class PersonaController {
 		headers.add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		headers.add("Content-Disposition", "inline; filename=foo.xlsx");
 		try {
-	
+
 			stream = personaService.exportUsuarios(modelo);
 
 			stream.close();
@@ -316,10 +318,6 @@ public class PersonaController {
 		}
 		return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
 	}
-	
-	
-	
-	
 
 	@PostMapping("/listarusuariospersonaslibre")
 	@Consumes("multipart/form-data;charset=UTF-8")
@@ -360,12 +358,12 @@ public class PersonaController {
 			busqueda.setCelular("");
 			busqueda.setTelefono("");
 			busqueda.setCorreo("");
-			busqueda.setId_tipo_documenton("4"); // todos los documentos 
+			busqueda.setId_tipo_documenton("4"); // todos los documentos
 			busqueda.setFec_inicio("");
 			busqueda.setFec_fin("");
 			busqueda.setNumpag(1);
 			busqueda.setNumreg(9999999);
-			
+
 			System.out.println("Personalibre paso 9");
 			auditoria = personaService.PersonaUsuario_Listar(busqueda);
 			System.out.println("Personalibre paso 10");
@@ -389,52 +387,51 @@ public class PersonaController {
 			String iddepa = "", idprov = "", iddist = "";
 
 			switch (tipopersona) {
-			case 3:
-				auditoria = personaService.PersonaInterno_ListarUno(id);
-				break;
-			default:
-				VentanillastdProxy proxy = new VentanillastdProxy();
-				if (tipopersona.equals(1)) {
-					PersonaNatural modelo = new PersonaNatural();
-					modelo.setIdpersona(Integer.valueOf(id.toString()));
+				case 3:
+					auditoria = personaService.PersonaInterno_ListarUno(id);
+					break;
+				default:
+					// VentanillastdProxy proxy = new VentanillastdProxy();
+					if (tipopersona.equals(1)) {
+						PersonaNatural modelo = new PersonaNatural();
+						modelo.setIdpersona(Integer.valueOf(id.toString()));
 
-					auditoria = personaService.PersonaNatural_ListarUno(modelo, valido);
-					PersonaNatural personaNatural = (PersonaNatural) auditoria.objeto;
-					
-									
-					if (personaNatural != null) {
-						if(personaNatural.getTipodoc() == 1) {
-							AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
-							personaNatural.setDepartamento(
-									UbigeoHelpers.getDepartamento(ubigeos, personaNatural.getIddepartamento()));
-							personaNatural.setProvincia(UbigeoHelpers.getProvincia(ubigeos,
-									personaNatural.getIddepartamento(), personaNatural.getIdprovincia()));
-							personaNatural
-									.setDistrito(UbigeoHelpers.getDistrito(ubigeos, personaNatural.getIddepartamento(),
-											personaNatural.getIdprovincia(), personaNatural.getIddistrito()));
+						auditoria = personaService.PersonaNatural_ListarUno(modelo, valido);
+						PersonaNatural personaNatural = (PersonaNatural) auditoria.objeto;
+
+						if (personaNatural != null) {
+							if (personaNatural.getTipodoc() == 1) {
+								AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
+								personaNatural.setDepartamento(
+										UbigeoHelpers.getDepartamento(ubigeos, personaNatural.getIddepartamento()));
+								personaNatural.setProvincia(UbigeoHelpers.getProvincia(ubigeos,
+										personaNatural.getIddepartamento(), personaNatural.getIdprovincia()));
+								personaNatural
+										.setDistrito(UbigeoHelpers.getDistrito(ubigeos,
+												personaNatural.getIddepartamento(),
+												personaNatural.getIdprovincia(), personaNatural.getIddistrito()));
+							}
 						}
+
+					} else {
+						auditoria = personaService.PersonaJuridica_ListarUno(Integer.valueOf(id.toString()), valido);
+						PersonaJuridica personaJuridica = (PersonaJuridica) auditoria.objeto;
+
+						if (personaJuridica != null) {
+							AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
+							personaJuridica.setDepartamento(
+									UbigeoHelpers.getDepartamento(ubigeos, personaJuridica.getIddepartamento()));
+							personaJuridica.setProvincia(UbigeoHelpers.getProvincia(ubigeos,
+									personaJuridica.getIddepartamento(), personaJuridica.getIdprovincia()));
+							personaJuridica
+									.setDistrito(UbigeoHelpers.getDistrito(ubigeos, personaJuridica.getIddepartamento(),
+											personaJuridica.getIdprovincia(), personaJuridica.getIddistrito()));
+						}
+
+						auditoria.objeto = personaJuridica;
 					}
-	
 
-				} else {
-					auditoria = personaService.PersonaJuridica_ListarUno(Integer.valueOf(id.toString()), valido);
-					PersonaJuridica personaJuridica = (PersonaJuridica) auditoria.objeto;				
-
-					if (personaJuridica != null) {
-						AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
-						personaJuridica.setDepartamento(
-								UbigeoHelpers.getDepartamento(ubigeos, personaJuridica.getIddepartamento()));
-						personaJuridica.setProvincia(UbigeoHelpers.getProvincia(ubigeos,
-								personaJuridica.getIddepartamento(), personaJuridica.getIdprovincia()));
-						personaJuridica
-								.setDistrito(UbigeoHelpers.getDistrito(ubigeos, personaJuridica.getIddepartamento(),
-										personaJuridica.getIdprovincia(), personaJuridica.getIddistrito()));
-					}
-
-					auditoria.objeto = personaJuridica;
-				}
-				
-				break;
+					break;
 			}
 
 		} catch (Exception ex) {
@@ -568,7 +565,7 @@ public class PersonaController {
 		Auditoria auditoria = new Auditoria();
 		try {
 			persona.setCodigoarchivo("-");
-			System.out.println("Tipo doc: "+persona.getTipodoc());
+			System.out.println("Tipo doc: " + persona.getTipodoc());
 
 			if (persona.getMifile() != null) {
 				if (!persona.getMifile().getOriginalFilename().equals("-")) {
@@ -576,15 +573,16 @@ public class PersonaController {
 					persona.setCodigoarchivo(Nombre_Archivo);
 					storageService.save(fileServer, persona.getMifile(), Nombre_Archivo);
 				}
-				
+
 				/*
-				if(persona.getTipodoc() == 2){
-					persona.setIddepartamento("");
-					persona.setIdprovincia("");
-					persona.setIddistrito("");
-					persona.setCodigoubigeo("");
-					persona.setCodigoverificadni("");
-				}*/
+				 * if(persona.getTipodoc() == 2){
+				 * persona.setIddepartamento("");
+				 * persona.setIdprovincia("");
+				 * persona.setIddistrito("");
+				 * persona.setCodigoubigeo("");
+				 * persona.setCodigoverificadni("");
+				 * }
+				 */
 			}
 
 			auditoria = personaService.PersonaNatural_Actualizar(persona);
@@ -603,14 +601,14 @@ public class PersonaController {
 			persona.setCodigoarchivo("-");
 			// modelo.setId_usuario(new UserIdentityHelper().getUserId());
 			if (persona.getMifile() != null) {
-				//System.out.println(persona.getMifile().getOriginalFilename());
+				// System.out.println(persona.getMifile().getOriginalFilename());
 				if (!persona.getMifile().getOriginalFilename().equals("-")) {
-				String Nombre_Archivo = CommonHelpers.Generar_Nombre_Archivo(persona.getMifile());
-				persona.setCodigoarchivo(Nombre_Archivo);
-				storageService.save(fileServer, persona.getMifile(), Nombre_Archivo);
+					String Nombre_Archivo = CommonHelpers.Generar_Nombre_Archivo(persona.getMifile());
+					persona.setCodigoarchivo(Nombre_Archivo);
+					storageService.save(fileServer, persona.getMifile(), Nombre_Archivo);
 				}
 			}
-			 
+
 			auditoria = personaService.PersonaJuridica_Actualizar(persona);
 
 		} catch (Exception ex) {

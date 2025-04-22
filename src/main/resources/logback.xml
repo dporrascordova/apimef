@@ -33,5 +33,7 @@
     </root>
 
     <!-- Configuración específica para paquetes -->
-    <logger name="mef.application" level="debug" />
+    <logger name="mef.application" level="info" />
+    <logger name="pe.gob.mef.std" level="info" />
+    <logger name="org.springframework" level="info" />
 </configuration>

@@ -1203,49 +1203,65 @@ public class DocumentoDaoImpl implements DocumentoDao {
 
 			for (int i = 0; i < TableST.size(); i++) {
 				Object[] row = TableST.get(i);
-				documento = new Documento();
-				documento.setId_documento(Integer.valueOf(row[0] + ""));
-				documento.setAsunto(String.valueOf(row[1]));
-				documento.setCodigo_archivo(String.valueOf(row[2]));
-				documento.setFec_creacion(Objects.toString(row[3], ""));
-				documento.setSrt_fecha_creacion(Objects.toString(row[3], ""));
-				documento.setStr_fec_modificacion(Objects.toString(row[4], ""));
-				documento.setSrt_fecha_recibido(Objects.toString(row[5], ""));
-				documento.setFlg_estado(String.valueOf(row[6]));
-				documento.setId_estado_documento(Integer.valueOf(row[7] + ""));
-				documento.setId_oficina(Integer.valueOf(row[8] + ""));
-				documento.setId_tipo_documento(String.valueOf(row[9]));
-				documento.setId_tipo_usuario(String.valueOf(row[10]));
-				documento.setId_usuario(String.valueOf(row[11]));
-				documento.setIp_creacion(String.valueOf(row[12]));
-				documento.setIp_modificacion(String.valueOf(row[13]));
-				documento.setNro_documento(String.valueOf(row[14]));
-				documento.setNro_folios(Integer.valueOf(row[15] + ""));
-				documento.setUsu_creacion(String.valueOf(row[16]));
-				documento.setUsu_modificacion(Objects.toString(row[17], ""));
 
-				if (row[19] != null)
-					documento.setAnio(Integer.valueOf(row[18] + ""));
-				documento.setNumero_sid(Objects.toString(row[19], ""));
-				documento.setHoja_ruta(Objects.toString(row[20], ""));
-				documento.setNombre_persona(Objects.toString(row[21], ""));
-				documento.setNrodocumento_persona(Objects.toString(row[22], ""));
-				documento.setTipopersona(Integer.valueOf(row[23] + ""));
-				documento.setId_persona(String.valueOf(row[24]));
-				documento.setDesc_tipo_documento(String.valueOf(row[25]));
-				documento.setDesc_oficina(String.valueOf(row[26]));
+				try {
+					// Verificar si row[23] es null ANTES de procesar
+					if (row[23] == null) {
+						throw new NullPointerException("tipoPersona es null en el registro " + i);
+					}
 
-				lista.add(documento);
+					// Si llegamos aquí, row[23] NO es null
+					documento = new Documento();
+					documento.setId_documento(Integer.valueOf(row[0] + ""));
+					documento.setAsunto(String.valueOf(row[1]));
+					documento.setCodigo_archivo(String.valueOf(row[2]));
+					documento.setFec_creacion(Objects.toString(row[3], ""));
+					documento.setSrt_fecha_creacion(Objects.toString(row[3], ""));
+					documento.setStr_fec_modificacion(Objects.toString(row[4], ""));
+					documento.setSrt_fecha_recibido(Objects.toString(row[5], ""));
+					documento.setFlg_estado(String.valueOf(row[6]));
+					documento.setId_estado_documento(Integer.valueOf(row[7] + ""));
+					documento.setId_oficina(Integer.valueOf(row[8] + ""));
+					documento.setId_tipo_documento(String.valueOf(row[9]));
+					documento.setId_tipo_usuario(String.valueOf(row[10]));
+					documento.setId_usuario(String.valueOf(row[11]));
+					documento.setIp_creacion(String.valueOf(row[12]));
+					documento.setIp_modificacion(String.valueOf(row[13]));
+					documento.setNro_documento(String.valueOf(row[14]));
+					documento.setNro_folios(Integer.valueOf(row[15] + ""));
+					documento.setUsu_creacion(String.valueOf(row[16]));
+					documento.setUsu_modificacion(Objects.toString(row[17], ""));
+
+					if (row[18] != null) {
+						documento.setAnio(Integer.valueOf(row[18] + ""));
+					}
+					documento.setNumero_sid(Objects.toString(row[19], ""));
+					documento.setHoja_ruta(Objects.toString(row[20], ""));
+					documento.setNombre_persona(Objects.toString(row[21], ""));
+					documento.setNrodocumento_persona(Objects.toString(row[22], ""));
+					documento.setTipopersona(Integer.valueOf(row[23] + "")); // Aquí sabemos que no es null
+					documento.setId_persona(String.valueOf(row[24]));
+					documento.setDesc_tipo_documento(String.valueOf(row[25]));
+					documento.setDesc_oficina(String.valueOf(row[26]));
+
+					lista.add(documento);
+
+				} catch (NullPointerException e) {
+					// Capturamos específicamente cuando row[23] es null
+					System.err.println("Error en registro " + i + ": " + e.getMessage());
+					// También puedes usar un logger: logger.warn("Error en registro {}: {}", i, e.getMessage());
+				} catch (Exception e) {
+					// Capturamos otros errores inesperados
+					System.err.println("Error inesperado en registro " + i + ": " + e.getMessage());
+				}
 			}
 			auditoria.objeto = lista;
 			entityManager.close();
 		} catch (NoResultException ex) {
-			auditoria.Error(ex);
-			System.out.println(auditoria.error_log);
+			ex.printStackTrace();
 
 		} catch (Exception ex) {
-			auditoria.Error(ex);
-			System.out.println(auditoria.error_log);
+			ex.printStackTrace();
 		}
 
 		return auditoria;

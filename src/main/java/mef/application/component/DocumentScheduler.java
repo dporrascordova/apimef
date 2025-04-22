@@ -80,6 +80,7 @@ public class DocumentScheduler {
 
 	private EmailUtil emailutil;
 
+<<<<<<< HEAD
 	@Autowired
 	private OficinaServiceImpl oficinaService;
 
@@ -87,6 +88,15 @@ public class DocumentScheduler {
 		this.emailComponent = emailComponent;
 	}
 
+=======
+	private final VentanillastdProxy ventanillastdProxy;
+
+	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
+		this.emailComponent = emailComponent;
+		this.ventanillastdProxy = ventanillastdProxy;
+	}
+
+>>>>>>> develop
 	// Job de prueba para recar un nuevo registro en SGDD
 	public void TestSGDD() throws IOException {
 		System.out.println("-----TestSGDD-------");
@@ -122,10 +132,11 @@ public class DocumentScheduler {
 			oficinas[0] = new TdFlujoSDto(Long.valueOf(1), Long.valueOf(13), "", true);
 			System.out.println("Total Anexos: " + anexoDto.size());
 
-			VentanillastdProxy proxy = new VentanillastdProxy();
+			// VentanillastdProxy proxy = new VentanillastdProxy();
 
 			// Crear expediente en el SGDD
-			expediente = proxy.crearExpediente(USU, "617045", Long.valueOf(53), "1123", 3, "ASUNTO DE PRUEBA", "", "",
+			expediente = ventanillastdProxy.crearExpediente(USU, "617045", Long.valueOf(53), "1123", 3,
+					"ASUNTO DE PRUEBA", "", "",
 					"", "", "0", "MUNICIPALIDAD DISTRITAL DE SAN PABLO", "20552486219", "PLAZA DE ARMAS", "CUSCO",
 					"CANCHIS", "SAN PABLO", "juliahuallpa@hotmail.com", anexoDto.toArray(new AnexoDto[anexoDto.size()]),
 					"10.2.20.79", oficinas, null, null, new long[0], 0, anexosHR);
@@ -211,7 +222,8 @@ public class DocumentScheduler {
 					if (auditoriaPersona.ejecucion_procedimiento)
 						mipersona = (UsuarioPersona) auditoriaPersona.objeto;
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
+
 					String nombre_persona = "";
 					String nombre = mipersona.getNombre_usuario();
 					String apellido_paterno = mipersona.getApellido_paterno();
@@ -242,7 +254,7 @@ public class DocumentScheduler {
 
 					logger.info("Solicitud: " + documento.getId_documento());
 					logger.info("Asunto:" + documento.getAsunto());
-					expediente = proxy.crearExpediente(USU, documento.getId_documento() + "",
+					expediente = ventanillastdProxy.crearExpediente(USU, documento.getId_documento() + "",
 							Long.valueOf(documento.getId_tipo_documento()), documento.getNro_documento(),
 							documento.getNro_folios(), documento.getAsunto().replaceAll("\u0002", ""), apellido_paterno,
 							apellido_materno, nombre, dni, mipersona.getTelefono(), razon_social, ruc,
@@ -265,7 +277,8 @@ public class DocumentScheduler {
 					String hojaRuta = expediente.getNumeroSid() + "-" + expediente.getNumeroAnio().toString();
 					System.out.println("Hoja de ruta: " + hojaRuta);
 					for (AnexoDto itemAnexo : anexoDto) {
-						proxy.agregarAExpediente(USU, expediente.getNumeroSid(), expediente.getNumeroAnio(), itemAnexo,
+						ventanillastdProxy.agregarAExpediente(USU, expediente.getNumeroSid(),
+								expediente.getNumeroAnio(), itemAnexo,
 								IP);
 
 					}
@@ -346,7 +359,7 @@ public class DocumentScheduler {
 			oficinaService.actualizarOficinasDesdeServicio(mioficinas);
 
 			// VentanillastdProxy proxy = new VentanillastdProxy();
-			AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
+			AcMsUbigwsDto[] ubigeos = ventanillastdProxy.ubigeos();
 
 			// ubigeos = null;
 
@@ -502,13 +515,14 @@ public class DocumentScheduler {
 					System.out.println("sid:" + documento.getNumero_sid());
 					System.out.println("anio:" + documento.getAnio());
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					String USU = "lmauricio";
 					String IP = "10.10.10.10";
 					// System.out.println("RUC: " + ruc);
 					// System.out.println("IP: " + IP);
 
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+					idValorDto = ventanillastdProxy.estadoDeExpediente(USU, documento.getNumero_sid(),
+							documento.getAnio(), IP);
 
 					ObjectMapper mapper = new ObjectMapper();
 					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
@@ -582,13 +596,14 @@ public class DocumentScheduler {
 					System.out.println("sid:" + documento.getNumero_sid());
 					System.out.println("anio:" + documento.getAnio());
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					String USU = "lmauricio";
 					String IP = "10.10.10.10";
 					// System.out.println("RUC: " + ruc);
 					// System.out.println("IP: " + IP);
 
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+					idValorDto = ventanillastdProxy.estadoDeExpediente(USU, documento.getNumero_sid(),
+							documento.getAnio(), IP);
 
 					ObjectMapper mapper = new ObjectMapper();
 					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
