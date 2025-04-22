@@ -80,15 +80,10 @@ public class DocumentScheduler {
 
 	private EmailUtil emailutil;
 
-<<<<<<< HEAD
 	@Autowired
 	private OficinaServiceImpl oficinaService;
 
-	public DocumentScheduler(EmailComponent emailComponent) {
-		this.emailComponent = emailComponent;
-	}
 
-=======
 	private final VentanillastdProxy ventanillastdProxy;
 
 	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
@@ -96,7 +91,6 @@ public class DocumentScheduler {
 		this.ventanillastdProxy = ventanillastdProxy;
 	}
 
->>>>>>> develop
 	// Job de prueba para recar un nuevo registro en SGDD
 	public void TestSGDD() throws IOException {
 		System.out.println("-----TestSGDD-------");
