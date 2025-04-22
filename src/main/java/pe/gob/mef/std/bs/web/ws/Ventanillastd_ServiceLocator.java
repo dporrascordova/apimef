@@ -7,26 +7,34 @@
 
 package pe.gob.mef.std.bs.web.ws;
 
-public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service implements pe.gob.mef.std.bs.web.ws.Ventanillastd_Service {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import mef.application.configuration.VentanillaConfig;
+
+@Service
+public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
+        implements pe.gob.mef.std.bs.web.ws.Ventanillastd_Service {
+
+    private String VentanillaSTDPort_address;
+
+    @Autowired
+    public Ventanillastd_ServiceLocator(VentanillaConfig ventanillaConfig) {
+        this.VentanillaSTDPort_address = ventanillaConfig.getVentanillaSTDUrl();
+        System.out.println("VentanillaSTDPort_address method:" + VentanillaSTDPort_address);
+    }
 
     public Ventanillastd_ServiceLocator() {
     }
-
 
     public Ventanillastd_ServiceLocator(org.apache.axis.EngineConfiguration config) {
         super(config);
     }
 
-    public Ventanillastd_ServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public Ventanillastd_ServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName)
+            throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
-
-    // Use to get a proxy class for VentanillaSTDPort
-//     private java.lang.String VentanillaSTDPort_address = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl";
-//    private java.lang.String VentanillaSTDPort_address = "http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl";  //error
-   private java.lang.String VentanillaSTDPort_address = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl";
-    //http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl
-    //http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl
 
     public java.lang.String getVentanillaSTDPortAddress() {
         return VentanillaSTDPort_address;
@@ -43,24 +51,27 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
         VentanillaSTDPortWSDDServiceName = name;
     }
 
-    public pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType getVentanillaSTDPort() throws javax.xml.rpc.ServiceException {
-       java.net.URL endpoint;
+    public pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType getVentanillaSTDPort()
+            throws javax.xml.rpc.ServiceException {
+        java.net.URL endpoint;
+        System.out.println("VentanillaSTDPort_address method:" + VentanillaSTDPort_address);
         try {
             endpoint = new java.net.URL(VentanillaSTDPort_address);
-        }
-        catch (java.net.MalformedURLException e) {
+        } catch (java.net.MalformedURLException e) {
+            e.printStackTrace();
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getVentanillaSTDPort(endpoint);
     }
 
-    public pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType getVentanillaSTDPort(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType getVentanillaSTDPort(java.net.URL portAddress)
+            throws javax.xml.rpc.ServiceException {
         try {
-            pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub _stub = new pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub(portAddress, this);
+            pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub _stub = new pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub(
+                    portAddress, this);
             _stub.setPortName(getVentanillaSTDPortWSDDServiceName());
             return _stub;
-        }
-        catch (org.apache.axis.AxisFault e) {
+        } catch (org.apache.axis.AxisFault e) {
             return null;
         }
     }
@@ -75,17 +86,20 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
      * then ServiceException is thrown.
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+        System.out.println("VentanillaSTDPort_address:" + VentanillaSTDPort_address);
         try {
             if (pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType.class.isAssignableFrom(serviceEndpointInterface)) {
-                pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub _stub = new pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub(new java.net.URL(VentanillaSTDPort_address), this);
+                pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub _stub = new pe.gob.mef.std.bs.web.ws.VentanillaSTDPortBindingStub(
+                        new java.net.URL(VentanillaSTDPort_address), this);
                 _stub.setPortName(getVentanillaSTDPortWSDDServiceName());
                 return _stub;
             }
-        }
-        catch (java.lang.Throwable t) {
+        } catch (java.lang.Throwable t) {
+            t.printStackTrace();
             throw new javax.xml.rpc.ServiceException(t);
         }
-        throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
+        throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  "
+                + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
     }
 
     /**
@@ -93,15 +107,15 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
-    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface)
+            throws javax.xml.rpc.ServiceException {
         if (portName == null) {
             return getPort(serviceEndpointInterface);
         }
         java.lang.String inputPortName = portName.getLocalPart();
         if ("VentanillaSTDPort".equals(inputPortName)) {
             return getVentanillaSTDPort();
-        }
-        else  {
+        } else {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
             ((org.apache.axis.client.Stub) _stub).setPortName(portName);
             return _stub;
@@ -123,23 +137,23 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
-    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-        
-if ("VentanillaSTDPort".equals(portName)) {
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(java.lang.String portName, java.lang.String address)
+            throws javax.xml.rpc.ServiceException {
+
+        if ("VentanillaSTDPort".equals(portName)) {
             setVentanillaSTDPortEndpointAddress(address);
-        }
-        else 
-{ // Unknown Port Name
+        } else { // Unknown Port Name
             throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
         }
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
-    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address)
+            throws javax.xml.rpc.ServiceException {
         setEndpointAddress(portName.getLocalPart(), address);
     }
 

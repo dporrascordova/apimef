@@ -1,6 +1,5 @@
 package mef.application.component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -14,18 +13,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import mef.application.dto.Resource;
-import mef.application.infrastructure.CommonHelpers;
-import mef.application.infrastructure.UserIdentityHelper;
 import mef.application.modelo.Auditoria;
 import mef.application.modelo.Casilla;
 import mef.application.modelo.Documento;
@@ -80,10 +79,12 @@ public class DocumentScheduler {
 
 	private EmailUtil emailutil;
 
-	public DocumentScheduler(EmailComponent emailComponent) {
-		this.emailComponent = emailComponent;
-	}
+	private final VentanillastdProxy ventanillastdProxy;
 
+	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
+		this.emailComponent = emailComponent;
+		this.ventanillastdProxy = ventanillastdProxy;
+	}
 
 	// Job de prueba para recar un nuevo registro en SGDD
 	public void TestSGDD() throws IOException {
@@ -120,10 +121,11 @@ public class DocumentScheduler {
 			oficinas[0] = new TdFlujoSDto(Long.valueOf(1), Long.valueOf(13), "", true);
 			System.out.println("Total Anexos: " + anexoDto.size());
 
-			VentanillastdProxy proxy = new VentanillastdProxy();
+			// VentanillastdProxy proxy = new VentanillastdProxy();
 
 			// Crear expediente en el SGDD
-			expediente = proxy.crearExpediente(USU, "617045", Long.valueOf(53), "1123", 3, "ASUNTO DE PRUEBA", "", "",
+			expediente = ventanillastdProxy.crearExpediente(USU, "617045", Long.valueOf(53), "1123", 3,
+					"ASUNTO DE PRUEBA", "", "",
 					"", "", "0", "MUNICIPALIDAD DISTRITAL DE SAN PABLO", "20552486219", "PLAZA DE ARMAS", "CUSCO",
 					"CANCHIS", "SAN PABLO", "juliahuallpa@hotmail.com", anexoDto.toArray(new AnexoDto[anexoDto.size()]),
 					"10.2.20.79", oficinas, null, null, new long[0], 0, anexosHR);
@@ -143,7 +145,8 @@ public class DocumentScheduler {
 		}
 	}
 
-	//Job que realiza un query by estado 8 and flag 1 de error de servicio SGDD para obtener HR nuevamente
+	// Job que realiza un query by estado 8 and flag 1 de error de servicio SGDD
+	// para obtener HR nuevamente
 	@Scheduled(fixedRate = 300000)
 	public void ScheduletDocumentSGDD() throws IOException {
 		logger.info("-----ScheduletDocumentSGDD------- estado 8 flag 1");
@@ -181,17 +184,17 @@ public class DocumentScheduler {
 					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
 					for (DocumentoAnexo itemAnexo : anexos) {
 						switch (itemAnexo.getFlg_link()) {
-						case "1":
-							filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
-							path = Paths.get(fileServer, documento.getId_documento() + "", filename);
-							fileByte = Files.readAllBytes(path);
-							anexoDto.add(new AnexoDto(fileByte, fileByte.length,
-									itemAnexo.getNombre_archivo().replaceAll("\u0002", "")));
-							System.out.println("Files Anexo: " + fileByte.length);
-							break;
-						case "2":
-							arrayAnexosHR.add(itemAnexo.getNombre_archivo());
-							break;
+							case "1":
+								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
+								path = Paths.get(fileServer, documento.getId_documento() + "", filename);
+								fileByte = Files.readAllBytes(path);
+								anexoDto.add(new AnexoDto(fileByte, fileByte.length,
+										itemAnexo.getNombre_archivo().replaceAll("\u0002", "")));
+								System.out.println("Files Anexo: " + fileByte.length);
+								break;
+							case "2":
+								arrayAnexosHR.add(itemAnexo.getNombre_archivo());
+								break;
 						}
 					}
 
@@ -208,7 +211,8 @@ public class DocumentScheduler {
 					if (auditoriaPersona.ejecucion_procedimiento)
 						mipersona = (UsuarioPersona) auditoriaPersona.objeto;
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
+
 					String nombre_persona = "";
 					String nombre = mipersona.getNombre_usuario();
 					String apellido_paterno = mipersona.getApellido_paterno();
@@ -236,10 +240,10 @@ public class DocumentScheduler {
 							mipersona.setDireccion(direcc);
 						}
 					}
-					
+
 					logger.info("Solicitud: " + documento.getId_documento());
 					logger.info("Asunto:" + documento.getAsunto());
-					expediente = proxy.crearExpediente(USU, documento.getId_documento() + "",
+					expediente = ventanillastdProxy.crearExpediente(USU, documento.getId_documento() + "",
 							Long.valueOf(documento.getId_tipo_documento()), documento.getNro_documento(),
 							documento.getNro_folios(), documento.getAsunto().replaceAll("\u0002", ""), apellido_paterno,
 							apellido_materno, nombre, dni, mipersona.getTelefono(), razon_social, ruc,
@@ -257,12 +261,13 @@ public class DocumentScheduler {
 
 					} else {
 						throw new Exception("El expediente es nulo, error al crear expediente.");
-						
+
 					}
 					String hojaRuta = expediente.getNumeroSid() + "-" + expediente.getNumeroAnio().toString();
 					System.out.println("Hoja de ruta: " + hojaRuta);
 					for (AnexoDto itemAnexo : anexoDto) {
-						proxy.agregarAExpediente(USU, expediente.getNumeroSid(), expediente.getNumeroAnio(), itemAnexo,
+						ventanillastdProxy.agregarAExpediente(USU, expediente.getNumeroSid(),
+								expediente.getNumeroAnio(), itemAnexo,
 								IP);
 
 					}
@@ -329,8 +334,7 @@ public class DocumentScheduler {
 		}
 	}
 
-
-	//Job para mantener actualizadas las tablas ubigeo,  y otras listas 
+	// Job para mantener actualizadas las tablas ubigeo, y otras listas
 	@Scheduled(cron = "0 0 3,23 * * *") // se ejecuta a las 3AM y 11PM
 	public void ScheduletDocumentSGDD2() throws IOException {
 		System.out.println("-----ScheduletDocumentSGDD2-------");
@@ -339,8 +343,8 @@ public class DocumentScheduler {
 		Auditoria auditoria = new Auditoria();
 		try {
 
-			VentanillastdProxy proxy = new VentanillastdProxy();
-			UnidadesOrganicasTreeDto[] mioficinas = proxy.unidadesOrganicas();
+			// VentanillastdProxy proxy = new VentanillastdProxy();
+			UnidadesOrganicasTreeDto[] mioficinas = ventanillastdProxy.unidadesOrganicas();
 			String cadena = "";
 			int cuenta = 0;
 			for (int i = 0; i < mioficinas.length; i++) {
@@ -378,7 +382,7 @@ public class DocumentScheduler {
 			mioficinas = null;
 
 			// VentanillastdProxy proxy = new VentanillastdProxy();
-			AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
+			AcMsUbigwsDto[] ubigeos = ventanillastdProxy.ubigeos();
 
 			// ubigeos = null;
 
@@ -505,7 +509,6 @@ public class DocumentScheduler {
 
 	}
 
-
 	@Scheduled(cron = "0 10 8,12,13,19,22 * * *")
 	public void ScheduletDocumentSGDD5() throws IOException {
 
@@ -519,7 +522,8 @@ public class DocumentScheduler {
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
 			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
 
-//			lista = lista.stream().filter(  n-> n.getId_documento() == 347421).collect(Collectors.toList());
+			// lista = lista.stream().filter( n-> n.getId_documento() ==
+			// 347421).collect(Collectors.toList());
 
 			// System.out.println("entro aqui 1");
 			System.out.println("Lista de :" + lista.size());
@@ -534,61 +538,61 @@ public class DocumentScheduler {
 					System.out.println("sid:" + documento.getNumero_sid());
 					System.out.println("anio:" + documento.getAnio());
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					String USU = "lmauricio";
 					String IP = "10.10.10.10";
 					// System.out.println("RUC: " + ruc);
 					// System.out.println("IP: " + IP);
 
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+					idValorDto = ventanillastdProxy.estadoDeExpediente(USU, documento.getNumero_sid(),
+							documento.getAnio(), IP);
 
 					ObjectMapper mapper = new ObjectMapper();
 					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
 
 					if (idValorDto != null) {
 
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { //POR RECIBIR
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { // POR
+																														// RECIBIR
 
 							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { //RECIBIDO
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { // RECIBIDO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 3, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { //RECIBIDO
+						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { // RECIBIDO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 3, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { //OBSERVADO
+						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { // OBSERVADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 2,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 2, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO") && (idValorDto.getId().equals(6L) ||  idValorDto.getId().equals(7L)) ) { //ANULADO
+						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO")
+								&& (idValorDto.getId().equals(6L) || idValorDto.getId().equals(7L))) { // ANULADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 6,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 6, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { //FINALIZADO
+						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { // FINALIZADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 5,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 5, "");
 						}
-
 
 					}
 
 					// System.out.println("RUC: " + ruc);
 
 				} catch (Exception ex) {
-//					docService.Documento_FlgServicioError(documento.getId_documento());
+					// docService.Documento_FlgServicioError(documento.getId_documento());
 					System.out.println(ex.getMessage());
 					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
-					logger.error("ERROR EN EL SERVICIO DE ESTADO SGDD: " + documento.getId_documento() );
-//					System.out.println(ex.toString());
+					logger.error("ERROR EN EL SERVICIO DE ESTADO SGDD: " + documento.getId_documento());
+					// System.out.println(ex.toString());
 				}
 			}
 		}
 	}
-
-
 
 	@Scheduled(cron = "0 0 1,5 * * *") // 1 am 5 am
 	public void ScheduletDocumentSGDD6() throws IOException {
@@ -615,55 +619,57 @@ public class DocumentScheduler {
 					System.out.println("sid:" + documento.getNumero_sid());
 					System.out.println("anio:" + documento.getAnio());
 
-					VentanillastdProxy proxy = new VentanillastdProxy();
+					// VentanillastdProxy proxy = new VentanillastdProxy();
 					String USU = "lmauricio";
 					String IP = "10.10.10.10";
 					// System.out.println("RUC: " + ruc);
 					// System.out.println("IP: " + IP);
 
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+					idValorDto = ventanillastdProxy.estadoDeExpediente(USU, documento.getNumero_sid(),
+							documento.getAnio(), IP);
 
 					ObjectMapper mapper = new ObjectMapper();
 					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
 
 					if (idValorDto != null) {
 
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { //POR RECIBIR
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { // POR
+																														// RECIBIR
 
 							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { //RECIBIDO
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { // RECIBIDO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 3, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { //RECIBIDO
+						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { // RECIBIDO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 3, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { //OBSERVADO
+						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { // OBSERVADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 2,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 2, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO") && (idValorDto.getId().equals(6L) ||  idValorDto.getId().equals(7L)) ) { //ANULADO
+						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO")
+								&& (idValorDto.getId().equals(6L) || idValorDto.getId().equals(7L))) { // ANULADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 6,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 6, "");
 						}
-						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { //FINALIZADO
+						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { // FINALIZADO
 
-							docService.Actualizar_Estado(documento.getId_documento(), 5,"");
+							docService.Actualizar_Estado(documento.getId_documento(), 5, "");
 						}
-
 
 					}
 
 					// System.out.println("RUC: " + ruc);
 
 				} catch (Exception ex) {
-//					docService.Documento_FlgServicioError(documento.getId_documento());
+					// docService.Documento_FlgServicioError(documento.getId_documento());
 					System.out.println(ex.getMessage());
 					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
-					logger.error("ACTUALIZACION DE ESTADOS PARA EL TAB OBSERVADOS: " + documento.getId_documento() );
-//					System.out.println(ex.toString());
+					logger.error("ACTUALIZACION DE ESTADOS PARA EL TAB OBSERVADOS: " + documento.getId_documento());
+					// System.out.println(ex.toString());
 				}
 			}
 		}
