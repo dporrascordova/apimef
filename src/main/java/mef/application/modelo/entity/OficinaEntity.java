@@ -1,4 +1,4 @@
-package mef.application.modelo;
+package mef.application.modelo.entity;
 
 import java.time.LocalDateTime;
 
