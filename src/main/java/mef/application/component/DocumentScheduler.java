@@ -271,71 +271,48 @@ public class DocumentScheduler {
 								DocumentoAnexoEntity documentoItem;
 								if (anexoItem.isPresent()) {
 									documentoItem = anexoItem.get();
-								} else {
-									System.out.println(
-											"No se encontró el documento con ID_DOCUMENTO: "
-													+ itemAnexo.getId_documento() + " y ORDEN: "
-													+ itemAnexo.getOrden());
 
-									throw new Exception("No se encontró el documento con ID_DOCUMENTO: "
-											+ itemAnexo.getId_documento() + " y ORDEN: "
-											+ itemAnexo.getOrden());
+									// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
+									HrDto anexo = null;
+									try {
+										anexo = ventanillastdProxy.agregarAExpediente(
+												USU,
+												expediente.getNumeroSid(),
+												expediente.getNumeroAnio(),
+												new AnexoDto(
+														fileByte,
+														fileByte.length,
+														itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
+												IP);
+										// Aquí sabes que sería un "HTTP 200 OK"
+										System.out.println("Anexo agregado correctamente: " + anexo);
+									} catch (Exception e) {
+										// Otro error inesperado
+										System.err.println("Error inesperado: " + e.getMessage());
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
+
+										documentoAnexoRepository.save(documentoItem);
+									}
+
+									// Paso 2: Validar que "anexo" no sea null y que contenga el campo necesario
+									// "idanexo"
+									if (anexo != null && anexo.getIdanexo() != null) {
+
+										documentoItem.setEstadoAnexo(1);
+										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+										documentoAnexoRepository.save(documentoItem);
+									} else {
+										// Lanzar excepción si "anexo" no es válido
+										System.out.println(
+												"El objeto 'anexo' es nulo o no contiene el campo 'idanexo'.");
+										documentoItem.setEstadoAnexo(1);
+										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+										documentoAnexoRepository.save(documentoItem);
+									}
 								}
-								// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
-								HrDto anexo = null;
-								try {
-									anexo = ventanillastdProxy.agregarAExpediente(
-											USU,
-											expediente.getNumeroSid(),
-											expediente.getNumeroAnio(),
-											new AnexoDto(
-													fileByte,
-													fileByte.length,
-													itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
-											IP);
-									// Aquí sabes que sería un "HTTP 200 OK"
-									System.out.println("Anexo agregado correctamente: " + anexo);
-								} catch (ErrorInfo ei) {
-									// Error de negocio
-									System.err.println("Error en negocio: " + ei.getMessage());
-									documentoItem.setEstadoAnexo(0);
-									documentoItem.setIdAnexo(null);
-
-									documentoAnexoRepository.save(documentoItem);
-								} catch (RemoteException re) {
-									// Error de red o del servicio
-									System.err.println("Error remoto: " + re.getMessage());
-									documentoItem.setEstadoAnexo(0);
-									documentoItem.setIdAnexo(null);
-
-									documentoAnexoRepository.save(documentoItem);
-								} catch (Exception e) {
-									// Otro error inesperado
-									System.err.println("Error inesperado: " + e.getMessage());
-									documentoItem.setEstadoAnexo(0);
-									documentoItem.setIdAnexo(null);
-
-									documentoAnexoRepository.save(documentoItem);
-								}
-
-								// Paso 2: Validar que "anexo" no sea null y que contenga el campo necesario
-								// "idanexo"
-								if (anexo != null && anexo.getIdanexo() != null) {
-
-									documentoItem.setEstadoAnexo(1);
-									documentoItem.setIdAnexo(anexo.getIdanexo().toString());
-
-									documentoAnexoRepository.save(documentoItem);
-								} else {
-									// Lanzar excepción si "anexo" no es válido
-									System.out.println(
-											"El objeto 'anexo' es nulo o no contiene el campo 'idanexo'.");
-									documentoItem.setEstadoAnexo(1);
-									documentoItem.setIdAnexo(anexo.getIdanexo().toString());
-
-									documentoAnexoRepository.save(documentoItem);
-								}
-
 								break;
 							case "2":
 								arrayAnexosHR.add(itemAnexo.getNombre_archivo());
