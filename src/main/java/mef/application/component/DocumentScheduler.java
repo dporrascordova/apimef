@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +34,9 @@ import mef.application.modelo.PersonaCorreo;
 import mef.application.modelo.UsuarioPersona;
 import mef.application.modelo.entity.DocumentoAnexoEntity;
 import mef.application.modelo.entity.DocumentoAnexoPK;
+import mef.application.modelo.entity.DocumentoEntity;
 import mef.application.repositorio.DocumentoAnexoRepository;
+import mef.application.repositorio.DocumentoRepository;
 import mef.application.service.CasillaService;
 import mef.application.service.DocumentoService;
 import mef.application.service.EstadoService;
@@ -45,7 +46,6 @@ import mef.application.service.PersonaService;
 import mef.application.service.impl.OficinaServiceImpl;
 import pe.gob.mef.std.bs.web.ws.AcMsUbigwsDto;
 import pe.gob.mef.std.bs.web.ws.AnexoDto;
-import pe.gob.mef.std.bs.web.ws.ErrorInfo;
 import pe.gob.mef.std.bs.web.ws.HrDto;
 import pe.gob.mef.std.bs.web.ws.IdValorDto;
 import pe.gob.mef.std.bs.web.ws.TdFlujoSDto;
@@ -80,6 +80,8 @@ public class DocumentScheduler {
 	private OficinaServiceImpl oficinaService;
 	@Autowired
 	private DocumentoAnexoRepository documentoAnexoRepository;
+	@Autowired
+	private DocumentoRepository documentoRepository;
 
 	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
 		this.emailComponent = emailComponent;
@@ -153,6 +155,9 @@ public class DocumentScheduler {
 		logger.info(
 				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD : " + (new Date(System.currentTimeMillis())));
 
+		Integer totalFaileFiles = 1;
+		Integer totalFaileFilesUploaded = 1;
+
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
 			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
@@ -164,8 +169,7 @@ public class DocumentScheduler {
 					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
 					HrDto expediente = new HrDto();
 					Path path;
-					Integer totalFaileFiles = 0;
-					String message = "";
+
 					String USU = "lmauricio";
 					String IP = documento.getIp_creacion();
 					String filename = "";
@@ -243,14 +247,25 @@ public class DocumentScheduler {
 						logger.info("getFechaCompleto:" + expediente.getFechaCompleto());
 
 					} else {
+
+						Optional<DocumentoEntity> optionalDocumento = documentoRepository
+								.findById(Long.valueOf(documento.getId_tipo_documento()));
+						if (optionalDocumento.isPresent()) {
+							DocumentoEntity documentoenti = optionalDocumento.get();
+							documentoenti.setObsSgdd("No se genero la HR");
+							documentoRepository.save(documentoenti);
+
+						}
+
 						throw new Exception("El expediente es nulo, error al crear expediente.");
 
 					}
 					String hojaRuta = expediente.getNumeroSid() + "-" + expediente.getNumeroAnio().toString();
 					System.out.println("Hoja de ruta: " + hojaRuta);
 
-					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
 					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
+					totalFaileFiles += anexos.size();
+					System.out.println("total files totalFaileFiles");
 
 					for (DocumentoAnexo itemAnexo : anexos) {
 						switch (itemAnexo.getFlg_link()) {
@@ -286,6 +301,13 @@ public class DocumentScheduler {
 												IP);
 										// Aquí sabes que sería un "HTTP 200 OK"
 										System.out.println("Anexo agregado correctamente: " + anexo);
+
+										documentoItem.setEstadoAnexo(1);
+										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+										documentoAnexoRepository.save(documentoItem);
+
+										totalFaileFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
 										System.err.println("Error inesperado: " + e.getMessage());
@@ -295,20 +317,17 @@ public class DocumentScheduler {
 										documentoAnexoRepository.save(documentoItem);
 									}
 
-									// Paso 2: Validar que "anexo" no sea null y que contenga el campo necesario
-									// "idanexo"
-									if (anexo != null && anexo.getIdanexo() != null) {
+									if (anexo == null) {
 
-										documentoItem.setEstadoAnexo(1);
-										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+										System.err.println("Anexo null: ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
 
 										documentoAnexoRepository.save(documentoItem);
-									} else {
-										// Lanzar excepción si "anexo" no es válido
-										System.out.println(
-												"El objeto 'anexo' es nulo o no contiene el campo 'idanexo'.");
-										documentoItem.setEstadoAnexo(1);
-										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+									} else if (anexo.getIdanexo() == null) {
+										System.err.println("anexo.getIdanexo() is null ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
 
 										documentoAnexoRepository.save(documentoItem);
 									}
@@ -317,6 +336,19 @@ public class DocumentScheduler {
 							case "2":
 								arrayAnexosHR.add(itemAnexo.getNombre_archivo());
 								break;
+						}
+					}
+					System.out.println("totalFaileFilesUploaded:" + totalFaileFilesUploaded);
+					System.out.println("totalFaileFiles:" + totalFaileFiles);
+
+					if (totalFaileFilesUploaded != totalFaileFiles) {
+						Optional<DocumentoEntity> optionalDocumento = documentoRepository
+								.findById(Long.valueOf(documento.getId_tipo_documento()));
+						if (optionalDocumento.isPresent()) {
+							DocumentoEntity documentoenti = optionalDocumento.get();
+							documentoenti.setObsSgdd("No se mando los anexos completos");
+							documentoRepository.save(documentoenti);
+
 						}
 					}
 
