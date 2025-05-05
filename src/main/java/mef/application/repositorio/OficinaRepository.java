@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import mef.application.modelo.OficinaEntity;
+import mef.application.modelo.entity.OficinaEntity;
 
 public interface OficinaRepository extends JpaRepository<OficinaEntity, Long> {
     @Modifying

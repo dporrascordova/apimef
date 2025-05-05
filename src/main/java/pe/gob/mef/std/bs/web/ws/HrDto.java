@@ -7,8 +7,10 @@
 
 package pe.gob.mef.std.bs.web.ws;
 
-public class HrDto  implements java.io.Serializable {
+public class HrDto implements java.io.Serializable {
     private java.util.Calendar fechaCompleto;
+
+    private java.lang.Long idanexo;
 
     private java.lang.Long iddoc;
 
@@ -22,18 +24,19 @@ public class HrDto  implements java.io.Serializable {
     }
 
     public HrDto(
-           java.util.Calendar fechaCompleto,
-           java.lang.Long iddoc,
-           java.lang.Integer numeroAnio,
-           java.lang.String numeroDoc,
-           java.lang.String numeroSid) {
-           this.fechaCompleto = fechaCompleto;
-           this.iddoc = iddoc;
-           this.numeroAnio = numeroAnio;
-           this.numeroDoc = numeroDoc;
-           this.numeroSid = numeroSid;
+            java.util.Calendar fechaCompleto,
+            java.lang.Long idanexo,
+            java.lang.Long iddoc,
+            java.lang.Integer numeroAnio,
+            java.lang.String numeroDoc,
+            java.lang.String numeroSid) {
+        this.fechaCompleto = fechaCompleto;
+        this.idanexo = idanexo;
+        this.iddoc = iddoc;
+        this.numeroAnio = numeroAnio;
+        this.numeroDoc = numeroDoc;
+        this.numeroSid = numeroSid;
     }
-
 
     /**
      * Gets the fechaCompleto value for this HrDto.
@@ -44,7 +47,6 @@ public class HrDto  implements java.io.Serializable {
         return fechaCompleto;
     }
 
-
     /**
      * Sets the fechaCompleto value for this HrDto.
      * 
@@ -54,6 +56,23 @@ public class HrDto  implements java.io.Serializable {
         this.fechaCompleto = fechaCompleto;
     }
 
+    /**
+     * Gets the idanexo value for this HrDto.
+     * 
+     * @return idanexo
+     */
+    public java.lang.Long getIdanexo() {
+        return idanexo;
+    }
+
+    /**
+     * Sets the idanexo value for this HrDto.
+     * 
+     * @param idanexo
+     */
+    public void setIdanexo(java.lang.Long idanexo) {
+        this.idanexo = idanexo;
+    }
 
     /**
      * Gets the iddoc value for this HrDto.
@@ -64,7 +83,6 @@ public class HrDto  implements java.io.Serializable {
         return iddoc;
     }
 
-
     /**
      * Sets the iddoc value for this HrDto.
      * 
@@ -73,7 +91,6 @@ public class HrDto  implements java.io.Serializable {
     public void setIddoc(java.lang.Long iddoc) {
         this.iddoc = iddoc;
     }
-
 
     /**
      * Gets the numeroAnio value for this HrDto.
@@ -84,7 +101,6 @@ public class HrDto  implements java.io.Serializable {
         return numeroAnio;
     }
 
-
     /**
      * Sets the numeroAnio value for this HrDto.
      * 
@@ -93,7 +109,6 @@ public class HrDto  implements java.io.Serializable {
     public void setNumeroAnio(java.lang.Integer numeroAnio) {
         this.numeroAnio = numeroAnio;
     }
-
 
     /**
      * Gets the numeroDoc value for this HrDto.
@@ -104,7 +119,6 @@ public class HrDto  implements java.io.Serializable {
         return numeroDoc;
     }
 
-
     /**
      * Sets the numeroDoc value for this HrDto.
      * 
@@ -114,7 +128,6 @@ public class HrDto  implements java.io.Serializable {
         this.numeroDoc = numeroDoc;
     }
 
-
     /**
      * Gets the numeroSid value for this HrDto.
      * 
@@ -123,7 +136,6 @@ public class HrDto  implements java.io.Serializable {
     public java.lang.String getNumeroSid() {
         return numeroSid;
     }
-
 
     /**
      * Sets the numeroSid value for this HrDto.
@@ -135,37 +147,46 @@ public class HrDto  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof HrDto)) return false;
+        if (!(obj instanceof HrDto))
+            return false;
         HrDto other = (HrDto) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.fechaCompleto==null && other.getFechaCompleto()==null) || 
-             (this.fechaCompleto!=null &&
-              this.fechaCompleto.equals(other.getFechaCompleto()))) &&
-            ((this.iddoc==null && other.getIddoc()==null) || 
-             (this.iddoc!=null &&
-              this.iddoc.equals(other.getIddoc()))) &&
-            ((this.numeroAnio==null && other.getNumeroAnio()==null) || 
-             (this.numeroAnio!=null &&
-              this.numeroAnio.equals(other.getNumeroAnio()))) &&
-            ((this.numeroDoc==null && other.getNumeroDoc()==null) || 
-             (this.numeroDoc!=null &&
-              this.numeroDoc.equals(other.getNumeroDoc()))) &&
-            ((this.numeroSid==null && other.getNumeroSid()==null) || 
-             (this.numeroSid!=null &&
-              this.numeroSid.equals(other.getNumeroSid())));
+        _equals = true &&
+                ((this.fechaCompleto == null && other.getFechaCompleto() == null) ||
+                        (this.fechaCompleto != null &&
+                                this.fechaCompleto.equals(other.getFechaCompleto())))
+                &&
+                ((this.iddoc == null && other.getIddoc() == null) ||
+                        (this.iddoc != null &&
+                                this.iddoc.equals(other.getIddoc())))
+                &&
+                ((this.numeroAnio == null && other.getNumeroAnio() == null) ||
+                        (this.numeroAnio != null &&
+                                this.numeroAnio.equals(other.getNumeroAnio())))
+                &&
+                ((this.numeroDoc == null && other.getNumeroDoc() == null) ||
+                        (this.numeroDoc != null &&
+                                this.numeroDoc.equals(other.getNumeroDoc())))
+                &&
+                ((this.numeroSid == null && other.getNumeroSid() == null) ||
+                        (this.numeroSid != null &&
+                                this.numeroSid.equals(other.getNumeroSid())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -192,8 +213,8 @@ public class HrDto  implements java.io.Serializable {
     }
 
     // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(HrDto.class, true);
+    private static org.apache.axis.description.TypeDesc typeDesc = new org.apache.axis.description.TypeDesc(HrDto.class,
+            true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://ws.web.bs.std.mef.gob.pe/", "hrDto"));
@@ -245,24 +266,22 @@ public class HrDto  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(
+                _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(
+                _javaType, _xmlType, typeDesc);
     }
 
 }
