@@ -14,13 +14,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-import mef.application.modelo.entity.DocumentoAnexoPK;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 //import org.hamcrest.text.IsEmptyString;
@@ -63,7 +63,10 @@ import mef.application.modelo.PersonaCorreo;
 import mef.application.modelo.RespuestaMessage;
 import mef.application.modelo.UsuarioPersona;
 import mef.application.modelo.entity.DocumentoAnexoEntity;
+import mef.application.modelo.entity.DocumentoAnexoPK;
+import mef.application.modelo.entity.DocumentoEntity;
 import mef.application.repositorio.DocumentoAnexoRepository;
+import mef.application.repositorio.DocumentoRepository;
 import mef.application.service.CasillaService;
 import mef.application.service.DocumentoService;
 import mef.application.service.EnlaceEncuestaService;
@@ -121,6 +124,9 @@ public class DocumentoControlador {
 
 	@Autowired
 	private DocumentoAnexoRepository documentoAnexoRepository;
+
+	@Autowired
+	private DocumentoRepository documentoRepository;
 
 	private EmailUtil emailutil;
 	private final VentanillastdProxy ventanillastdProxy;
@@ -363,14 +369,29 @@ public class DocumentoControlador {
 		return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream));
 	}
 
+	private void marcarDocumentoComoNoGeneradoHR(Long documentoId, String mensaje) {
+
+		Optional<DocumentoEntity> optionalDocumento = documentoRepository.findById(documentoId);
+		if (optionalDocumento.isPresent()) {
+			DocumentoEntity documentoEnti = optionalDocumento.get();
+			documentoEnti.setObsSgdd(mensaje);
+			documentoRepository.save(documentoEnti);
+			docService.Documento_FlgServicioError(documentoId.intValue());
+		}
+
+	}
+
 	@PostMapping("/registrar-solicitud")
 	@Consumes("multipart/form-data;charset=UTF-8")
 	@Produces("application/json")
 	public ResponseEntity<Auditoria> Documento_Insertar(@Valid @ModelAttribute Documento doc) {
 		Auditoria auditoria = new Auditoria();
+
+		Integer totalFiles = 1;
+		Integer totalFilesUploaded = 1;
 		try {
 			// DocumentoAnexo anexo = new DocumentoAnexo();
-			Integer totalFaileFiles = 0;
+
 			String message = "";
 			String anexosHR = "";
 			String hojaRuta = "";
@@ -480,6 +501,39 @@ public class DocumentoControlador {
 							anexosHR = String.join(" , ", doc.getAnexoslink());
 						}
 
+						if (doc.getFilesAnexos() != null) {
+							for (MultipartFile file : doc.getFilesAnexos()) {
+								HrDto anexoSoap = null;
+								filename = UUID.randomUUID().toString();
+								filename = CommonHelpers.Generar_Nombre_Archivo(file, filename);
+
+								DocumentoAnexoEntity documentoAnexoItem = new DocumentoAnexoEntity();
+								if (documentoAnexoItem.getId() == null) {
+									documentoAnexoItem.setId(new DocumentoAnexoPK());
+								}
+								documentoAnexoItem.getId().setIdDocumento((long) documentoId);
+								Long siguienteOrden = documentoAnexoRepository
+										.obtenerSiguienteOrden(documentoAnexoItem.getId().getIdDocumento());
+								documentoAnexoItem.getId().setOrden(siguienteOrden);
+
+								documentoAnexoItem.setCodigoArchivo(filename);
+								documentoAnexoItem
+										.setExtensionArchivo(FilenameUtils.getExtension(file.getOriginalFilename())
+												.toLowerCase());
+								documentoAnexoItem.setNombreArchivo(file.getOriginalFilename().replaceAll("\u0002", ""));
+								documentoAnexoItem.setUsuarioCreacion(new UserIdentityHelper().getName());
+								documentoAnexoItem.setTamanioArchivo((long) file.getBytes().length);
+
+								String mimetype = FilenameUtils.getExtension(file.getContentType()).toLowerCase();
+								documentoAnexoItem.setMimeTypeArchivo(mimetype);
+								documentoAnexoItem.setFlagLink("1");
+								documentoAnexoItem.setEstadoAnexo(0);
+
+								documentoAnexoItem = documentoAnexoRepository.save(documentoAnexoItem);
+								storageService.save(path.toString(), file, filename);
+							}
+						}
+
 						expediente = ventanillastdProxy.crearExpediente(
 								USU,
 								auditoria.objeto.toString() + "",
@@ -519,70 +573,96 @@ public class DocumentoControlador {
 									: "La solicitud " + documentoId + " con hoja de ruta " + hojaRuta
 											+ " se ha generado correctamente";
 
+							docService.Documento_Agregar_HojaRuta(Integer.valueOf(auditoria.objeto.toString()),
+									expediente.getNumeroAnio(), expediente.getNumeroSid(), USU);
+
 							// Logica para Anexos
 							AnexoDto[] anexoDto = new AnexoDto[doc.getFilesAnexos().length];
-							int totalFiles = 0;
-							System.out.println("Total anexos: " + anexoDto.length);
-							if (doc.getFilesAnexos() != null) {
-								for (MultipartFile file : doc.getFilesAnexos()) {
-									HrDto anexoSoap = null;
-									filename = UUID.randomUUID().toString();
-									filename = CommonHelpers.Generar_Nombre_Archivo(file, filename);
 
-									DocumentoAnexoEntity documentoItem = new DocumentoAnexoEntity();
-									if (documentoItem.getId() == null) {
-										documentoItem.setId(new DocumentoAnexoPK());
+							totalFiles += anexoDto.length;
+							System.out.println("Total anexos: " + totalFiles);
+
+							List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(expediente.getIddoc().intValue());
+
+							System.out.println("total files totalFaileFiles");
+
+							for (DocumentoAnexo itemAnexo : anexos) {
+
+								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
+								path = Paths.get(fileServer, expediente.getIddoc().intValue() + "", filename);
+								fileByte = Files.readAllBytes(path);
+
+								System.out.println("Files Anexo: " + fileByte.length);
+
+								DocumentoAnexoPK id = new DocumentoAnexoPK();
+								id.setIdDocumento(Long.valueOf(itemAnexo.getId_documento()));
+								id.setOrden((long) itemAnexo.getOrden());
+
+								Optional<DocumentoAnexoEntity> anexoItem = documentoAnexoRepository
+										.findById(id);
+								DocumentoAnexoEntity documentoItem;
+								if (anexoItem.isPresent()) {
+									documentoItem = anexoItem.get();
+
+									// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
+									HrDto anexo = null;
+									try {
+										anexo = ventanillastdProxy.agregarAExpediente(
+												USU,
+												expediente.getNumeroSid(),
+												expediente.getNumeroAnio(),
+												new AnexoDto(
+														fileByte,
+														fileByte.length,
+														itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
+												IP);
+										// Aquí sabes que sería un "HTTP 200 OK"
+										System.out.println("Anexo agregado correctamente: " + anexo);
+
+										documentoItem.setEstadoAnexo(1);
+										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+										documentoAnexoRepository.save(documentoItem);
+
+										// totalFaileFilesUploaded += 1;
+									} catch (Exception e) {
+										// Otro error inesperado
+										System.err.println("Error inesperado: " + e.getMessage());
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
+
+										documentoAnexoRepository.save(documentoItem);
 									}
-									documentoItem.getId().setIdDocumento((long) documentoId);
-									Long siguienteOrden = documentoAnexoRepository
-											.obtenerSiguienteOrden(documentoItem.getId().getIdDocumento());
-									documentoItem.getId().setOrden(siguienteOrden);
 
-									documentoItem.setCodigoArchivo(filename);
-									documentoItem
-											.setExtensionArchivo(FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase());
-									documentoItem.setNombreArchivo(file.getOriginalFilename().replaceAll("\u0002", ""));
-									documentoItem.setUsuarioCreacion(new UserIdentityHelper().getName());
-									documentoItem.setTamanioArchivo((long) file.getBytes().length);
+									if (anexo == null) {
 
-									String mimetype = FilenameUtils.getExtension(file.getContentType()).toLowerCase();
-									documentoItem.setMimeTypeArchivo(mimetype);
-									documentoItem.setFlagLink("1");
+										System.err.println("Anexo null: ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
 
-									documentoItem = documentoAnexoRepository.save(documentoItem);
+										documentoAnexoRepository.save(documentoItem);
+									} else if (anexo.getIdanexo() == null) {
+										System.err.println("anexo.getIdanexo() is null ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
 
-									if (documentoItem != null && documentoItem.getId() != null) {
-										storageService.save(path.toString(), file, filename);
-
-										try {
-											anexoSoap = ventanillastdProxy.agregarAExpediente(
-													USU,
-													expediente.getNumeroSid(),
-													expediente.getNumeroAnio(),
-													new AnexoDto(file.getBytes(), file.getBytes().length,
-															documentoItem.getNombreArchivo().replaceAll("\u0002", "")),
-													IP);
-
-										} catch (Exception e) {
-
-											documentoItem.setEstadoAnexo(0);
-											documentoItem.setIdAnexo(null);
-
-											documentoAnexoRepository.save(documentoItem);
-										}
-
-									} else {
-										totalFaileFiles++;
+										documentoAnexoRepository.save(documentoItem);
 									}
 								}
+
 							}
 
 						} else {
 							System.out.println("Datos de retorno:null");
 							docService.Documento_FlgServicioError(documentoId);
+
+							marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
+
 						}
-						if (expediente.getNumeroSid().isEmpty())
-							docService.Documento_FlgServicioError(documentoId);
+
+						if (expediente.getNumeroSid().isEmpty()) {
+							marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
+						}
 
 					} catch (Exception ex) {
 						docService.Documento_FlgServicioError(documentoId);
@@ -592,10 +672,13 @@ public class DocumentoControlador {
 						System.out.println("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
 						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
 						System.out.println(ex.getMessage());
+						docService.Documento_FlgServicioError(documentoId);
+						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
 
 					} catch (OutOfMemoryError ex) {
 						docService.Documento_FlgServicioError(documentoId);
 						auditoria.ejecucion_procedimiento = false;
+						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
 					}
 
 					Casilla modelo = new Casilla();
@@ -665,9 +748,13 @@ public class DocumentoControlador {
 							? "La solicitud " + documentoId + " se ha generado correctamente"
 							: message;
 
-					if (totalFaileFiles > 0)
-						auditoria.mensaje_salida += ", pero en el proceso " + totalFaileFiles
-								+ "archivo(s) no se han podido registrar";
+					System.out.println("totalFiles:" + totalFiles);
+					System.out.println("totalFilesUploaded:" + totalFilesUploaded);
+
+					if (totalFiles != totalFilesUploaded) {
+						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se mando los anexos completos");
+						auditoria.mensaje_salida += ", pero en el proceso anexos no se han podido registrar";
+					}
 				}
 			}
 		} catch (Exception ex) {
