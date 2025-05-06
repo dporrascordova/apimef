@@ -470,7 +470,7 @@ public class DocumentoControlador {
 						ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
 						byte[] fileByte = doc.getFile().getBytes();
 						anexoDtoPrincipal
-								.add(new AnexoDto(fileByte, fileByte.length, filename.replaceAll("\u0002", "")));
+								.add(new AnexoDto(fileByte, fileByte.length, filename));
 
 						String USU = "lmauricio";
 						System.out.println("Creando Expediente:");
@@ -520,7 +520,7 @@ public class DocumentoControlador {
 								documentoAnexoItem
 										.setExtensionArchivo(FilenameUtils.getExtension(file.getOriginalFilename())
 												.toLowerCase());
-								documentoAnexoItem.setNombreArchivo(file.getOriginalFilename().replaceAll("\u0002", ""));
+								documentoAnexoItem.setNombreArchivo(file.getOriginalFilename());
 								documentoAnexoItem.setUsuarioCreacion(new UserIdentityHelper().getName());
 								documentoAnexoItem.setTamanioArchivo((long) file.getBytes().length);
 
@@ -540,7 +540,7 @@ public class DocumentoControlador {
 								Long.valueOf(doc.getId_tipo_documento()),
 								doc.getNro_documento(),
 								doc.getNro_folios(),
-								doc.getAsunto().replaceAll("\u0002", ""),
+								doc.getAsunto(),
 								apellido_paterno,
 								apellido_materno,
 								nombre,
@@ -582,14 +582,14 @@ public class DocumentoControlador {
 							totalFiles += anexoDto.length;
 							System.out.println("Total anexos: " + totalFiles);
 
-							List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(expediente.getIddoc().intValue());
+							List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documentoId);
 
 							System.out.println("total files totalFaileFiles");
 
 							for (DocumentoAnexo itemAnexo : anexos) {
 
-								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
-								path = Paths.get(fileServer, expediente.getIddoc().intValue() + "", filename);
+								filename = itemAnexo.getCodigo_archivo();
+								path = Paths.get(fileServer, documentoId + "", filename);
 								fileByte = Files.readAllBytes(path);
 
 								System.out.println("Files Anexo: " + fileByte.length);
@@ -614,7 +614,7 @@ public class DocumentoControlador {
 												new AnexoDto(
 														fileByte,
 														fileByte.length,
-														itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
+														itemAnexo.getNombre_archivo()),
 												IP);
 										// Aquí sabes que sería un "HTTP 200 OK"
 										System.out.println("Anexo agregado correctamente: " + anexo);
@@ -627,28 +627,14 @@ public class DocumentoControlador {
 										// totalFaileFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
-										e.printStackTrace();
-										System.err.println("Error inesperado: " + e.getMessage());
+										auditoria.Error(e);
+										logger.info(auditoria.error_log);
 										documentoItem.setEstadoAnexo(0);
 										documentoItem.setIdAnexo(null);
-
 										documentoAnexoRepository.save(documentoItem);
 									}
 
-									if (anexo == null) {
 
-										System.err.println("Anexo null: ");
-										documentoItem.setEstadoAnexo(0);
-										documentoItem.setIdAnexo(null);
-
-										documentoAnexoRepository.save(documentoItem);
-									} else if (anexo.getIdanexo() == null) {
-										System.err.println("anexo.getIdanexo() is null ");
-										documentoItem.setEstadoAnexo(0);
-										documentoItem.setIdAnexo(null);
-
-										documentoAnexoRepository.save(documentoItem);
-									}
 								}
 
 							}
@@ -669,17 +655,18 @@ public class DocumentoControlador {
 						docService.Documento_FlgServicioError(documentoId);
 						ObjectMapper mapper = new ObjectMapper();
 						System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
-						ex.printStackTrace();
+
 						System.out.println("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
 						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
-						System.out.println(ex.getMessage());
+
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
 						auditoria.ejecucion_procedimiento = false;
 						auditoria.mensaje_salida = message.isEmpty()
 								? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
 								: message;
-
+						ex.printStackTrace();
 					} catch (OutOfMemoryError ex) {
+						ex.printStackTrace();
 						docService.Documento_FlgServicioError(documentoId);
 						auditoria.ejecucion_procedimiento = false;
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
@@ -734,7 +721,7 @@ public class DocumentoControlador {
 
 					System.out.println("Correo:" + entidad.getCorreo());
 					System.out.println("Correo CC:" + entidad.getCorreo_copia());
-					System.out.println("Plantilla:" + plantillaCorreo);
+					// System.out.println("Plantilla:" + plantillaCorreo);
 					// System.out.println("Plantilla:"+plantillaCorreo);
 					emailutil = new EmailUtil();
 
@@ -763,8 +750,7 @@ public class DocumentoControlador {
 			}
 		} catch (Exception ex) {
 			auditoria.Error(ex);
-			System.out.println(ex.toString());
-			System.out.println(auditoria.error_log);
+			logger.error(auditoria.error_log);
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
@@ -2769,4 +2755,31 @@ public class DocumentoControlador {
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
+<<<<<<< Updated upstream
+=======
+
+	@PostMapping("/agregar-expediente-reload")
+	@Produces("application/json")
+	public ResponseEntity<Auditoria> agregarAExpedienteReload(@Valid @RequestBody Documento documento) {
+		Auditoria auditoria = new Auditoria();
+		HrDto anexo = null;
+		try {
+			anexo = ventanillastdProxy.agregarAExpediente(
+					"lmauricio",
+					documento.getNumero_sid(),
+					documento.getAnio(),
+					new AnexoDto(null, 0, ""),
+					UserIdentityHelper.getClientIpAddress());
+
+			logger.info("Anexo obtenido de SOAP: " + anexo);
+
+			auditoria = docService.updateAnexo(documento.getId_documento(), String.valueOf(anexo.getIdanexo()));
+
+		} catch (Exception ex) {
+			auditoria.Error(ex);
+			logger.info(auditoria.error_log);
+		}
+		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
+	}
+>>>>>>> Stashed changes
 }

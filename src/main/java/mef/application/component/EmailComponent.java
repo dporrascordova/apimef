@@ -172,7 +172,7 @@ public class EmailComponent {
 			}
 			//System.out.println(helper.getMimeMessage().getContent().toString());
 			emailSender.send(mimeMessage);
-			logger.info("Send email '{}' to: {}", subject, to);
+//			logger.info("Send email '{}' to: {}", subject, to);
 		} catch (Exception e) {
 			System.out.println("mierror: " + e.toString());
 			logger.error("Error : {}, to: {}, ", e.getMessage(), to);
