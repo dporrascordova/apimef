@@ -627,6 +627,7 @@ public class DocumentoControlador {
 										// totalFaileFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
+										e.printStackTrace();
 										System.err.println("Error inesperado: " + e.getMessage());
 										documentoItem.setEstadoAnexo(0);
 										documentoItem.setIdAnexo(null);
@@ -672,8 +673,11 @@ public class DocumentoControlador {
 						System.out.println("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
 						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
 						System.out.println(ex.getMessage());
-						docService.Documento_FlgServicioError(documentoId);
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
+						auditoria.ejecucion_procedimiento = false;
+						auditoria.mensaje_salida = message.isEmpty()
+								? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
+								: message;
 
 					} catch (OutOfMemoryError ex) {
 						docService.Documento_FlgServicioError(documentoId);

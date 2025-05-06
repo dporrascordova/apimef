@@ -41,7 +41,7 @@ public class DocumentoAnexoEntity {
   private String usuarioModificacion;
 
   @Column(name = "ESTADO", length = 255)
-  private String estado;
+  private String estado = "1";
 
   @Column(name = "MIMETYPE_ARCHIVO", length = 255)
   private String mimeTypeArchivo;
