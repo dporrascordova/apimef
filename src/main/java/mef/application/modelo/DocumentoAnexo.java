@@ -22,7 +22,25 @@ public class DocumentoAnexo implements Serializable{
 	private String flg_link;
 	private boolean crea_MPI;
 	private int flg_estado;
-	
+	private int estadoAnexo;
+	private String idAnexo;
+
+	public int getEstadoAnexo() {
+		return estadoAnexo;
+	}
+
+	public void setEstadoAnexo(int estadoAnexo) {
+		this.estadoAnexo = estadoAnexo;
+	}
+
+	public String getIdAnexo() {
+		return idAnexo;
+	}
+
+	public void setIdAnexo(String idAnexo) {
+		this.idAnexo = idAnexo;
+	}
+
 	public int getFlg_estado() {
 		return flg_estado;
 	}
