@@ -3,7 +3,7 @@ ventanillaVirtual
 		.controller(
 				'mainController',
 				function($scope, $rootScope, $uibModal, toaster, $window,
-						$interval, jwtHelper, loginService, personaService,transversalService) {
+						$interval, jwtHelper, loginService, personaService,transversalService, $ngBootbox) {
 					/*
 					 * VERIFICA LA AUTENCICACION DEL USUARIO
 					 */

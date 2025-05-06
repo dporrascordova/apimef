@@ -1,9 +1,12 @@
 package pe.gob.mef.std.bs.web.ws;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VentanillastdProxy implements pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType {
+  private static final Logger logger = LoggerFactory.getLogger(VentanillastdProxy.class);
 
   private String _endpoint = null;
   private pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType ventanillastd_PortType = null;
@@ -75,6 +78,7 @@ public class VentanillastdProxy implements pe.gob.mef.std.bs.web.ws.Ventanillast
       int NUMEROANIO, java.lang.String NUM_OFICIO, pe.gob.mef.std.bs.web.ws.AnexoDto[] ANEXOS,
       java.lang.String REMOTEADDRESS, pe.gob.mef.std.bs.web.ws.TdFlujoSDto[] UNIDADES)
       throws java.rmi.RemoteException, pe.gob.mef.std.bs.web.ws.ErrorInfo {
+    logger.info(">>>Inicio anexarAExpediente()");
     if (ventanillastd_PortType == null)
       _initVentanillastdProxy();
     return ventanillastd_PortType.anexarAExpediente(NOMBRECORTO, NUMEROSID, NUMEROANIO, NUM_OFICIO, ANEXOS,
@@ -130,6 +134,8 @@ public class VentanillastdProxy implements pe.gob.mef.std.bs.web.ws.Ventanillast
   public pe.gob.mef.std.bs.web.ws.HrDto agregarAExpediente(java.lang.String NOMBRECORTO, java.lang.String NUMEROSID,
       int NUMEROANIO, pe.gob.mef.std.bs.web.ws.AnexoDto ANEXO, java.lang.String REMOTEADDRESS)
       throws java.rmi.RemoteException, pe.gob.mef.std.bs.web.ws.ErrorInfo {
+    logger.info(">>>Inicio agregarAExpediente()");
+
     if (ventanillastd_PortType == null)
       _initVentanillastdProxy();
     return ventanillastd_PortType.agregarAExpediente(NOMBRECORTO, NUMEROSID, NUMEROANIO, ANEXO, REMOTEADDRESS);
