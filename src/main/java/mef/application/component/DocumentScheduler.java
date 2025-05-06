@@ -157,6 +157,7 @@ public class DocumentScheduler {
 
 		Integer totalFaileFiles = 1;
 		Integer totalFaileFilesUploaded = 1;
+		Auditoria auditoria = new Auditoria();
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
@@ -180,7 +181,7 @@ public class DocumentScheduler {
 					filename = documento.getCodigo_archivo() + ".pdf";
 					path = Paths.get(fileServer, documento.getId_documento() + "", filename);
 					byte[] fileByte = Files.readAllBytes(path);
-					anexoDtoPrincipal.add(new AnexoDto(fileByte, fileByte.length, filename.replaceAll("\u0002", "")));
+					anexoDtoPrincipal.add(new AnexoDto(fileByte, fileByte.length, filename));
 
 					logger.info("File principal: " + "" + fileByte.length);
 					logger.info("File principal: " + filename);
@@ -227,12 +228,11 @@ public class DocumentScheduler {
 							mipersona.setDireccion(direcc);
 						}
 					}
-
 					logger.info("Solicitud: " + documento.getId_documento());
 					logger.info("Asunto:" + documento.getAsunto());
 					expediente = ventanillastdProxy.crearExpediente(USU, documento.getId_documento() + "",
 							Long.valueOf(documento.getId_tipo_documento()), documento.getNro_documento(),
-							documento.getNro_folios(), documento.getAsunto().replaceAll("\u0002", ""), apellido_paterno,
+							documento.getNro_folios(), documento.getAsunto(), apellido_paterno,
 							apellido_materno, nombre, dni, mipersona.getTelefono(), razon_social, ruc,
 							mipersona.getDireccion(), mipersona.getDesc_departamento(), mipersona.getDesc_provincia(),
 							mipersona.getDesc_distrito(), mipersona.getCorreo(),
@@ -297,7 +297,7 @@ public class DocumentScheduler {
 												new AnexoDto(
 														fileByte,
 														fileByte.length,
-														itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
+														itemAnexo.getNombre_archivo()),
 												IP);
 										// Aquí sabes que sería un "HTTP 200 OK"
 										System.out.println("Anexo agregado correctamente: " + anexo);
@@ -310,8 +310,8 @@ public class DocumentScheduler {
 										totalFaileFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
-										e.printStackTrace();
-										System.err.println("Error inesperado: " + e.getMessage());
+										auditoria.Error(e);
+										logger.error(auditoria.error_log);
 										documentoItem.setEstadoAnexo(0);
 										documentoItem.setIdAnexo(null);
 
@@ -325,21 +325,6 @@ public class DocumentScheduler {
 											documentoRepository.save(documentoenti);
 
 										}
-									}
-
-									if (anexo == null) {
-
-										System.err.println("Anexo null: ");
-										documentoItem.setEstadoAnexo(0);
-										documentoItem.setIdAnexo(null);
-
-										documentoAnexoRepository.save(documentoItem);
-									} else if (anexo.getIdanexo() == null) {
-										System.err.println("anexo.getIdanexo() is null ");
-										documentoItem.setEstadoAnexo(0);
-										documentoItem.setIdAnexo(null);
-
-										documentoAnexoRepository.save(documentoItem);
 									}
 								}
 								break;
@@ -418,8 +403,8 @@ public class DocumentScheduler {
 				} catch (Exception ex) {
 					docService.Documento_FlgServicioError(documento.getId_documento());
 					logger.error("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD:");
-					logger.error(ex.toString());
-					ex.printStackTrace();
+					auditoria.Error(ex);
+					logger.error(auditoria.error_log);
 				}
 			}
 		}
