@@ -628,7 +628,7 @@ public class DocumentoControlador {
 
 										documentoAnexoRepository.save(documentoItem);
 
-										// totalFaileFilesUploaded += 1;
+										 totalFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
 										auditoria.Error(e);
