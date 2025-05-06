@@ -210,6 +210,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				docMap.setAsignado(!Objects.toString(row[32], "").isEmpty());
 				docMap.setNomb_usu_asignacion(String.valueOf(row[33]));
 				docMap.setHoja_ruta(Objects.toString(row[34], "-"));
+				docMap.setObsSgdd(Objects.toString(row[35], "-"));
 
 				lista.add(docMap);
 			}

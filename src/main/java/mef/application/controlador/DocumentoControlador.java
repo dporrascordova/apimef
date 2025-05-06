@@ -256,6 +256,7 @@ public class DocumentoControlador {
 						jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
 						jsonObject.put("esta_asignado", documento.isAsignado());
 						jsonObject.put("nomb_usu_asignacion", documento.getNomb_usu_asignacion());
+						jsonObject.put("obsSgdd", documento.getObsSgdd());
 						jsonArray.put(jsonObject);
 					}
 
