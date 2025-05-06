@@ -600,6 +600,9 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				anexo.setCrea_MPI(String.valueOf(row[12]).equals("1"));
 				anexo.setFlg_estado(Integer.valueOf(row[13] + ""));
 
+				anexo.setEstadoAnexo(Integer.valueOf(row[14] + ""));
+				anexo.setIdAnexo(String.valueOf(row[15]));
+
 				anexos.add(anexo);
 			}
 		} catch (NoResultException e) {

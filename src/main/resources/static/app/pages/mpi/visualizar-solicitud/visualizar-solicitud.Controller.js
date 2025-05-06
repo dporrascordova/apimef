@@ -74,6 +74,27 @@ ventanillaVirtual.controller('visualizarsolicitudController', function ($scope,
         });   
     }
 
+    $scope.ejecutarAgregarAExpediente = function(id_documento,numero_sid,anio){
+        debugger;
+        mpiService.ejecutarAgregarAExpediente(id_documento,numero_sid,anio).then(function(res){
+            if (res.data.ejecucion_procedimiento && !$scope.isNullOrEmpty(res.data.mensaje_salida))
+                $scope.showAlert({
+                  message: res.data.mensaje_salida,
+                });
+        });
+    }
+
+    /*
+
+    mpiService.asignarDocumento(IdSolicitud).then(function (res) {
+      if (res.data.ejecucion_procedimiento && !$scope.isNullOrEmpty(res.data.mensaje_salida))
+        $scope.showAlert({
+          message: res.data.mensaje_salida,
+        });
+    });
+
+    */
+
     $scope.downloadFile = function(id, fileType, fileName) {
         mpiService.exportFile(id, fileType, fileName).then(function(response) {            
             var file = new Blob([(response.data)], {type: $rootScope.applicationType(fileType)});

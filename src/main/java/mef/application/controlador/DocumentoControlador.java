@@ -21,11 +21,14 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
+import mef.application.component.DocumentScheduler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 //import org.hamcrest.text.IsEmptyString;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -86,6 +89,7 @@ import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 @RestController
 @RequestMapping("/api")
 public class DocumentoControlador {
+	private static final Logger logger = LoggerFactory.getLogger(DocumentoControlador.class);
 
 	private EmailComponent emailComponent;
 
@@ -2763,6 +2767,30 @@ public class DocumentoControlador {
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
+		}
+		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
+	}
+
+	@PostMapping("/agregar-expediente-reload")
+	@Produces("application/json")
+	public ResponseEntity<Auditoria> agregarAExpedienteReload(@Valid @RequestBody Documento documento) {
+		Auditoria auditoria = new Auditoria();
+		HrDto anexo = null;
+		try {
+			anexo = ventanillastdProxy.agregarAExpediente(
+					"lmauricio",
+					documento.getNumero_sid(),
+					documento.getAnio(),
+					new AnexoDto(null,0,	""),
+					UserIdentityHelper.getClientIpAddress());
+
+			logger.info("Anexo obtenido de SOAP: " + anexo);
+
+			auditoria = docService.updateAnexo(documento.getId_documento(),String.valueOf(anexo.getIdanexo()));
+
+		} catch (Exception ex) {
+			auditoria.Error(ex);
+			logger.info(auditoria.error_log);
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
