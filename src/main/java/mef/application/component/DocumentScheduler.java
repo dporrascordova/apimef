@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -31,6 +32,11 @@ import mef.application.modelo.Documento;
 import mef.application.modelo.DocumentoAnexo;
 import mef.application.modelo.PersonaCorreo;
 import mef.application.modelo.UsuarioPersona;
+import mef.application.modelo.entity.DocumentoAnexoEntity;
+import mef.application.modelo.entity.DocumentoAnexoPK;
+import mef.application.modelo.entity.DocumentoEntity;
+import mef.application.repositorio.DocumentoAnexoRepository;
+import mef.application.repositorio.DocumentoRepository;
 import mef.application.service.CasillaService;
 import mef.application.service.DocumentoService;
 import mef.application.service.EstadoService;
@@ -51,40 +57,31 @@ import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 public class DocumentScheduler {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentScheduler.class);
-
-	private EmailComponent emailComponent;
-
-	@Value("${database.micorreo}")
-	private String micorrreo;
-
-	@Value("${file.fileserver}")
-	private String fileServer;
-
+	private final VentanillastdProxy ventanillastdProxy;
 	@Autowired
 	FilesStorageService storageService;
-
 	@Autowired
 	DocumentoService docService;
-
 	@Autowired
 	PersonaService personaService;
-
 	@Autowired
 	EstadoService estadoService;
-
 	@Autowired
 	MefService mefService;
-
 	@Autowired
 	CasillaService casillaService;
-
+	private EmailComponent emailComponent;
+	@Value("${database.micorreo}")
+	private String micorrreo;
+	@Value("${file.fileserver}")
+	private String fileServer;
 	private EmailUtil emailutil;
-
 	@Autowired
 	private OficinaServiceImpl oficinaService;
-
-
-	private final VentanillastdProxy ventanillastdProxy;
+	@Autowired
+	private DocumentoAnexoRepository documentoAnexoRepository;
+	@Autowired
+	private DocumentoRepository documentoRepository;
 
 	public DocumentScheduler(EmailComponent emailComponent, VentanillastdProxy ventanillastdProxy) {
 		this.emailComponent = emailComponent;
@@ -158,6 +155,9 @@ public class DocumentScheduler {
 		logger.info(
 				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD : " + (new Date(System.currentTimeMillis())));
 
+		Integer totalFaileFiles = 1;
+		Integer totalFaileFilesUploaded = 1;
+
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
 			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
@@ -165,12 +165,11 @@ public class DocumentScheduler {
 			for (Documento documento : lista) {
 				try {
 					logger.info("Solicitud a reparar estado 8:" + documento.getId_documento());
-					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
+
 					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
 					HrDto expediente = new HrDto();
 					Path path;
-					Integer totalFaileFiles = 0;
-					String message = "";
+
 					String USU = "lmauricio";
 					String IP = documento.getIp_creacion();
 					String filename = "";
@@ -185,23 +184,6 @@ public class DocumentScheduler {
 
 					logger.info("File principal: " + "" + fileByte.length);
 					logger.info("File principal: " + filename);
-
-					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
-					for (DocumentoAnexo itemAnexo : anexos) {
-						switch (itemAnexo.getFlg_link()) {
-							case "1":
-								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
-								path = Paths.get(fileServer, documento.getId_documento() + "", filename);
-								fileByte = Files.readAllBytes(path);
-								anexoDto.add(new AnexoDto(fileByte, fileByte.length,
-										itemAnexo.getNombre_archivo().replaceAll("\u0002", "")));
-								System.out.println("Files Anexo: " + fileByte.length);
-								break;
-							case "2":
-								arrayAnexosHR.add(itemAnexo.getNombre_archivo());
-								break;
-						}
-					}
 
 					// Oficinas
 					TdFlujoSDto[] oficinas = new TdFlujoSDto[1];
@@ -265,17 +247,111 @@ public class DocumentScheduler {
 						logger.info("getFechaCompleto:" + expediente.getFechaCompleto());
 
 					} else {
+
+						Optional<DocumentoEntity> optionalDocumento = documentoRepository
+								.findById(Long.valueOf(documento.getId_tipo_documento()));
+						if (optionalDocumento.isPresent()) {
+							DocumentoEntity documentoenti = optionalDocumento.get();
+							documentoenti.setObsSgdd("No se genero la HR");
+							documentoRepository.save(documentoenti);
+
+						}
+
 						throw new Exception("El expediente es nulo, error al crear expediente.");
 
 					}
 					String hojaRuta = expediente.getNumeroSid() + "-" + expediente.getNumeroAnio().toString();
 					System.out.println("Hoja de ruta: " + hojaRuta);
-					for (AnexoDto itemAnexo : anexoDto) {
-						ventanillastdProxy.agregarAExpediente(USU, expediente.getNumeroSid(),
-								expediente.getNumeroAnio(), itemAnexo,
-								IP);
 
+					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
+					totalFaileFiles += anexos.size();
+					System.out.println("total files totalFaileFiles");
+
+					for (DocumentoAnexo itemAnexo : anexos) {
+						switch (itemAnexo.getFlg_link()) {
+							case "1":
+
+								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
+								path = Paths.get(fileServer, documento.getId_documento() + "", filename);
+								fileByte = Files.readAllBytes(path);
+
+								System.out.println("Files Anexo: " + fileByte.length);
+
+								DocumentoAnexoPK id = new DocumentoAnexoPK();
+								id.setIdDocumento(Long.valueOf(itemAnexo.getId_documento()));
+								id.setOrden((long) itemAnexo.getOrden());
+
+								Optional<DocumentoAnexoEntity> anexoItem = documentoAnexoRepository
+										.findById(id);
+								DocumentoAnexoEntity documentoItem;
+								if (anexoItem.isPresent()) {
+									documentoItem = anexoItem.get();
+
+									// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
+									HrDto anexo = null;
+									try {
+										anexo = ventanillastdProxy.agregarAExpediente(
+												USU,
+												expediente.getNumeroSid(),
+												expediente.getNumeroAnio(),
+												new AnexoDto(
+														fileByte,
+														fileByte.length,
+														itemAnexo.getNombre_archivo().replaceAll("\u0002", "")),
+												IP);
+										// Aquí sabes que sería un "HTTP 200 OK"
+										System.out.println("Anexo agregado correctamente: " + anexo);
+
+										documentoItem.setEstadoAnexo(1);
+										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+										documentoAnexoRepository.save(documentoItem);
+
+										totalFaileFilesUploaded += 1;
+									} catch (Exception e) {
+										// Otro error inesperado
+										System.err.println("Error inesperado: " + e.getMessage());
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
+
+										documentoAnexoRepository.save(documentoItem);
+									}
+
+									if (anexo == null) {
+
+										System.err.println("Anexo null: ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
+
+										documentoAnexoRepository.save(documentoItem);
+									} else if (anexo.getIdanexo() == null) {
+										System.err.println("anexo.getIdanexo() is null ");
+										documentoItem.setEstadoAnexo(0);
+										documentoItem.setIdAnexo(null);
+
+										documentoAnexoRepository.save(documentoItem);
+									}
+								}
+								break;
+							case "2":
+								arrayAnexosHR.add(itemAnexo.getNombre_archivo());
+								break;
+						}
 					}
+					System.out.println("totalFaileFilesUploaded:" + totalFaileFilesUploaded);
+					System.out.println("totalFaileFiles:" + totalFaileFiles);
+
+					if (totalFaileFilesUploaded != totalFaileFiles) {
+						Optional<DocumentoEntity> optionalDocumento = documentoRepository
+								.findById(Long.valueOf(documento.getId_tipo_documento()));
+						if (optionalDocumento.isPresent()) {
+							DocumentoEntity documentoenti = optionalDocumento.get();
+							documentoenti.setObsSgdd("No se mando los anexos completos");
+							documentoRepository.save(documentoenti);
+
+						}
+					}
+
 					docService.Documento_Agregar_HojaRuta(documento.getId_documento(), expediente.getNumeroAnio(),
 							expediente.getNumeroSid(), USU);
 
@@ -355,11 +431,6 @@ public class DocumentScheduler {
 			// VentanillastdProxy proxy = new VentanillastdProxy();
 			AcMsUbigwsDto[] ubigeos = ventanillastdProxy.ubigeos();
 
-			// ubigeos = null;
-
-			// VentanillastdProxy proxy = new VentanillastdProxy();
-			// AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
-			// String
 			String cadena = "";
 			int cuenta = 0;
 			for (int i = 0; i < ubigeos.length; i++) {
@@ -386,13 +457,7 @@ public class DocumentScheduler {
 				cadena = "";
 				cuenta = 0;
 			}
-			// ubigeos = null;
 
-			// VentanillastdProxy proxy = new VentanillastdProxy();
-			// AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
-
-			// VentanillastdProxy proxy = new VentanillastdProxy();
-			// AcMsUbigwsDto[] ubigeos = proxy.ubigeos();
 			cadena = "";
 			cuenta = 0;
 			for (int i = 0; i < ubigeos.length; i++) {
@@ -434,19 +499,10 @@ public class DocumentScheduler {
 					int id_prov = ubi.getCodprov();
 					int id_dep = ubi.getCoddpto();
 					String Descripcion = ubi.getNombre().isEmpty() ? "-" : ubi.getNombre();
-
-					/*
-					 * if (ubi.getNombre().equals("CHORRILLOS")) { System.out.println("ESTE ES");
-					 * System.out.println(cadena); enc = true; }
-					 */
 					cadena += id_dist + "|" + id_prov + "|" + id_dep + "|" + Descripcion;
 					cuenta++;
 
 					if (cadena.length() > 3500) {
-						/*
-						 * if (enc) { System.out.println("entro a actualizar ES");
-						 * System.out.println(cadena); enc = false; }
-						 */
 
 						auditoria = mefService.Mef_Dist_Actualizar(cadena);
 						cadena = "";
@@ -460,14 +516,6 @@ public class DocumentScheduler {
 				cuenta = 0;
 			}
 			ubigeos = null;
-			// Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
-			// System.out.println("entro aqui 1");
-			// if (documentosPorRecibir.ejecucion_procedimiento &&
-			// !documentosPorRecibir.rechazar) {
-			// List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
-			// System.out.println("entro aqui 1");
-			// System.out.println("Lista de :" + lista.size());
-			// for (Documento documento : lista) {
 
 			System.out.println("FIN DE SINCRONIZACION: " + (new Date(System.currentTimeMillis())));
 		} catch (Exception ex) {
@@ -475,8 +523,6 @@ public class DocumentScheduler {
 			System.out.println("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD:");
 			System.out.println(ex.getMessage());
 		}
-		// }
-		// }
 
 	}
 
@@ -524,7 +570,7 @@ public class DocumentScheduler {
 					if (idValorDto != null) {
 
 						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { // POR
-																														// RECIBIR
+							// RECIBIR
 
 							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
 						}
@@ -605,7 +651,7 @@ public class DocumentScheduler {
 					if (idValorDto != null) {
 
 						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { // POR
-																														// RECIBIR
+							// RECIBIR
 
 							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
 						}

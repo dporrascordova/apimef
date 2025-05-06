@@ -456,6 +456,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
+	@Transactional
 	public Auditoria Documento_FlgServicioError(int id_documento) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
@@ -466,7 +467,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 					.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
 					.registerStoredProcedureParameter(2, Integer.class, ParameterMode.OUT)
 					.registerStoredProcedureParameter(3, String.class, ParameterMode.OUT).setParameter(1, id_documento);
-
+			entityManager.joinTransaction();
 			query.execute();
 
 			// Integer estado = (Integer) query.getOutputParameterValue(13);
@@ -573,7 +574,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 					.setParameter(1, id_documento);
 
 			List<Object[]> TableST = query.getResultList();
-			query.unwrap(ProcedureOutputs.class).release();
+//			query.unwrap(ProcedureOutputs.class).release();
 
 			for (int i = 0; i < TableST.size(); i++) {
 				Object[] row = TableST.get(i);
@@ -1120,24 +1121,27 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
+	@Transactional
 	public Auditoria Documento_Agregar_HojaRuta(Integer documentoId, Integer anio, String numeroSid, String usuario) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
-		try {
-			StoredProcedureQuery query = entityManager
-					.createStoredProcedureQuery(databasePackage + ".P_DOCUMENTO_HOJARUTA")
-					.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(3, String.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(4, String.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(5, Integer.class, ParameterMode.OUT)
-					.registerStoredProcedureParameter(6, String.class, ParameterMode.OUT).setParameter(1, documentoId)
-					.setParameter(2, anio).setParameter(3, numeroSid).setParameter(4, usuario);
-			query.execute();
+			try {
+				StoredProcedureQuery query = entityManager
+						.createStoredProcedureQuery(databasePackage + ".P_DOCUMENTO_HOJARUTA")
+						.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(3, String.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(4, String.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(5, Integer.class, ParameterMode.OUT)
+						.registerStoredProcedureParameter(6, String.class, ParameterMode.OUT).setParameter(1, documentoId)
+						.setParameter(2, anio).setParameter(3, numeroSid).setParameter(4, usuario);
 
-			Integer estado = (Integer) query.getOutputParameterValue(5);
-			String mensaje = (String) query.getOutputParameterValue(6);
-			query.unwrap(ProcedureOutputs.class).release();
+				entityManager.joinTransaction();
+				query.execute();
+
+				Integer estado = (Integer) query.getOutputParameterValue(5);
+				String mensaje = (String) query.getOutputParameterValue(6);
+//			query.unwrap(ProcedureOutputs.class).release();
 			if (!estado.equals(100)) {
 				auditoria.Rechazar(mensaje);
 			} else {
@@ -1147,6 +1151,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
+			ex.printStackTrace();
 		}
 		return auditoria;
 	}
