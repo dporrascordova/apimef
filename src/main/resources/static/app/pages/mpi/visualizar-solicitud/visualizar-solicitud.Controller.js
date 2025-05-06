@@ -41,20 +41,59 @@ ventanillaVirtual.controller('visualizarsolicitudController', function ($scope,
             $scope.documento.hoja_ruta_generado = $scope.documento.hoja_ruta_generado=="-0" ? "": $scope.documento.hoja_ruta_generado; 
             $scope.movimientosSTD = [];  
             if ($scope.documento.anio > 0 && $scope.documento.numero_sid != null) {
-                mpiService.getExpediente($scope.documento.anio, $scope.documento.numero_sid).then(function(res) {
+                mpiService.getExpediente($scope.documento.anio, $scope.documento.numero_sid)
+                .then(function(res) {
                     //debugger;
                     $scope.movimientosSTD = res.data.objeto.movimientos;
                     //console.log($scope.movimientosSTD);
+                })
+                .catch(function(error) {
+                    console.error('Error al exportar archivo:', error);
                 });
-            }        
-            mpiService.exportFile(response.data.objeto.id_documento,'pdf',response.data.objeto.codigo_archivo).then(function(responses){  
-                var file = new Blob([(responses.data)],{type: $rootScope.applicationType('pdf')});            
+            } 
+            /*
+            mpiService.exportFile(response.data.objeto.id_documento, 'pdf', response.data.objeto.codigo_archive)
+            .then(function(fileResponse) {  // Cambiado el nombre para evitar confusión
+                var file = new Blob([fileResponse.data], {type: $rootScope.applicationType('pdf')});
                 $scope.file = {
-                    file : $sce.trustAsResourceUrl(URL.createObjectURL(file))
+                    file: $sce.trustAsResourceUrl(URL.createObjectURL(file))
+                };
+            })
+            .catch(function(error) {
+                console.error('Error al exportar archivo:', error);
+            });
+            */
+            
+            mpiService.exportFile(response.data.objeto.id_documento,'pdf',response.data.objeto.codigo_archivo).then(function(response){  
+                var file = new Blob([(response.data)],{type: $rootScope.applicationType('pdf')});            
+                $scope.file = {
+                    file : $sce.trustAsResourceUrl(window.URL.createObjectURL(file))
                 }
             });        
+            
         });   
     }
+
+    $scope.ejecutarAgregarAExpediente = function(id_documento,numero_sid,anio){
+        debugger;
+        mpiService.ejecutarAgregarAExpediente(id_documento,numero_sid,anio).then(function(res){
+            if (res.data.ejecucion_procedimiento && !$scope.isNullOrEmpty(res.data.mensaje_salida))
+                $scope.showAlert({
+                  message: res.data.mensaje_salida,
+                });
+        });
+    }
+
+    /*
+
+    mpiService.asignarDocumento(IdSolicitud).then(function (res) {
+      if (res.data.ejecucion_procedimiento && !$scope.isNullOrEmpty(res.data.mensaje_salida))
+        $scope.showAlert({
+          message: res.data.mensaje_salida,
+        });
+    });
+
+    */
 
     $scope.downloadFile = function(id, fileType, fileName) {
         mpiService.exportFile(id, fileType, fileName).then(function(response) {            

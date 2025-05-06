@@ -17,6 +17,7 @@ import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 
+import mef.application.repositorio.DocumentoAnexoRepository;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -46,12 +47,16 @@ import mef.application.modelo.DocumentoObservacion;
 import mef.application.modelo.RespuestaMessage;
 //import mef.application.repositorio.DocumentoRepositorio;
 import mef.application.service.DocumentoService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DocumentoServiceImpl implements DocumentoService {
 
 	@Autowired
 	private DocumentoDao documentoDao;
+
+	@Autowired
+	private DocumentoAnexoRepository documentoAnexoRepository;
 
 	@Override
 	public Auditoria Documento_Listar(Documento doc) {
@@ -315,5 +320,21 @@ public class DocumentoServiceImpl implements DocumentoService {
 	@Override
 	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab) {
 		return documentoDao.Documento_Listar_Pendiente_Bandeja(tab);
+	}
+
+	@Transactional
+	@Override
+	public Auditoria updateAnexo(long idDocumento, String idAnexo) {
+		Auditoria auditoria = null;
+		try{
+			auditoria.Limpiar();
+			documentoAnexoRepository.actualizarIdAnexoNative(idDocumento, idAnexo);
+		}catch (Exception e){
+			auditoria.rechazar=true;
+			auditoria.ejecucion_procedimiento=false;
+			auditoria.mensaje_salida="Se produjjo un error al actualizar el ID_ANEXO.";
+		}
+
+		return auditoria;
 	}
 }

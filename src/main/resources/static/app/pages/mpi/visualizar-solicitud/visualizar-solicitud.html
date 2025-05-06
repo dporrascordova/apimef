@@ -137,6 +137,7 @@
 								<th>Nombre de Archivo</th>
 								<th>Fecha</th>
 								<th>Tamaño</th>
+								<th>id_sgdd</th>
 							</tr>
 						<thead>
 						<tbody ng-repeat="item in documento.anexos">
@@ -157,6 +158,14 @@
 										</td>
 								<td>{{item.fec_creacion}}</td>
 								<td>{{item.tamanio_archivo | Filesize}}</td>
+								<td ng-if="item.estadoAnexo == 0  && item.idAnexo == 'null'">
+									<button ng-click="ejecutarAgregarAExpediente(item.id_documento,documento.numero_sid,documento.anio)" 
+										class="btn btn-link" 
+										title="Ejecutar proceso">
+									<i class="fa fa-cogs"></i>  <!-- Ícono de engranajes (para procesos) -->
+								</button>
+
+								</td>
 							</tr>
 						</tbody>
 						<tbody

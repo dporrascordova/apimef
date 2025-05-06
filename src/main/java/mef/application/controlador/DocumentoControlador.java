@@ -26,6 +26,8 @@ import org.apache.commons.io.FilenameUtils;
 //import org.hamcrest.text.IsEmptyString;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -86,6 +88,7 @@ import pe.gob.mef.std.bs.web.ws.VentanillastdProxy;
 @RestController
 @RequestMapping("/api")
 public class DocumentoControlador {
+	private static final Logger logger = LoggerFactory.getLogger(DocumentoControlador.class);
 
 	private EmailComponent emailComponent;
 
@@ -256,6 +259,7 @@ public class DocumentoControlador {
 						jsonObject.put("usu_asignacion", documento.getUsu_asignacion());
 						jsonObject.put("esta_asignado", documento.isAsignado());
 						jsonObject.put("nomb_usu_asignacion", documento.getNomb_usu_asignacion());
+						jsonObject.put("obsSgdd", documento.getObsSgdd());
 						jsonArray.put(jsonObject);
 					}
 
@@ -633,7 +637,6 @@ public class DocumentoControlador {
 										documentoItem.setIdAnexo(null);
 										documentoAnexoRepository.save(documentoItem);
 									}
-
 
 								}
 
@@ -2755,8 +2758,6 @@ public class DocumentoControlador {
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
-<<<<<<< Updated upstream
-=======
 
 	@PostMapping("/agregar-expediente-reload")
 	@Produces("application/json")
@@ -2781,5 +2782,4 @@ public class DocumentoControlador {
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
 	}
->>>>>>> Stashed changes
 }

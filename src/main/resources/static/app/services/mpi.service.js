@@ -107,5 +107,9 @@ function mpiService($http, BASE_URL) {
 	        };
 	        return $http.post(`${BASE_URL}/desasignar-solicitud`,payload);
 		    },
+      ejecutarAgregarAExpediente(id_documento,numero_sid,anio) {    
+          var payload = {id_documento:id_documento, numero_sid : numero_sid, anio:anio };
+          return $http.post(`${BASE_URL}/agregar-expediente-reload`,payload);
+      },
     };
 }
