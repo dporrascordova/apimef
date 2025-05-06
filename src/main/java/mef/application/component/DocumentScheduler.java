@@ -402,7 +402,7 @@ public class DocumentScheduler {
 					}
 				} catch (Exception ex) {
 					docService.Documento_FlgServicioError(documento.getId_documento());
-					logger.error("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD:");
+					logger.error("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD {}: ", documento.getId_documento());
 					auditoria.Error(ex);
 					logger.error(auditoria.error_log);
 				}
