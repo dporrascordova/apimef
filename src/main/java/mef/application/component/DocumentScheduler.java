@@ -249,7 +249,7 @@ public class DocumentScheduler {
 					} else {
 
 						Optional<DocumentoEntity> optionalDocumento = documentoRepository
-								.findById(Long.valueOf(documento.getId_tipo_documento()));
+								.findById(Long.valueOf(documento.getId_documento()));
 						if (optionalDocumento.isPresent()) {
 							DocumentoEntity documentoenti = optionalDocumento.get();
 							documentoenti.setObsSgdd("No se genero la HR");
@@ -271,7 +271,7 @@ public class DocumentScheduler {
 						switch (itemAnexo.getFlg_link()) {
 							case "1":
 
-								filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
+								filename = itemAnexo.getCodigo_archivo();
 								path = Paths.get(fileServer, documento.getId_documento() + "", filename);
 								fileByte = Files.readAllBytes(path);
 
@@ -310,11 +310,21 @@ public class DocumentScheduler {
 										totalFaileFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
+										e.printStackTrace();
 										System.err.println("Error inesperado: " + e.getMessage());
 										documentoItem.setEstadoAnexo(0);
 										documentoItem.setIdAnexo(null);
 
 										documentoAnexoRepository.save(documentoItem);
+
+										Optional<DocumentoEntity> optionalDocumento = documentoRepository
+												.findById(Long.valueOf(documento.getId_documento()));
+										if (optionalDocumento.isPresent()) {
+											DocumentoEntity documentoenti = optionalDocumento.get();
+											documentoenti.setObsSgdd("No se mando los anexos completos");
+											documentoRepository.save(documentoenti);
+
+										}
 									}
 
 									if (anexo == null) {
@@ -343,7 +353,7 @@ public class DocumentScheduler {
 
 					if (totalFaileFilesUploaded != totalFaileFiles) {
 						Optional<DocumentoEntity> optionalDocumento = documentoRepository
-								.findById(Long.valueOf(documento.getId_tipo_documento()));
+								.findById(Long.valueOf(documento.getId_documento()));
 						if (optionalDocumento.isPresent()) {
 							DocumentoEntity documentoenti = optionalDocumento.get();
 							documentoenti.setObsSgdd("No se mando los anexos completos");

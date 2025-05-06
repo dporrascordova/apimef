@@ -604,9 +604,10 @@ public class DocumentoDaoImpl implements DocumentoDao {
 		} catch (NoResultException e) {
 			System.out.println("VACIO: " + e.getMessage());
 			// return null;
+			e.printStackTrace();
 		} catch (Exception e) {
 
-			// e.printStackTrace();
+			 e.printStackTrace();
 			System.out.println("ERROR STORE: " + e.getMessage());
 		}
 
