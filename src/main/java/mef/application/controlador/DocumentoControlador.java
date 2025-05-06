@@ -2769,7 +2769,7 @@ public class DocumentoControlador {
 					"lmauricio",
 					documento.getNumero_sid(),
 					documento.getAnio(),
-					new AnexoDto(null, 0, ""),
+					new AnexoDto(),
 					UserIdentityHelper.getClientIpAddress());
 
 			logger.info("Anexo obtenido de SOAP: " + anexo);
