@@ -99,7 +99,7 @@ public class DocumentScheduler {
 			ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
 			HrDto expediente = new HrDto();
 			Path path;
-			Integer totalFaileFiles = 0;
+//			Integer totalFaileFiles = 0;
 			String message = "";
 			String USU = "lmauricio";
 			String filename = "";
@@ -155,8 +155,8 @@ public class DocumentScheduler {
 		logger.info(
 				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD : " + (new Date(System.currentTimeMillis())));
 
-		Integer totalFaileFiles = 1;
-		Integer totalFaileFilesUploaded = 1;
+		Integer totalFiles = 1;
+		Integer totalFilesUploaded = 1;
 		Auditoria auditoria = new Auditoria();
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
@@ -264,8 +264,8 @@ public class DocumentScheduler {
 					System.out.println("Hoja de ruta: " + hojaRuta);
 
 					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
-					totalFaileFiles += anexos.size();
-					System.out.println("total files totalFaileFiles");
+					totalFiles += anexos.size();
+					logger.info("total totalFiles> {}", totalFiles);
 
 					for (DocumentoAnexo itemAnexo : anexos) {
 						switch (itemAnexo.getFlg_link()) {
@@ -307,7 +307,7 @@ public class DocumentScheduler {
 
 										documentoAnexoRepository.save(documentoItem);
 
-										totalFaileFilesUploaded += 1;
+										totalFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
 										auditoria.Error(e);
@@ -333,10 +333,10 @@ public class DocumentScheduler {
 								break;
 						}
 					}
-					System.out.println("totalFaileFilesUploaded:" + totalFaileFilesUploaded);
-					System.out.println("totalFaileFiles:" + totalFaileFiles);
+					logger.info("totalFilesUploaded:{} ", totalFilesUploaded);
+					logger.info("totalFiles:{} ", totalFiles);
 
-					if (totalFaileFilesUploaded != totalFaileFiles) {
+					if (totalFilesUploaded != totalFiles) {
 						Optional<DocumentoEntity> optionalDocumento = documentoRepository
 								.findById(Long.valueOf(documento.getId_documento()));
 						if (optionalDocumento.isPresent()) {
