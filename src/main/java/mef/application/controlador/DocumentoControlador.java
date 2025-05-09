@@ -591,7 +591,7 @@ public class DocumentoControlador {
 							for (DocumentoAnexo itemAnexo : anexos) {
 
 								filename = itemAnexo.getCodigo_archivo();
-								path = Paths.get(fileServer, documentoId + "", filename);
+								path = Paths.get(fileServer, documentoId + "", filename + "." + itemAnexo.getExtension_archivo());
 								fileByte = Files.readAllBytes(path);
 
 								System.out.println("Files Anexo: " + fileByte.length);
