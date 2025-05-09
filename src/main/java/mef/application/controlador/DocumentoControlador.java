@@ -642,37 +642,21 @@ public class DocumentoControlador {
 
 							}
 
-						} else {
-							System.out.println("Datos de retorno:null");
-							docService.Documento_FlgServicioError(documentoId);
-
-							marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
-
-						}
-
-						if (expediente.getNumeroSid().isEmpty()) {
-							marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
 						}
 
 					} catch (Exception ex) {
 						docService.Documento_FlgServicioError(documentoId);
 						ObjectMapper mapper = new ObjectMapper();
-						System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
-
-						System.out.println("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
+						logger.error("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
+						logger.error(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
 						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
-
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
 						auditoria.ejecucion_procedimiento = false;
 						auditoria.mensaje_salida = message.isEmpty()
 								? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
 								: message;
-						ex.printStackTrace();
-					} catch (OutOfMemoryError ex) {
-						ex.printStackTrace();
-						docService.Documento_FlgServicioError(documentoId);
-						auditoria.ejecucion_procedimiento = false;
-						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
+						auditoria.Error(ex);
+						logger.error(auditoria.error_log);
 					}
 
 					Casilla modelo = new Casilla();
@@ -742,8 +726,12 @@ public class DocumentoControlador {
 							? "La solicitud " + documentoId + " se ha generado correctamente"
 							: message;
 
-					System.out.println("totalFiles:" + totalFiles);
-					System.out.println("totalFilesUploaded:" + totalFilesUploaded);
+					auditoria.mensaje_salida =
+							expediente.getNumeroSid() == null ? auditoria.mensaje_salida + ", La Generacoin de HR esta pendiente" : auditoria.mensaje_salida;
+
+					logger.info("totalFiles {}:", totalFiles);
+					logger.info("totalFilesUploaded {}:", totalFilesUploaded);
+
 
 					if (totalFiles != totalFilesUploaded) {
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se mando los anexos completos");
