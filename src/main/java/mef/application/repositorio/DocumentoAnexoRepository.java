@@ -24,9 +24,10 @@ public interface DocumentoAnexoRepository extends JpaRepository<DocumentoAnexoEn
   // Versión alternativa con SQL nativo
   @Modifying
   @Transactional
-  @Query(value = "UPDATE T_VUDM_DOCUMENTO_ANEXO SET ID_ANEXO = :idAnexo WHERE ID_DOCUMENTO = :idDocumento", nativeQuery = true)
+  @Query(value = "UPDATE T_VUDM_DOCUMENTO_ANEXO SET ID_ANEXO = :idAnexo, ESTADO_ANEXO = 1 WHERE ID_DOCUMENTO = :idDocumento AND ORDEN = :orden ", nativeQuery = true)
   int actualizarIdAnexoNative(
+          @Param("idAnexo") String idAnexo,
           @Param("idDocumento") Long idDocumento,
-          @Param("idAnexo") String idAnexo
+          @Param("orden") Integer orden
   );
 }

@@ -107,8 +107,30 @@ function mpiService($http, BASE_URL) {
 	        };
 	        return $http.post(`${BASE_URL}/desasignar-solicitud`,payload);
 		    },
-      ejecutarAgregarAExpediente(id_documento,numero_sid,anio) {    
-          var payload = {id_documento:id_documento, numero_sid : numero_sid, anio:anio };
+      //ejecutarAgregarAExpediente(id_documento,codigo_archivo, numero_sid,anio) {    
+      ejecutarAgregarAExpediente(documento,item) {    
+          var payload = {
+            id_documento    : documento.id_documento, 
+            codigo_archivo  : item.codigo_archivo, 
+            numero_sid      : documento.numero_sid, 
+            anio            : documento.anio ,
+            anexos          : []
+          };
+          var anexo = {
+            id_documento: item.id_documento,
+            codigo_archivo: item.codigo_archivo,
+            nombre_archivo: item.nombre_archivo,
+            extension_archivo: item.extension_archivo,
+            tamanio_archivo: item.tamanio_archivo,
+            orden: item.orden,
+            flg_link: item.flg_link,
+            flg_estado: item.flg_estado,
+            estadoAnexo: item.estadoAnexo,
+            idAnexo: item.idAnexo
+        };
+        
+        payload.anexos.push(anexo);
+
           return $http.post(`${BASE_URL}/agregar-expediente-reload`,payload);
       },
     };

@@ -2765,19 +2765,38 @@ public class DocumentoControlador {
 		Auditoria auditoria = new Auditoria();
 		HrDto anexo = null;
 		try {
+			/*
+			Path path = Paths.get(fileServer, id.toString(), fileName + "." + fileType.toLowerCase());
+			File file = path.toFile();// new File(path.);
+			headers.add("Content-Type", Files.probeContentType(file.toPath()));
+			stream = new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
+			 */
+
+			DocumentoAnexo itemAnexo = documento.getAnexos().get(0);
+
+			String filename = itemAnexo.getCodigo_archivo();
+			Path path = Paths.get(fileServer, itemAnexo.getId_documento() + "", filename);
+			File file = path.toFile();
+			byte[] fileByte = Files.readAllBytes(path);
+
 			anexo = ventanillastdProxy.agregarAExpediente(
 					"lmauricio",
 					documento.getNumero_sid(),
 					documento.getAnio(),
-					new AnexoDto(),
+					new AnexoDto(
+							fileByte,
+							fileByte.length,
+							itemAnexo.getNombre_archivo()
+					),
 					UserIdentityHelper.getClientIpAddress());
 
 			logger.info("Anexo obtenido de SOAP: " + anexo);
 
-			auditoria = docService.updateAnexo(documento.getId_documento(), String.valueOf(anexo.getIdanexo()));
+			auditoria = docService.updateAnexo(String.valueOf(anexo.getIdanexo()),documento.getId_documento(), itemAnexo.getOrden());
 
 		} catch (Exception ex) {
 			auditoria.Error(ex);
+			auditoria.mensaje_salida=auditoria.error_log;
 			logger.info(auditoria.error_log);
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
