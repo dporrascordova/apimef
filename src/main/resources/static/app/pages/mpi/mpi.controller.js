@@ -319,6 +319,10 @@ ventanillaVirtual
 									}
 								});
 						modalInstance.result.then(function() {
+							if (result === 'refresh') {
+								console.log(">>>Ingresa a refresh en padre ");
+								$scope.openModalVisualizarSolicitud(data, size); // vuelve a abrir el modal
+							  }
 							// alert("now I'll close the modal");
 						});
 					};

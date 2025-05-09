@@ -85,5 +85,5 @@ public interface DocumentoService {
 
 	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab);
 
-	Auditoria updateAnexo(long idDocumento, String idAnexo );
+	Auditoria updateAnexo(String idAnexo, long idDocumento, int orden );
 }

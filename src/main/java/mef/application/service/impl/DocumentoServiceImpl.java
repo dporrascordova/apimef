@@ -324,17 +324,22 @@ public class DocumentoServiceImpl implements DocumentoService {
 
 	@Transactional
 	@Override
-	public Auditoria updateAnexo(long idDocumento, String idAnexo) {
-		Auditoria auditoria = null;
+	public Auditoria updateAnexo(String idAnexo, long idDocumento, int orden) {
+		Auditoria auditoria = new Auditoria();
 		try{
 			auditoria.Limpiar();
-			documentoAnexoRepository.actualizarIdAnexoNative(idDocumento, idAnexo);
+			int rpta = documentoAnexoRepository.actualizarIdAnexoNative(idAnexo, idDocumento, orden);
+			if (rpta <= 0) {
+				auditoria.mensaje_salida="No se encontró el documento o anexo para actualizar";
+			} else {
+				auditoria.mensaje_salida="Anexo["+idAnexo+"] actualizado correctamente";
+			}
 		}catch (Exception e){
+			auditoria.Error(e);
 			auditoria.rechazar=true;
 			auditoria.ejecucion_procedimiento=false;
-			auditoria.mensaje_salida="Se produjjo un error al actualizar el ID_ANEXO.";
+			auditoria.mensaje_salida="Se produjo un error al actualizar el Anexo["+idAnexo+"]: ";
 		}
-
 		return auditoria;
 	}
 }
