@@ -2751,17 +2751,9 @@ public class DocumentoControlador {
 		Auditoria auditoria = new Auditoria();
 		HrDto anexo = null;
 		try {
-			/*
-			 * Path path = Paths.get(fileServer, id.toString(), fileName + "." +
-			 * fileType.toLowerCase());
-			 * File file = path.toFile();// new File(path.);
-			 * headers.add("Content-Type", Files.probeContentType(file.toPath()));
-			 * stream = new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
-			 */
-
 			DocumentoAnexo itemAnexo = documento.getAnexos().get(0);
 
-			String filename = itemAnexo.getCodigo_archivo();
+			String filename = itemAnexo.getCodigo_archivo()+"."+itemAnexo.getExtension_archivo();
 			Path path = Paths.get(fileServer, itemAnexo.getId_documento() + "", filename);
 			File file = path.toFile();
 			byte[] fileByte = Files.readAllBytes(path);

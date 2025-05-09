@@ -338,7 +338,7 @@ public class DocumentoServiceImpl implements DocumentoService {
 			auditoria.Error(e);
 			auditoria.rechazar=true;
 			auditoria.ejecucion_procedimiento=false;
-			auditoria.mensaje_salida="Se produjo un error al actualizar el Anexo["+idAnexo+"]: ";
+			auditoria.mensaje_salida="Se produjo un error al actualizar el Anexo["+idAnexo+"]";
 		}
 		return auditoria;
 	}
