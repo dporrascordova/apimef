@@ -507,11 +507,10 @@ public class DocumentoControlador {
 
 						if (doc.getFilesAnexos() != null) {
 							for (MultipartFile file : doc.getFilesAnexos()) {
-								HrDto anexoSoap = null;
 								filename = UUID.randomUUID().toString();
-								filename = CommonHelpers.Generar_Nombre_Archivo(file, filename);
-
 								DocumentoAnexoEntity documentoAnexoItem = new DocumentoAnexoEntity();
+								documentoAnexoItem.setCodigoArchivo(filename);
+
 								if (documentoAnexoItem.getId() == null) {
 									documentoAnexoItem.setId(new DocumentoAnexoPK());
 								}
@@ -520,7 +519,6 @@ public class DocumentoControlador {
 										.obtenerSiguienteOrden(documentoAnexoItem.getId().getIdDocumento());
 								documentoAnexoItem.getId().setOrden(siguienteOrden);
 
-								documentoAnexoItem.setCodigoArchivo(filename);
 								documentoAnexoItem
 										.setExtensionArchivo(FilenameUtils.getExtension(file.getOriginalFilename())
 												.toLowerCase());
@@ -534,7 +532,7 @@ public class DocumentoControlador {
 								documentoAnexoItem.setEstadoAnexo(0);
 
 								documentoAnexoItem = documentoAnexoRepository.save(documentoAnexoItem);
-								storageService.save(path.toString(), file, filename);
+								storageService.save(path.toString(), file, CommonHelpers.Generar_Nombre_Archivo(file, filename));
 							}
 						}
 
@@ -628,7 +626,7 @@ public class DocumentoControlador {
 
 										documentoAnexoRepository.save(documentoItem);
 
-										 totalFilesUploaded += 1;
+										totalFilesUploaded += 1;
 									} catch (Exception e) {
 										// Otro error inesperado
 										auditoria.Error(e);
@@ -726,12 +724,12 @@ public class DocumentoControlador {
 							? "La solicitud " + documentoId + " se ha generado correctamente"
 							: message;
 
-					auditoria.mensaje_salida =
-							expediente.getNumeroSid() == null ? auditoria.mensaje_salida + ", La Generacoin de HR esta pendiente" : auditoria.mensaje_salida;
+					auditoria.mensaje_salida = expediente.getNumeroSid() == null
+							? auditoria.mensaje_salida + ", La Generacoin de HR esta pendiente"
+							: auditoria.mensaje_salida;
 
 					logger.info("totalFiles {}:", totalFiles);
 					logger.info("totalFilesUploaded {}:", totalFilesUploaded);
-
 
 					if (totalFiles != totalFilesUploaded) {
 						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se mando los anexos completos");
@@ -2754,10 +2752,11 @@ public class DocumentoControlador {
 		HrDto anexo = null;
 		try {
 			/*
-			Path path = Paths.get(fileServer, id.toString(), fileName + "." + fileType.toLowerCase());
-			File file = path.toFile();// new File(path.);
-			headers.add("Content-Type", Files.probeContentType(file.toPath()));
-			stream = new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
+			 * Path path = Paths.get(fileServer, id.toString(), fileName + "." +
+			 * fileType.toLowerCase());
+			 * File file = path.toFile();// new File(path.);
+			 * headers.add("Content-Type", Files.probeContentType(file.toPath()));
+			 * stream = new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
 			 */
 
 			DocumentoAnexo itemAnexo = documento.getAnexos().get(0);
@@ -2774,17 +2773,17 @@ public class DocumentoControlador {
 					new AnexoDto(
 							fileByte,
 							fileByte.length,
-							itemAnexo.getNombre_archivo()
-					),
+							itemAnexo.getNombre_archivo()),
 					UserIdentityHelper.getClientIpAddress());
 
 			logger.info("Anexo obtenido de SOAP: " + anexo);
 
-			auditoria = docService.updateAnexo(String.valueOf(anexo.getIdanexo()),documento.getId_documento(), itemAnexo.getOrden());
+			auditoria = docService.updateAnexo(String.valueOf(anexo.getIdanexo()), documento.getId_documento(),
+					itemAnexo.getOrden());
 
 		} catch (Exception ex) {
 			auditoria.Error(ex);
-			auditoria.mensaje_salida=auditoria.error_log;
+			auditoria.mensaje_salida = auditoria.error_log;
 			logger.info(auditoria.error_log);
 		}
 		return new ResponseEntity<Auditoria>(auditoria, HttpStatus.OK);
