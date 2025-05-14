@@ -648,7 +648,7 @@ public class DocumentoControlador {
 						logger.error("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
 						logger.error(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
 						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
-						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se genero HR");
+						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "NO SE LOGRÓ GENERAR LA HR");
 						auditoria.ejecucion_procedimiento = false;
 						auditoria.mensaje_salida = message.isEmpty()
 								? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
@@ -732,7 +732,7 @@ public class DocumentoControlador {
 					logger.info("totalFilesUploaded {}:", totalFilesUploaded);
 
 					if (totalFiles != totalFilesUploaded) {
-						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "No se mando los anexos completos");
+						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "NO SE ENVIARON TODOS LOS ANEXOS");
 						auditoria.mensaje_salida += ", pero en el proceso anexos no se han podido registrar";
 					}
 				}

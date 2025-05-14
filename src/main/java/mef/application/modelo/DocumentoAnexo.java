@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class DocumentoAnexo implements Serializable{	
 	
-	private int id_documento;
+	private Integer  id_documento;
 	private String codigo_archivo;
 	private String nombre_archivo;
 	private String extension_archivo;
@@ -25,11 +25,11 @@ public class DocumentoAnexo implements Serializable{
 	private int estadoAnexo;
 	private String idAnexo;
 
-	public int getEstadoAnexo() {
+	public Integer  getEstadoAnexo() {
 		return estadoAnexo;
 	}
 
-	public void setEstadoAnexo(int estadoAnexo) {
+	public void setEstadoAnexo(Integer  estadoAnexo) {
 		this.estadoAnexo = estadoAnexo;
 	}
 
