@@ -99,7 +99,7 @@ public class DocumentScheduler {
 			ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
 			HrDto expediente = new HrDto();
 			Path path;
-//			Integer totalFaileFiles = 0;
+			// Integer totalFaileFiles = 0;
 			String message = "";
 			String USU = "lmauricio";
 			String filename = "";
@@ -209,8 +209,7 @@ public class DocumentScheduler {
 					String ruc = mipersona.getNro_documento();
 					String razon_social = mipersona.getNombre_usuario();
 
-					if (apellido_paterno.equals("") || apellido_paterno.equals(null)
-							|| apellido_paterno.equals("null")) {
+					if (apellido_paterno == null) {
 						nombre = "";
 						dni = "";
 						apellido_paterno = "";
@@ -321,7 +320,7 @@ public class DocumentScheduler {
 												.findById(Long.valueOf(documento.getId_documento()));
 										if (optionalDocumento.isPresent()) {
 											DocumentoEntity documentoenti = optionalDocumento.get();
-											documentoenti.setObsSgdd("No se mando los anexos completos");
+											documentoenti.setObsSgdd("NO SE ENVIARON TODOS LOS ANEXOS");
 											documentoRepository.save(documentoenti);
 
 										}
@@ -341,7 +340,7 @@ public class DocumentScheduler {
 								.findById(Long.valueOf(documento.getId_documento()));
 						if (optionalDocumento.isPresent()) {
 							DocumentoEntity documentoenti = optionalDocumento.get();
-							documentoenti.setObsSgdd("No se mando los anexos completos");
+							documentoenti.setObsSgdd("NO SE ENVIARON TODOS LOS ANEXOS");
 							documentoRepository.save(documentoenti);
 
 						}
