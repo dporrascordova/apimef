@@ -617,7 +617,7 @@ public class DocumentoControlador {
 						long duracion = fin - inicio;
 						logger.info("Tiempo de ejecución crearExpediente: {} ms, nro Documento : {}", duracion, documentoId);
 
-						if (expediente != null) {
+						if (expediente != null && expediente.getNumeroSid() != null) {
 
 							System.out.println("Datos de retorno: ");
 							System.out.println("getNumeroDoc:" + expediente.getNumeroDoc());
@@ -643,86 +643,98 @@ public class DocumentoControlador {
 							Path pathanexos;
 							for (DocumentoAnexo itemAnexo : anexos) {
 
-								filename = itemAnexo.getCodigo_archivo();
-								pathanexos = Paths.get(fileServer, documentoId + "", filename + "." + itemAnexo.getExtension_archivo());
-								byte[] fileByteAnexo = Files.readAllBytes(pathanexos);
+								if (itemAnexo.getFlg_link().equals("1")) {
 
-								inicio = System.currentTimeMillis();
-								fechaLegible = Instant.ofEpochMilli(fin)
-										.atZone(ZoneId.systemDefault())
-										.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+									filename = itemAnexo.getCodigo_archivo();
+									pathanexos = Paths.get(fileServer, documentoId + "",
+											filename + "." + itemAnexo.getExtension_archivo());
+									byte[] fileByteAnexo = Files.readAllBytes(pathanexos);
 
-								logger.info("Inicio de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
-										documentoId);
-								logger.info("Anexo tamaño: {} , nombre: {} , codigo: {} , nro Documento : {}",
-										CommonHelpers.formatFileSize(fileByteAnexo.length),
-										itemAnexo.getNombre_archivo(),
-										itemAnexo.getCodigo_archivo(),
-										documentoId);
-
-								DocumentoAnexoPK id = new DocumentoAnexoPK();
-								id.setIdDocumento(Long.valueOf(itemAnexo.getId_documento()));
-								id.setOrden((long) itemAnexo.getOrden());
-
-								Optional<DocumentoAnexoEntity> anexoItem = documentoAnexoRepository
-										.findById(id);
-								DocumentoAnexoEntity documentoItem;
-								if (anexoItem.isPresent()) {
-									documentoItem = anexoItem.get();
-
-									// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
-									HrDto anexo = null;
-									try {
-										anexo = ventanillastdProxy.agregarAExpediente(
-												USU,
-												expediente.getNumeroSid(),
-												expediente.getNumeroAnio(),
-												new AnexoDto(
-														fileByteAnexo,
-														fileByteAnexo.length,
-														itemAnexo.getNombre_archivo()),
-												IP);
-										// Aquí sabes que sería un "HTTP 200 OK"
-										logger.info("Anexo agregado correctamente, nro Documento : {} ", documentoId);
-										logger.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(anexo));
-
-										documentoItem.setEstadoAnexo(1);
-										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
-
-										documentoAnexoRepository.save(documentoItem);
-
-										totalFilesUploaded += 1;
-									} catch (Exception e) {
-										// Otro error inesperado
-										auditoria.Error(e);
-										logger.info(auditoria.error_log);
-										documentoItem.setEstadoAnexo(0);
-										documentoItem.setIdAnexo(null);
-										documentoAnexoRepository.save(documentoItem);
-										e.printStackTrace();
-									}
-
-									fin = System.currentTimeMillis();
+									inicio = System.currentTimeMillis();
 									fechaLegible = Instant.ofEpochMilli(fin)
 											.atZone(ZoneId.systemDefault())
 											.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
-									logger.info("Fin de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
+
+									logger.info("Inicio de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
+											documentoId);
+									logger.info("Anexo tamaño: {} , nombre: {} , codigo: {} , nro Documento : {}",
+											CommonHelpers.formatFileSize(fileByteAnexo.length),
+											itemAnexo.getNombre_archivo(),
+											itemAnexo.getCodigo_archivo(),
 											documentoId);
 
-									duracion = fin - inicio;
-									logger.info("Tiempo de ejecución agregar Anexo: {} ms, nro Documento : {}", duracion, documentoId);
+									DocumentoAnexoPK id = new DocumentoAnexoPK();
+									id.setIdDocumento(Long.valueOf(itemAnexo.getId_documento()));
+									id.setOrden((long) itemAnexo.getOrden());
+
+									Optional<DocumentoAnexoEntity> anexoItem = documentoAnexoRepository
+											.findById(id);
+									DocumentoAnexoEntity documentoItem;
+									if (anexoItem.isPresent()) {
+										documentoItem = anexoItem.get();
+
+										// Paso 1: Llamar al servicio ventanillastdProxy y obtener el objeto "AxDto"
+										HrDto anexo = null;
+										try {
+											anexo = ventanillastdProxy.agregarAExpediente(
+													USU,
+													expediente.getNumeroSid(),
+													expediente.getNumeroAnio(),
+													new AnexoDto(
+															fileByteAnexo,
+															fileByteAnexo.length,
+															itemAnexo.getNombre_archivo()),
+													IP);
+											// Aquí sabes que sería un "HTTP 200 OK"
+											logger.info("Anexo agregado correctamente, nro Documento : {} ", documentoId);
+											logger.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(anexo));
+
+											documentoItem.setEstadoAnexo(1);
+											documentoItem.setIdAnexo(anexo.getIdanexo().toString());
+
+											documentoAnexoRepository.save(documentoItem);
+
+											totalFilesUploaded += 1;
+										} catch (Exception e) {
+											// Otro error inesperado
+											auditoria.Error(e);
+											logger.info(auditoria.error_log);
+											documentoItem.setEstadoAnexo(0);
+											documentoItem.setIdAnexo(null);
+											documentoAnexoRepository.save(documentoItem);
+											e.printStackTrace();
+										}
+
+										fin = System.currentTimeMillis();
+										fechaLegible = Instant.ofEpochMilli(fin)
+												.atZone(ZoneId.systemDefault())
+												.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+										logger.info("Fin de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
+												documentoId);
+
+										duracion = fin - inicio;
+										logger.info("Tiempo de ejecución agregar Anexo: {} ms, nro Documento : {}", duracion, documentoId);
+
+									}
 
 								}
 
 							}
 
+						} else {
+							logger.info("no se creo la HR para iddocumento: {}", documentoId);
+							try {
+								logger.error(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
+							} catch (Exception e) {
+								System.out.println(e.getMessage());
+							}
 						}
 
 					} catch (Exception ex) {
-						logger.error("Error General, nro Documento : {}");
+						logger.error("Error General, nro Documento : {}", documentoId);
 						auditoria.Error(ex);
 						logger.error(auditoria.error_log);
-						ex.printStackTrace();
+						System.out.println(ex.getMessage());
 					}
 
 					Casilla modelo = new Casilla();
