@@ -271,7 +271,7 @@ public class DocumentScheduler {
 							case "1":
 
 								filename = itemAnexo.getCodigo_archivo();
-								path = Paths.get(fileServer, documento.getId_documento() + "", filename);
+								path = Paths.get(fileServer, documento.getId_documento() + "", filename + "." + itemAnexo.getExtension_archivo());
 								fileByte = Files.readAllBytes(path);
 
 								System.out.println("Files Anexo: " + fileByte.length);
