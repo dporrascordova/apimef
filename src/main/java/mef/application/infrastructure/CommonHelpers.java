@@ -17,6 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class CommonHelpers {
 
+	public static String formatFileSize(long size) {
+		if (size <= 0)
+			return "0 Bytes";
+		String[] units = new String[] { "Bytes", "KB", "MB", "GB", "TB" };
+		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+		return String.format("%.2f %s", size / Math.pow(1024, digitGroups), units[digitGroups]);
+	}
+
 	/**
 	 * Retorna una cadena con la fecha formatea a formato espanol.
 	 * 
@@ -59,7 +67,7 @@ public class CommonHelpers {
 		String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
 		return newFilename + "." + extension;
 	}
-	
+
 	public static boolean Validar_Captcha(String secretKey, String response) {
 		try {
 			String url = "https://www.google.com/recaptcha/api/siteverify?" + "secret=" + secretKey + "&response="

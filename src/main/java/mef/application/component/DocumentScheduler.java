@@ -155,8 +155,8 @@ public class DocumentScheduler {
 		logger.info(
 				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD : " + (new Date(System.currentTimeMillis())));
 
-		Integer totalFiles = 1;
-		Integer totalFilesUploaded = 1;
+		Integer totalFiles = 0;
+		Integer totalFilesUploaded = 0;
 		Auditoria auditoria = new Auditoria();
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);

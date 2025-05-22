@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -391,8 +394,10 @@ public class DocumentoControlador {
 	public ResponseEntity<Auditoria> Documento_Insertar(@Valid @ModelAttribute Documento doc) {
 		Auditoria auditoria = new Auditoria();
 
-		Integer totalFiles = 1;
-		Integer totalFilesUploaded = 1;
+		Integer totalFiles = 0;
+		Integer totalFilesUploaded = 0;
+		ObjectMapper mapper = new ObjectMapper();
+
 		try {
 			// DocumentoAnexo anexo = new DocumentoAnexo();
 
@@ -410,6 +415,9 @@ public class DocumentoControlador {
 			doc.setUsu_creacion(UserIdentityHelper.get_CodigoUsuario());
 			doc.setId_usuario(UserIdentityHelper.getUserId() + "");
 			doc.setId_estado_documento(8);
+
+			logger.info("registrar-solicitud");
+
 			HrDto expediente = new HrDto();
 			auditoria = docService.Documento_Insertar(doc);
 
@@ -417,7 +425,7 @@ public class DocumentoControlador {
 
 				if (!auditoria.rechazar) {
 					documentoId = Integer.parseInt(auditoria.objeto.toString());
-
+					logger.info("getId_documento {}:", documentoId);
 					try {
 
 						// Datos de la persona
@@ -466,18 +474,23 @@ public class DocumentoControlador {
 							}
 						}
 
-						// Prepara Anexo Principal
+						// Prepara Doc Principal
 						Path path = Paths.get(fileServer, documentoId + "");
 						Files.createDirectories(path);
+						logger.info("Doc Principal:  {}, nro Documento : {}", doc.getFile().getOriginalFilename(), documentoId);
 						filename = CommonHelpers.Generar_Nombre_Archivo(doc.getFile(), filename);
+						logger.info("Nombre Generado: {}, peso Doc Principal: {},  nro Documento: {}:", filename,
+								CommonHelpers.formatFileSize(doc.getFile().getSize()), documentoId);
+
 						storageService.save(path.toString(), doc.getFile(), filename);
-						ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
-						byte[] fileByte = doc.getFile().getBytes();
-						anexoDtoPrincipal
-								.add(new AnexoDto(fileByte, fileByte.length, filename));
+
+						ArrayList<AnexoDto> docPrincipal = new ArrayList<AnexoDto>();
+						byte[] fileBytePrincipal = doc.getFile().getBytes();
+						docPrincipal
+								.add(new AnexoDto(fileBytePrincipal, fileBytePrincipal.length, filename));
 
 						String USU = "lmauricio";
-						System.out.println("Creando Expediente:");
+						logger.info("Creando Expediente - nro Documento: {}", documentoId);
 						// Crear expediente en el SGDD
 
 						if (doc.getAnexoslink() != null) {
@@ -536,33 +549,74 @@ public class DocumentoControlador {
 							}
 						}
 
-						expediente = ventanillastdProxy.crearExpediente(
-								USU,
-								auditoria.objeto.toString() + "",
-								Long.valueOf(doc.getId_tipo_documento()),
-								doc.getNro_documento(),
-								doc.getNro_folios(),
-								doc.getAsunto(),
-								apellido_paterno,
-								apellido_materno,
-								nombre,
-								dni,
-								mipersona.getTelefono(),
-								razon_social,
-								ruc,
-								mipersona.getDireccion(),
-								mipersona.getDesc_departamento(),
-								mipersona.getDesc_provincia(),
-								mipersona.getDesc_distrito(),
-								mipersona.getCorreo(),
-								anexoDtoPrincipal.toArray(new AnexoDto[anexoDtoPrincipal.size()]),
-								IP,
-								oficinas,
-								null,
-								null,
-								new long[0],
-								0,
-								anexosHR);
+						long inicio = System.currentTimeMillis();
+						String fechaLegible = Instant.ofEpochMilli(inicio)
+								.atZone(ZoneId.systemDefault())
+								.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+						logger.info("Inicio de la llamada al método crearExpediente: {} , nro Documento : {}", fechaLegible,
+								documentoId);
+						logger.info("Doc Principal - Array Size: {} , nro Documento : {}", docPrincipal.size(), documentoId);
+						logger.info("Doc principal - Nombre: {}, Tamaño: {} , nro Documento : {}",
+								docPrincipal.get(0).getName(),
+								CommonHelpers.formatFileSize(docPrincipal.get(0).getArchivo().length),
+								documentoId);
+
+						try {
+
+							expediente = ventanillastdProxy.crearExpediente(
+									USU,
+									auditoria.objeto.toString() + "",
+									Long.valueOf(doc.getId_tipo_documento()),
+									doc.getNro_documento(),
+									doc.getNro_folios(),
+									doc.getAsunto(),
+									apellido_paterno,
+									apellido_materno,
+									nombre,
+									dni,
+									mipersona.getTelefono(),
+									razon_social,
+									ruc,
+									mipersona.getDireccion(),
+									mipersona.getDesc_departamento(),
+									mipersona.getDesc_provincia(),
+									mipersona.getDesc_distrito(),
+									mipersona.getCorreo(),
+									docPrincipal.toArray(new AnexoDto[docPrincipal.size()]),
+									IP,
+									oficinas,
+									null,
+									null,
+									new long[0],
+									0,
+									anexosHR);
+						} catch (Exception ex) {
+							docService.Documento_FlgServicioError(documentoId);
+
+							logger.error("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD, nro Documento : {}", documentoId);
+							logger.error(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
+							plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
+							marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "NO SE LOGRÓ GENERAR LA HR");
+							auditoria.ejecucion_procedimiento = false;
+							auditoria.mensaje_salida = message.isEmpty()
+									? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
+									: message;
+							auditoria.Error(ex);
+							logger.error(auditoria.error_log);
+							ex.printStackTrace();
+						}
+
+						long fin = System.currentTimeMillis();
+						fechaLegible = Instant.ofEpochMilli(fin)
+								.atZone(ZoneId.systemDefault())
+								.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+
+						logger.info("Fin de la llamada al método crearExpediente: {}, nro Documento : {}", fechaLegible,
+								documentoId);
+
+						long duracion = fin - inicio;
+						logger.info("Tiempo de ejecución crearExpediente: {} ms, nro Documento : {}", duracion, documentoId);
+
 						if (expediente != null) {
 
 							System.out.println("Datos de retorno: ");
@@ -586,15 +640,25 @@ public class DocumentoControlador {
 
 							List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documentoId);
 
-							System.out.println("total files totalFaileFiles");
-
+							Path pathanexos;
 							for (DocumentoAnexo itemAnexo : anexos) {
 
 								filename = itemAnexo.getCodigo_archivo();
-								path = Paths.get(fileServer, documentoId + "", filename + "." + itemAnexo.getExtension_archivo());
-								fileByte = Files.readAllBytes(path);
+								pathanexos = Paths.get(fileServer, documentoId + "", filename + "." + itemAnexo.getExtension_archivo());
+								byte[] fileByteAnexo = Files.readAllBytes(pathanexos);
 
-								System.out.println("Files Anexo: " + fileByte.length);
+								inicio = System.currentTimeMillis();
+								fechaLegible = Instant.ofEpochMilli(fin)
+										.atZone(ZoneId.systemDefault())
+										.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+
+								logger.info("Inicio de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
+										documentoId);
+								logger.info("Anexo tamaño: {} , nombre: {} , codigo: {} , nro Documento : {}",
+										CommonHelpers.formatFileSize(fileByteAnexo.length),
+										itemAnexo.getNombre_archivo(),
+										itemAnexo.getCodigo_archivo(),
+										documentoId);
 
 								DocumentoAnexoPK id = new DocumentoAnexoPK();
 								id.setIdDocumento(Long.valueOf(itemAnexo.getId_documento()));
@@ -614,12 +678,13 @@ public class DocumentoControlador {
 												expediente.getNumeroSid(),
 												expediente.getNumeroAnio(),
 												new AnexoDto(
-														fileByte,
-														fileByte.length,
+														fileByteAnexo,
+														fileByteAnexo.length,
 														itemAnexo.getNombre_archivo()),
 												IP);
 										// Aquí sabes que sería un "HTTP 200 OK"
-										System.out.println("Anexo agregado correctamente: " + anexo);
+										logger.info("Anexo agregado correctamente, nro Documento : {} ", documentoId);
+										logger.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(anexo));
 
 										documentoItem.setEstadoAnexo(1);
 										documentoItem.setIdAnexo(anexo.getIdanexo().toString());
@@ -634,7 +699,18 @@ public class DocumentoControlador {
 										documentoItem.setEstadoAnexo(0);
 										documentoItem.setIdAnexo(null);
 										documentoAnexoRepository.save(documentoItem);
+										e.printStackTrace();
 									}
+
+									fin = System.currentTimeMillis();
+									fechaLegible = Instant.ofEpochMilli(fin)
+											.atZone(ZoneId.systemDefault())
+											.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS"));
+									logger.info("Fin de la llamada al método agregar Anexo: {}, nro Documento : {}", fechaLegible,
+											documentoId);
+
+									duracion = fin - inicio;
+									logger.info("Tiempo de ejecución agregar Anexo: {} ms, nro Documento : {}", duracion, documentoId);
 
 								}
 
@@ -643,18 +719,10 @@ public class DocumentoControlador {
 						}
 
 					} catch (Exception ex) {
-						docService.Documento_FlgServicioError(documentoId);
-						ObjectMapper mapper = new ObjectMapper();
-						logger.error("ERROR EN LA CREACION DE LA HOJA DE RUTA SGDD:");
-						logger.error(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expediente));
-						plantillaCorreo = "email/SGDD_documento_crear_sin_HR";
-						marcarDocumentoComoNoGeneradoHR(Long.valueOf(documentoId), "NO SE LOGRÓ GENERAR LA HR");
-						auditoria.ejecucion_procedimiento = false;
-						auditoria.mensaje_salida = message.isEmpty()
-								? "La solicitud " + documentoId + " se ha generado correctamente, la Generacion de HR esta pendiente"
-								: message;
+						logger.error("Error General, nro Documento : {}");
 						auditoria.Error(ex);
 						logger.error(auditoria.error_log);
+						ex.printStackTrace();
 					}
 
 					Casilla modelo = new Casilla();
@@ -2753,7 +2821,7 @@ public class DocumentoControlador {
 		try {
 			DocumentoAnexo itemAnexo = documento.getAnexos().get(0);
 
-			String filename = itemAnexo.getCodigo_archivo()+"."+itemAnexo.getExtension_archivo();
+			String filename = itemAnexo.getCodigo_archivo() + "." + itemAnexo.getExtension_archivo();
 			Path path = Paths.get(fileServer, itemAnexo.getId_documento() + "", filename);
 			File file = path.toFile();
 			byte[] fileByte = Files.readAllBytes(path);
