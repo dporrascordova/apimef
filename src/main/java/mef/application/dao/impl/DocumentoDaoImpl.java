@@ -1,7 +1,5 @@
 package mef.application.dao.impl;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,10 +14,10 @@ import javax.persistence.StoredProcedureQuery;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import mef.application.dao.DocumentoDao;
 import mef.application.infrastructure.CommonHelpers;
-import mef.application.infrastructure.UserIdentityHelper;
 import mef.application.modelo.Auditoria;
 import mef.application.modelo.Documento;
 import mef.application.modelo.DocumentoAnexo;
@@ -28,7 +26,6 @@ import mef.application.modelo.DocumentoFinalizar;
 import mef.application.modelo.DocumentoGrilla;
 import mef.application.modelo.DocumentoObservacion;
 import mef.application.modelo.RespuestaMessage;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DocumentoDaoImpl implements DocumentoDao {
@@ -210,6 +207,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				docMap.setAsignado(!Objects.toString(row[32], "").isEmpty());
 				docMap.setNomb_usu_asignacion(String.valueOf(row[33]));
 				docMap.setHoja_ruta(Objects.toString(row[34], "-"));
+				docMap.setObsSgdd(Objects.toString(row[35], "-"));
 
 				lista.add(docMap);
 			}
@@ -373,9 +371,9 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				documento.setDesc_oficina(String.valueOf(row[26]));
 				// documento.setHoja_ruta(Objects.toString(row[28], ""));
 
-				System.out.println("Asunto C:"+cambiarcaracteres(documento.getAsunto()));
-				System.out.println("Asunto:"+documento.getAsunto());
-				
+				System.out.println("Asunto C:" + cambiarcaracteres(documento.getAsunto()));
+				System.out.println("Asunto:" + documento.getAsunto());
+
 			} else {
 				auditoria.rechazar = true;
 				documento.setId_documento(0);
@@ -456,6 +454,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
+	@Transactional
 	public Auditoria Documento_FlgServicioError(int id_documento) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
@@ -466,7 +465,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 					.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
 					.registerStoredProcedureParameter(2, Integer.class, ParameterMode.OUT)
 					.registerStoredProcedureParameter(3, String.class, ParameterMode.OUT).setParameter(1, id_documento);
-
+			entityManager.joinTransaction();
 			query.execute();
 
 			// Integer estado = (Integer) query.getOutputParameterValue(13);
@@ -573,7 +572,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 					.setParameter(1, id_documento);
 
 			List<Object[]> TableST = query.getResultList();
-			query.unwrap(ProcedureOutputs.class).release();
+			// query.unwrap(ProcedureOutputs.class).release();
 
 			for (int i = 0; i < TableST.size(); i++) {
 				Object[] row = TableST.get(i);
@@ -597,15 +596,20 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				anexo.setFlg_link(String.valueOf(row[11]));
 				anexo.setCrea_MPI(String.valueOf(row[12]).equals("1"));
 				anexo.setFlg_estado(Integer.valueOf(row[13] + ""));
+				anexo.setEstadoAnexo(row[14] != null ? Integer.valueOf(row[14].toString()) : 0);
+
+
+				anexo.setIdAnexo(row[15] != null ? String.valueOf(row[15].toString()) : null);
 
 				anexos.add(anexo);
 			}
 		} catch (NoResultException e) {
 			System.out.println("VACIO: " + e.getMessage());
 			// return null;
+			e.printStackTrace();
 		} catch (Exception e) {
 
-			// e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("ERROR STORE: " + e.getMessage());
 		}
 
@@ -776,35 +780,34 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
-	public Auditoria DocumentoActualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO ) {
+	public Auditoria DocumentoActualizar_Estado(long ID_DOCUMENTO, long ID_ESTADO) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
 		try {
 			// System.out.println(obs.getId_documento());
 			// System.out.println("ENTRO");
-			 
 
-				StoredProcedureQuery query = entityManager
-						.createStoredProcedureQuery(databasePackage + ".P_UPDATE_ESTADO_DOC")
-						.registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
-						.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN)
-						.registerStoredProcedureParameter(3, Integer.class, ParameterMode.OUT)
-						.registerStoredProcedureParameter(4, String.class, ParameterMode.OUT)
-						.setParameter(1, ID_DOCUMENTO).setParameter(2, ID_ESTADO);
+			StoredProcedureQuery query = entityManager
+					.createStoredProcedureQuery(databasePackage + ".P_UPDATE_ESTADO_DOC")
+					.registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(3, Integer.class, ParameterMode.OUT)
+					.registerStoredProcedureParameter(4, String.class, ParameterMode.OUT)
+					.setParameter(1, ID_DOCUMENTO).setParameter(2, ID_ESTADO);
 
-				query.execute();
+			query.execute();
 
-				// Integer estado = (Integer) query.getOutputParameterValue(4);
-				//String mensaje = (String) query.getOutputParameterValue(4);
-				query.unwrap(ProcedureOutputs.class).release();
-			//auditoria.objeto = mensaje;
+			// Integer estado = (Integer) query.getOutputParameterValue(4);
+			// String mensaje = (String) query.getOutputParameterValue(4);
+			query.unwrap(ProcedureOutputs.class).release();
+			// auditoria.objeto = mensaje;
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
 		}
 		return auditoria;
 	}
-	
+
 	@Override
 	public Auditoria Documento_Observacion_Listar(Integer documentoId) {
 		Auditoria auditoria = new Auditoria();
@@ -1120,6 +1123,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
+	@Transactional
 	public Auditoria Documento_Agregar_HojaRuta(Integer documentoId, Integer anio, String numeroSid, String usuario) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
@@ -1133,11 +1137,13 @@ public class DocumentoDaoImpl implements DocumentoDao {
 					.registerStoredProcedureParameter(5, Integer.class, ParameterMode.OUT)
 					.registerStoredProcedureParameter(6, String.class, ParameterMode.OUT).setParameter(1, documentoId)
 					.setParameter(2, anio).setParameter(3, numeroSid).setParameter(4, usuario);
+
+			entityManager.joinTransaction();
 			query.execute();
 
 			Integer estado = (Integer) query.getOutputParameterValue(5);
 			String mensaje = (String) query.getOutputParameterValue(6);
-			query.unwrap(ProcedureOutputs.class).release();
+			// query.unwrap(ProcedureOutputs.class).release();
 			if (!estado.equals(100)) {
 				auditoria.Rechazar(mensaje);
 			} else {
@@ -1147,6 +1153,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
+			ex.printStackTrace();
 		}
 		return auditoria;
 	}
@@ -1249,7 +1256,8 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				} catch (NullPointerException e) {
 					// Capturamos específicamente cuando row[23] es null
 					System.err.println("Error en registro " + i + ": " + e.getMessage());
-					// También puedes usar un logger: logger.warn("Error en registro {}: {}", i, e.getMessage());
+					// También puedes usar un logger: logger.warn("Error en registro {}: {}", i,
+					// e.getMessage());
 				} catch (Exception e) {
 					// Capturamos otros errores inesperados
 					System.err.println("Error inesperado en registro " + i + ": " + e.getMessage());
@@ -1266,7 +1274,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 
 		return auditoria;
 	}
-	
+
 	@Override
 	public Auditoria Documento_Listar_PorEstado2(Integer estadoId) {
 		Auditoria auditoria = new Auditoria();
@@ -1290,7 +1298,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 				documento.setId_documento(Integer.valueOf(row[0] + ""));
 				documento.setNumero_sid(Objects.toString(row[1], ""));
 				documento.setAnio(Integer.valueOf(row[2] + ""));
-				//documento.setHoja_ruta(Objects.toString(row[1], "")); 
+				// documento.setHoja_ruta(Objects.toString(row[1], ""));
 
 				lista.add(documento);
 			}
@@ -1308,18 +1316,13 @@ public class DocumentoDaoImpl implements DocumentoDao {
 		return auditoria;
 	}
 
-
-
-
-
 	@Override
-	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error ) {
+	public Auditoria Actualizar_Estado(long ID_DOCUMENTO, long ID_ESTADO, String des_error) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
 		try {
 			// System.out.println(obs.getId_documento());
 			// System.out.println("ENTRO");
-
 
 			StoredProcedureQuery query = entityManager
 					.createStoredProcedureQuery("SISVENVI.PQ_ESTADOS_SGDD" + ".P_UPDATE_ESTADO_DOC")
@@ -1335,17 +1338,15 @@ public class DocumentoDaoImpl implements DocumentoDao {
 			query.execute();
 
 			// Integer estado = (Integer) query.getOutputParameterValue(4);
-			//String mensaje = (String) query.getOutputParameterValue(4);
+			// String mensaje = (String) query.getOutputParameterValue(4);
 			query.unwrap(ProcedureOutputs.class).release();
-			//auditoria.objeto = mensaje;
+			// auditoria.objeto = mensaje;
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
 		}
 		return auditoria;
 	}
-
-
 
 	@Override
 	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab) {
@@ -1366,12 +1367,12 @@ public class DocumentoDaoImpl implements DocumentoDao {
 
 			for (int i = 0; i < TableST.size(); i++) {
 				Object[] row = TableST.get(i);
-				if( row[0] !=null & row[1] !=null & row[2] !=null & row[3] !=null ){
+				if (row[0] != null & row[1] != null & row[2] != null & row[3] != null) {
 					documento = new Documento();
 
-					documento.setId_documento(Integer.valueOf( row[0] != null ? row[0]+"" : ""));
+					documento.setId_documento(Integer.valueOf(row[0] != null ? row[0] + "" : ""));
 					documento.setNumero_sid(Objects.toString(row[2] != null ? row[2] : "", ""));
-					documento.setAnio(Integer.valueOf( row[3] != null ? row[3]+"" : ""));
+					documento.setAnio(Integer.valueOf(row[3] != null ? row[3] + "" : ""));
 					documento.setHoja_ruta(Objects.toString(row[1] != null ? row[2] : "", ""));
 
 					lista.add(documento);

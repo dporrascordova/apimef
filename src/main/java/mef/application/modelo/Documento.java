@@ -66,8 +66,16 @@ public class Documento   {
 	private int tipopersona;	
 	private String nrodocumento_persona; 
 	private String str_fec_modificacion;
+	private String obsSgdd;
 
-	
+	public String getObsSgdd() {
+		return obsSgdd;
+	}
+
+	public void setObsSgdd(String obsSgdd) {
+		this.obsSgdd = obsSgdd;
+	}
+
 	public String getStr_fec_modificacion() {
 		return str_fec_modificacion;
 	}

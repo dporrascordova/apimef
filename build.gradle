@@ -18,7 +18,7 @@ apply plugin: 'war'
 apply plugin: 'application'
 
 group = 'mef'
-version = '1.1.0.D'
+version = '1.4.2.P'
 sourceCompatibility = 1.8
 mainClassName='mef.application.AcervoOracleApplication'
 
@@ -37,8 +37,8 @@ repositories {
 task genJaxb {
 	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
 	ext.classesDir = "${buildDir}/classes/jaxb"
-//	ext.schema = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl"// Desarrollo
-	ext.schema = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl" //Prod
+	ext.schema = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl"// Desarrollo
+	// ext.schema = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl" //Prod
 
 	outputs.dir classesDir
 
@@ -50,11 +50,11 @@ task genJaxb {
 			mkdir(dir: classesDir)
 
 				 
-				//xjc(destdir: sourcesDir, schema: schema,
-						//package: "mef.application.consumingws2.wsdl") {  
-					//	arg(value: "-wsdl")
-					//produces(dir: sourcesDir, includes: "**/*.java")
-				//}
+				xjc(destdir: sourcesDir, schema: schema,
+						package: "mef.application.consumingws.wsdl") {
+						arg(value: "-wsdl")
+					produces(dir: sourcesDir, includes: "**/*.java")
+				}
 				
 				javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
 						debugLevel: "lines,vars,source",
@@ -114,7 +114,7 @@ dependencies {
 	runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.7'
 	runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.7'
 	compile group: 'org.json', name: 'json', version: '20180813'
-	compile files('libs/ojdbc7.jar') // agrega nuestro ojdbc
+	compile files('libs/ojdbc8.jar') // agrega nuestro ojdbc
 	compile files('libs/javax.ws.rs-api-2.1.1.jar')
 	//compile files('libs/spring-boot-starter-mail-2.0.3.RELEASE.jar')
     compile('org.liquibase:liquibase-core') // agrega liquibase

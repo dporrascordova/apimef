@@ -30,6 +30,7 @@ public interface DocumentoService {
 	// public Documento saveOrUpdate(Documento doc);
 
 	public Auditoria Documento_Insertar(Documento doc);
+
 	public Auditoria Documento_FlgServicioError(int id_documento);
 
 	public Auditoria Documento_Actualizar(Documento doc);
@@ -57,7 +58,8 @@ public interface DocumentoService {
 	public Auditoria Documento_HojaRuta(DocumentoFinalizar doc);
 
 	public Auditoria Documento_Actualizar_Estado(DocumentoObservacion obs);
-	public Auditoria DocumentoActualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO );
+
+	public Auditoria DocumentoActualizar_Estado(long ID_DOCUMENTO, long ID_ESTADO);
 
 	public Auditoria Documento_Asignar(Integer id_documento, String username);
 
@@ -74,12 +76,14 @@ public interface DocumentoService {
 	public Auditoria Documento_Agregar_HojaRuta(Integer documentoId, Integer anio, String numeroSid, String usuario);
 
 	public Auditoria Documento_Recepcionar(Integer documentoId, Date fechaRecepcion, String usuarioModifica);
-	
+
 	public Auditoria Documento_Listar_PorEstado(Integer estadoId);
+
 	public Auditoria Documento_Listar_PorEstado2(Integer estadoId);
 
-
-	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error );
+	public Auditoria Actualizar_Estado(long ID_DOCUMENTO, long ID_ESTADO, String des_error);
 
 	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab);
+
+	Auditoria updateAnexo(String idAnexo, long idDocumento, int orden );
 }
